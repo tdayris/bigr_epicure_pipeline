@@ -1,7 +1,7 @@
 rule deeptools_alignment_sieve:
     input:
-        aln="samtools/view/{sample}.bam",
-        aln_idx="samtools/view/{sample}.bam.bai",
+        aln="sambamba/markdup/{sample}.bam",
+        aln_idx="sambamba/markdup/{sample}.bam.bai",
         blacklist=blacklist_path,
     output:
         temp("deeptools/alignment_sieve/{sample}.bam"),

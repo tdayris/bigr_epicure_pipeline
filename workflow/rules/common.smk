@@ -103,7 +103,7 @@ if not blacklist_path:
 ###################
 
 
-def get_fastp_input(wildcards) -> Dict[str, List[str]]:
+def get_fastp_input(wildcards, design: pandas.DataFrame = design) -> Dict[str, List[str]]:
     """
     Return the list of Fastp input files
     """
@@ -117,7 +117,7 @@ def get_fastp_input(wildcards) -> Dict[str, List[str]]:
     return fastp_input
 
 
-def get_bowtie2_align_input(wildcards, bowtie2_index: str = bowtie2_index) -> Dict[str, List[str]]:
+def get_bowtie2_align_input(wildcards, design: pandas.DataFrame = design, bowtie2_index: str = bowtie2_index) -> Dict[str, List[str]]:
     """
     Return the list of bowtie2 align input
     """
@@ -139,10 +139,27 @@ def get_bowtie2_align_input(wildcards, bowtie2_index: str = bowtie2_index) -> Di
             )
 
     return bowtie2_align_input
-    
 
 
-def targets(config: Dict[str, Any]):
+
+def get_deeptools_bamcoverage_input(wildcards, protocol: str = protocol, blacklist_path: str = blacklist_path) -> Dict[str, str]:
+    """
+    Return the expected list of DeepTools input file list
+    """
+    deeptools_bamcoverage_input = {
+        "blacklist": blacklist_path
+    }
+    if protocol == "ataq-seq":
+        deeptools_bamcoverage_input["bam"] = "deeptools/alignment_sieve/{sample}.bam"
+        deeptools_bamcoverage_input["bai"] = "deeptools/alignment_sieve/{sample}.bam.bai"
+    else:
+        deeptools_bamcoverage_input["bam"] = "sambamba/markdup/{sample}.bam"
+        deeptools_bamcoverage_input["bai"] = "sambamba/markdup/{sample}.bam.bai"
+
+    return deeptools_bamcoverage_input
+
+
+def targets(config: Dict[str, Any] = config, protocol: str = protocol, genome_fasta_path: str = genome_fasta_path, genome_annotation_path: str = genome_annotation_path, bowtie2_index_path: str = bowtie2_index_path):
     """
     Return the list of expected output files, depending on the
     choices made by user in configuration file at: `<root>/config/config.yaml`
@@ -156,7 +173,7 @@ def targets(config: Dict[str, Any]):
 
     if config.get("step", {}).get("mapping", False):
         if protocol == "atac-seq":
-            expected_targets["mapping"] = "data_output/CRAM/{sample}.shift.cram"
+            expected_targets["mapping"] = "data_output/CRAM-shifted/{sample}.cram"
         else:
             expected_targets["mapping"] = "data_output/CRAM/{sample}.cram"
 
