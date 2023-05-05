@@ -40,7 +40,11 @@ _note: The following steps may not be perform in that exact order._
 
 # Roadmap
 
+* Preprocessing: FastqScreen
 * Coverage: Fingerprint, Heatmaps (matrices), PCA
 * Peak-calling: Macs2, Seacr, FRiP, FDR
 * Peak-annotation: Homer, CentriMo
 * Differential Peak Calling: DiffBind, DESeq2
+* IGV: screen-shot, igv-reports
+
+Awaiting for SNv1.29.1 to be out.
