@@ -1,0 +1,4 @@
+max_threads: 2
+
+steps:
+  install: true

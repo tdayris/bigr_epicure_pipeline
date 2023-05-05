@@ -1,3 +1,9 @@
+# Testing dataset and results
+*.snakemake*
+tests/logs
+tests/reference
+tests/cache
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

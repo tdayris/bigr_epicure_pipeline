@@ -1,0 +1,20 @@
+include: "rules/common.smk"
+# Genome reference data acquisition (if user did not
+# provide any genomic reference in configuration file)
+include: "rules/reference/download_genome_annotation.smk"
+include: "rules/reference/download_genome_sequence.smk"
+include: "rules/indexing/bowtie2_index.smk"
+include: "rules/indexing/samtools_faidx.smk"
+# Trimming
+include: "rules/trimming/fastp.smk"
+# Mapping
+include: "rules/mapping/bowtie2_mapping.smk"
+include: "rules/mapping/sambamba_samtools_filters.smk"
+include: "rules/mapping/sambamba_markdup.smk"
+include: "rules/mapping/deeptools_shift.smk"
+include: "rules/mapping/picard_collect_multiple_metrics.smk"
+
+
+rule target:
+    input:
+        **targets(config),
