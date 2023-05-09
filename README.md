@@ -8,12 +8,13 @@ _note: The following steps may not be perform in that exact order._
 
 ## Pre-pocessing
 
-| Step                        | Tool             | Documentation                                                                                                                                          | Reason                                                                                                                                                                                                                             |
-| --------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Download genome sequence    | curl             | [Snakemake-Wrapper: download-sequence](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/reference/ensembl-sequence.html)                  | Ensure genome sequence are consistent in Epicure analyses                                                                                                                                                                          |
-| Download genome annotation  | curl             | [Snakemake-Wrapper: download-annotation](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/reference/ensembl-annotation.html)              | Ensure genome annotation are consistent in Epicure analyses                                                                                                                                                                        |
-| Download blacklised regions | manual shell FTP |                                                                                                                                                        | Ensure blacklist regions are consistent in Epicure analyses                                                                                                                                                                        |
-| Trimming + QC               | Fastp            | [Snakemake-Wrapper: fastp](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/fastp.html)                                                   | Perform read quality check and corrections, UMI, adapter removal, QC before and after trimming                                                                                                                                     |
+| Step                        | Tool             | Documentation                                                                                                                             | Reason                                                                                         |
+| --------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Download genome sequence    | curl             | [Snakemake-Wrapper: download-sequence](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/reference/ensembl-sequence.html)     | Ensure genome sequence are consistent in Epicure analyses                                      |
+| Download genome annotation  | curl             | [Snakemake-Wrapper: download-annotation](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/reference/ensembl-annotation.html) | Ensure genome annotation are consistent in Epicure analyses                                    |
+| Download blacklised regions | manual shell FTP |                                                                                                                                           | Ensure blacklist regions are consistent in Epicure analyses                                    |
+| Trimming + QC               | Fastp            | [Snakemake-Wrapper: fastp](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/fastp.html)                                      | Perform read quality check and corrections, UMI, adapter removal, QC before and after trimming |
+| Quality Control             | FastqScreen      | [Snakemake-Wrapper: fastq-screen](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/fastq_screen.html)                               | Perform library quality check |
 
 
 ## Read mapping
@@ -38,11 +39,16 @@ _note: The following steps may not be perform in that exact order._
 | Coverage                    | DeepTools        | [Snakemake-Wrapper: picard-collect-multiple-metrics](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/deeptools/bamcoverage.html)         | Compute genome coverage, normalized to 1M reads |
 
 
+## Peak-Calling
+
+| Step         | Tool | Documentation                                                                                                          | Reason |
+| ------------ | ---- | ---------------------------------------------------------------------------------------------------------------------- | ------ |
+| Peak-Calling | Mac2 | [Snakemake-Wrapper: macs2-callpeak](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/macs2/callpeak.html) | Search for significant peaks |
+
 # Roadmap
 
-* Preprocessing: FastqScreen
 * Coverage: Fingerprint, Heatmaps (matrices), PCA, PBC
-* Peak-calling: Macs2, Seacr, FRiP, FDR
+* Peak-calling: Seacr, FRiP, FDR
 * Peak-annotation: Homer, CentriMo
 * Differential Peak Calling: DiffBind, DESeq2
 * IGV: screen-shot, igv-reports

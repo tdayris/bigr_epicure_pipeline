@@ -5,8 +5,11 @@ include: "rules/reference/download_genome_annotation.smk"
 include: "rules/reference/download_genome_sequence.smk"
 include: "rules/indexing/bowtie2_index.smk"
 include: "rules/indexing/samtools_faidx.smk"
+include: "rules/reference/download_fastq_screen_index.smk"
 # Trimming
 include: "rules/trimming/fastp.smk"
+# Library quality controls
+include: "rules/trimming/fastq_screen.smk"
 # Mapping
 include: "rules/mapping/bowtie2_mapping.smk"
 include: "rules/mapping/sambamba_samtools_filters.smk"

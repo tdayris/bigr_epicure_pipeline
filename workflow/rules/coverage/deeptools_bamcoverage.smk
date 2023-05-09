@@ -2,7 +2,7 @@
 # ask E. later
 rule test_deeptools_bamcoverage:
     input:
-        unpack(get_deeptools_bamcoverage_input)
+        unpack(get_deeptools_bamcoverage_input),
     output:
         temp("data_output/Coverage/{sample}.bw"),
     params:
