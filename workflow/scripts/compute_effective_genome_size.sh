@@ -1,1 +1,1 @@
-grep -v '>' "${1}" | grep -vi 'n' | wc -c
+grep -v '>' "${1}" | grep -iP 'a|t|c|g' | wc -c

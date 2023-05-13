@@ -3,7 +3,18 @@ import os
 import pandas
 
 from snakemake.remote import FTP
-from typing import Any, Dict
+from typing import Any, Dict, List
+
+
+###################
+### Local rules ###
+###################
+
+# Simple rsync copy
+localrule: macs2_save_narrow
+
+# Simple rsync copy
+localrule: macs2_save_broad
 
 
 ########################
@@ -100,68 +111,70 @@ if not blacklist_path:
 
 
 # See: https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html
-default_effective_genome_size = {
-    "GRCz10": {
-        "50": 1_195_445_591,
-        "75": 1_251_132_686,
-        "100": 1_280_189_044,
-        "150": 1_312_207_169,
-        "200": 1_321_355_241,
-    },
-    "WBcel235": {
-        "50": 95_159_452,
-        "75": 96_945_445,
-        "100": 98_259_998,
-        "150": 98_721_253,
-        "200": 98_672_758,
-    },
-    "dm3": {
-        "50": 130_428_560,
-        "75": 135_004_462,
-        "100": 139_647_232,
-        "150": 144_307_808,
-        "200": 148_524_010,
-    },
-    "dm6": {
-        "50": 125_464_728,
-        "75": 127_324_632,
-        "100": 129_789_873,
-        "150": 129_941_135,
-        "200": 132_509_163,
-    },
-    "GRCh37": {
-        "50": 2_685_511_504,
-        "75": 2_736_124_973,
-        "100": 2_776_919_808,
-        "150": 2_827_437_033,
-        "200": 2_855_464_000,
-    },
-    "GRCh38": {
-        "50": 2_701_495_761,
-        "75": 2_747_877_777,
-        "100": 2_805_636_331,
-        "150": 2_862_010_578,
-        "200": 2_887_553_303,
-    },
-    "GRCm37": {
-        "50": 2_304_947_926,
-        "75": 2_404_646_224,
-        "100": 2_462_481_010,
-        "150": 2_489_384_235,
-        "200": 2_513_019_276,
-    },
-    "GRCm38": {
-        "50": 2_308_125_349,
-        "75": 2_407_883_318,
-        "100": 2_467_481_108,
-        "150": 2_494_787_188,
-        "200": 2_520_869_189,
-    },
-}
-read_length = config.get("library", {}).get("read_length", 100)
-effective_genome_size = default_effective_genome_size.get(build).get(
-    read_length, 2_805_636_331
-)
+effective_genome_size = config.get("library", {}).get("effective_genome_size")
+if not effective_genome_size:
+    default_effective_genome_size = {
+        "GRCz10": {
+            "50": 1_195_445_591,
+            "75": 1_251_132_686,
+            "100": 1_280_189_044,
+            "150": 1_312_207_169,
+            "200": 1_321_355_241,
+        },
+        "WBcel235": {
+            "50": 95_159_452,
+            "75": 96_945_445,
+            "100": 98_259_998,
+            "150": 98_721_253,
+            "200": 98_672_758,
+        },
+        "dm3": {
+            "50": 130_428_560,
+            "75": 135_004_462,
+            "100": 139_647_232,
+            "150": 144_307_808,
+            "200": 148_524_010,
+        },
+        "dm6": {
+            "50": 125_464_728,
+            "75": 127_324_632,
+            "100": 129_789_873,
+            "150": 129_941_135,
+            "200": 132_509_163,
+        },
+        "GRCh37": {
+            "50": 2_685_511_504,
+            "75": 2_736_124_973,
+            "100": 2_776_919_808,
+            "150": 2_827_437_033,
+            "200": 2_855_464_000,
+        },
+        "GRCh38": {
+            "50": 2_701_495_761,
+            "75": 2_747_877_777,
+            "100": 2_805_636_331,
+            "150": 2_862_010_578,
+            "200": 2_887_553_303,
+        },
+        "GRCm37": {
+            "50": 2_304_947_926,
+            "75": 2_404_646_224,
+            "100": 2_462_481_010,
+            "150": 2_489_384_235,
+            "200": 2_513_019_276,
+        },
+        "GRCm38": {
+            "50": 2_308_125_349,
+            "75": 2_407_883_318,
+            "100": 2_467_481_108,
+            "150": 2_494_787_188,
+            "200": 2_520_869_189,
+        },
+    }
+    read_length = config.get("library", {}).get("read_length", 100)
+    effective_genome_size = default_effective_genome_size.get(build).get(
+        read_length, 2_805_636_331
+    )
 
 ###################
 ### IO function ###
@@ -329,6 +342,119 @@ def get_macs2_params(
     return extra
 
 
+def get_samtools_stats_input(wildcards, protocol: str = protocol) -> Dict[str, str]:
+    """
+    Return expected input files for Samtools stats
+    """
+    if str(wildcards.step) == "raw":
+        return {
+            "bam": f"bowtie2/align/{wildcards.sample}.bam",
+            "bai": f"bowtie2/align/{wildcards.sample}.bam.bai"
+        }
+
+    if protocol == "atac-seq":
+        return {
+            "bam": f"deeptools/alignment_sieve/{wildcards.sample}.bam",
+            "bai": f"deeptools/alignment_sieve/{wildcards.sample}.bam.bai",
+        }
+
+    return {
+        "bam": f"sambamba/markdup/{wildcards.sample}.bam",
+        "bai": f"sambamba/markdup/{wildcards.sample}.bam.bai",
+    }
+
+
+def get_multiqc_trimming_input(wildcards, protocol: str = protocol, design: pandas.DataFrame = design) -> List[str]:
+    """
+    Return the expected list of input files for multiqc right after trimming
+    """
+    multiqc_trimming_input = []
+    for sample in design.index:
+        if "Downstream_file" in design.keys():
+            down = design["Downstream_file"].loc[sample]
+            if (down is not None) and (down != ""):
+                multiqc_trimming_input.append(
+                    f"data_output/qc/fastp/{sample}.pe.html"
+                )
+                
+                multiqc_trimming_input.append(
+                    f"fastq_screen/{sample}.1.txt"
+                )
+
+                multiqc_trimming_input.append(
+                    f"fastq_screen/{sample}.2.txt"
+                )
+
+        else:
+            multiqc_trimming_input.append(
+                f"data_output/qc/fastp/{sample}.se.html"
+            )
+
+            multiqc_trimming_input.append(
+                f"fastq_screen/{sample}.txt"
+            )
+    
+    return multiqc_trimming_input
+
+
+def get_multiqc_mapping_input(wildcards, protocol: str = protocol, design: pandas.DataFrame = design) -> List[str]:
+    """
+    Return the expected list of input files for multiqc right after mapping
+    """
+    multiqc_mapping_input = get_multiqc_trimming_input(wildcards, protocol, design)
+
+    picard_files = [
+        ".alignment_summary_metrics",
+        ".insert_size_metrics",
+        ".insert_size_histogram.pdf",
+        ".quality_distribution_metrics",
+        ".quality_distribution.pdf",
+        ".gc_bias.detail_metrics",
+        ".gc_bias.summary_metrics",
+        ".gc_bias.pdf",
+    ]
+
+    for sample in design.index:
+        multiqc_mapping_input.append(
+            f"sambamba/markdup/{sample}.bam"
+        )
+
+        for step in ["raw", "cleaned"]:
+            multiqc_mapping_input.append(
+                f"samtools/stats/{sample}.{step}.txt",
+            )
+
+        for picard_file in picard_files:
+            multiqc_mapping_input.append(
+                f"picard/collectmultiplemetrics/stats/{sample}.{picard_file}"
+            )
+
+    multiqc_mapping_input.append("deeptools/plot_fingerprint/raw_counts.tab")
+
+    return multiqc_mapping_input
+
+
+def get_deeptools_plotfingerprint_input(wildcards, protocol: str = protocol, design: pandas.DataFrame = design) -> Dict[str, List[str]]:
+    """
+    Return the list of expected input files for deeptools plot fingerprint
+    """
+    bam_prefix = "sambamba/markdup/"
+    if protocol == "atac-seq":
+        bam_prefix = "deeptools/alignment_sieve/"
+
+    deeptools_plotfingerprint_input = {"bam_files": [], "bam_idx": []}
+    for sample in design.index:
+        deeptools_plotfingerprint_input["bam_files"].append(
+            f"{bam_prefix}/{sample}.bam"
+        )
+
+        deeptools_plotfingerprint_input["bam_idx"].append(
+            f"{bam_prefix}/{sample}.bam.bai"
+        )
+
+    return deeptools_plotfingerprint_input
+
+
 def targets(
     config: Dict[str, Any] = config,
     design: pandas.DataFrame = design,
@@ -357,21 +483,42 @@ def targets(
 
     if steps.get("trimming", False):
         expected_targets["fastp"] = get_fastp_output_html(design=design)
+        expected_targets["multiqc_trim"] = "data_output/QC/Mapping.QC.html"
 
     if steps.get("mapping", False):
         if protocol == "atac-seq":
-            expected_targets["mapping"] = "data_output/CRAM-shifted/{sample}.cram"
+            expected_targets["mapping"] = expand(
+                "data_output/CRAM-shifted/{sample}.cram",
+                design.index
+            )
         else:
-            expected_targets["mapping"] = "data_output/CRAM/{sample}.cram"
+            expected_targets["mapping"] = expand(
+                "data_output/CRAM/{sample}.cram",
+                sample=design.index
+            )
+        expected_targets["multiqc_map"] = "data_output/QC/Mapping.QC.html",
 
     if steps.get("coverage", False):
-        raise NotImplementedError("Coverage analysis not yet implements")
+        expected_targets["bam_coverage"] = expand(
+            "data_output/Coverage/{sample}.bw",
+            design.index
+        )
 
     if steps.get("calling", False):
-        raise NotImplementedError("Peak calling not yet implements")
+        if config.get("macs2", {}).get("broad", False):
+            expected_targets["macs2_broad"] = expand(
+                "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls",
+                sample = design.index,
+            )
+
+        if config.get("macs2", {}).get("narrow", False):
+            expected_targets["macs2_broad"] = expand(
+                "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
+                sample = design.index,
+            )
 
     if steps.get("diff_cov", False):
-        raise NotImplementedError("Differential coverage analysis not yet implements")
+        raise NotImplementedError("Differential coverage analysis not yet implemented")
 
     if steps.get("motives", False):
-        raise NotImplementedError("Mitives analysis not yet implements")
+        raise NotImplementedError("Mitives analysis not yet implemented")

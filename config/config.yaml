@@ -44,7 +44,7 @@ steps:
   motives: true
 
 
-# Must be one of: `chip-seq`, `atac-seq`, `cut&run`, or `cut&tag`
+# Must be one of: `chip-seq`, `atac-seq`, `medip-seq`
 # Main differences:
 # * `chip-seq`:
 #
@@ -98,3 +98,12 @@ reference:
 
   # Path to directory containing fastq_screen configuration file
   fastq_screen_config: config/fastq_screen.conf
+
+
+# Macs2 peak caller parameters
+macs2:
+  # Perform broad peak calling using Macs2 (chip-seq)
+  broad: true
+
+  # Perform narrow peak calling using Macs2 (chip-seq)
+  narrow: true
