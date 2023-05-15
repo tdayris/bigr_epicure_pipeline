@@ -1,6 +1,6 @@
 rule samtools_stats:
     input:
-        unpack(get_samtools_stats_input)
+        unpack(get_samtools_stats_input),
     output:
         "samtools/stats/{sample}.{step}.txt",
     threads: config.get("max_threads", 20)

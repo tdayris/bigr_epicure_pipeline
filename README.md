@@ -36,9 +36,10 @@ _note: The following steps may not be perform in that exact order._
 ## Coverage
 
 
-| Step                        | Tool             | Documentation                                                                                                                                          | Reason                                                                                                                                                                                                                             |
-| --------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Coverage                    | DeepTools        | [Snakemake-Wrapper: picard-collect-multiple-metrics](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/deeptools/bamcoverage.html)         | Compute genome coverage, normalized to 1M reads |
+| Step     | Tool      | Documentation                                                                                                                                  | Reason                                          |
+| -------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Coverage | DeepTools | [Snakemake-Wrapper: picard-collect-multiple-metrics](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/deeptools/bamcoverage.html) | Compute genome coverage, normalized to 1M reads |
+| Coverage | MEDIPS    | Incoming                                                                                                                                       | Compute genome coverage with CpG density correction using MEDIPS (MeDIP-Seq only) |
 
 
 ## Peak-Calling
@@ -47,12 +48,19 @@ _note: The following steps may not be perform in that exact order._
 | ------------ | ---- | ---------------------------------------------------------------------------------------------------------------------- | ------ |
 | Peak-Calling | Mac2 | [Snakemake-Wrapper: macs2-callpeak](https://snakemake-wrappers.readthedocs.io/en/v1.28.0/wrappers/macs2/callpeak.html) | Search for significant peaks |
 
+
+## Differential Peak Calling
+
+| Step         | Tool | Documentation                                                                                                          | Reason |
+| ------------ | ---- | ---------------------------------------------------------------------------------------------------------------------- | ------ |
+| Peak-Calling | MEDIPS | Incoming | Search for significant variation in peak coverage with EdgeR (MeDIP-Seq only) |
+
 # Roadmap
 
 * Coverage: Fingerprint, Heatmaps (matrices), PCA, PBC
 * Peak-calling: Seacr, FRiP, FDR
 * Peak-annotation: Homer, CentriMo
-* Differential Peak Calling: DiffBind, DESeq2, csaw
+* Differential Peak Calling: DiffBind, EdgeR, csaw
 * IGV: screen-shot, igv-reports
 * Big freaking multiqc at the end!
 

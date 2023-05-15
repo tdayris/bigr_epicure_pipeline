@@ -1,6 +1,6 @@
 rule deeptools_plot_fingerprint:
     input:
-        unpack(get_deeptools_plotfingerprint_input)
+        unpack(get_deeptools_plotfingerprint_input),
     output:
         fingerprint="data_output/QC/fingerprint.png",
         counts=temp("deeptools/plot_fingerprint/raw_counts.tab"),
@@ -10,8 +10,8 @@ rule deeptools_plot_fingerprint:
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/deeptools/plot_fingerprint.log"
+        "logs/deeptools/plot_fingerprint.log",
     params:
-        " --skipZeros "
+        " --skipZeros ",
     wrapper:
         "v1.29.0/bio/deeptools/plotfingerprint"

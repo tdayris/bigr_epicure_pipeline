@@ -1,6 +1,6 @@
 rule multiqc_trimming:
     input:
-        unpack(get_multiqc_mapping_input)
+        unpack(get_multiqc_mapping_input),
     output:
         "data_output/QC/Trimming.QC.html",
         directory("data_output/QC/Trimming.QC.data"),
@@ -12,6 +12,6 @@ rule multiqc_trimming:
     params:
         extra=" --module fastp --module fastq_screen ",
     log:
-        "logs/multiqc/trimming.log"
+        "logs/multiqc/trimming.log",
     wrapper:
         "v1.29.0/bio/multiqc"

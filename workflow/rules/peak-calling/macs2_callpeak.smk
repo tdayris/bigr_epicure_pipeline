@@ -23,7 +23,6 @@ rule macs2_callpeak_broad:
         "v1.29.0/bio/macs2/callpeak"
 
 
-
 rule macs2_save_broad:
     input:
         multiext(
@@ -31,20 +30,20 @@ rule macs2_save_broad:
             "_peaks.xls",
             "_peaks.broadPeak",
             "_peaks.gappedPeak",
-        )
+        ),
     output:
-        "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls"
+        "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 128,
         runtime=lambda wildcards, attempt: attempt * 5,
-        tmpdir=tmp
+        tmpdir=tmp,
     log:
-        "logs/rsync/macs2/{sample}.broad.log"
+        "logs/rsync/macs2/{sample}.broad.log",
     conda:
         "../../envs/bash.yaml"
     params:
-        "-cvhP"
+        "-cvhP",
     shell:
         "rsync {params} {input} {output} > {log} 2>&1"
 
@@ -81,19 +80,19 @@ rule macs2_save_narrow:
             "_peaks.xls",
             "_peaks.narrowPeak",
             "_summits.bed",
-        )
+        ),
     output:
-        "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls"
+        "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 128,
         runtime=lambda wildcards, attempt: attempt * 5,
-        tmpdir=tmp
+        tmpdir=tmp,
     log:
-        "logs/rsync/macs2/{sample}.narrow.log"
+        "logs/rsync/macs2/{sample}.narrow.log",
     conda:
         "../../envs/bash.yaml"
     params:
-        "-cvhP"
+        "-cvhP",
     shell:
         "rsync {params} {input} {output} > {log} 2>&1"

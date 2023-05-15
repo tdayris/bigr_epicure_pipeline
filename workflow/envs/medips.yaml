@@ -1,0 +1,9 @@
+channels:
+  - bioconda
+  - conda-forge
+  - nodefaults
+dependencies:
+  - bioconductor-bsgenome.mmusculus.ucsc.mm10 =1.4.3
+  - bioconductor-bsgenome.hsapiens.ucsc.hg38 =1.4.5
+  - bioconductor-medips =1.50.0
+  - bioconductor-dnacopy =1.72.0

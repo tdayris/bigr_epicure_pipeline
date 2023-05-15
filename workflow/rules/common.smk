@@ -1,9 +1,10 @@
 import logging
 import os
 import pandas
+import snakemake
 
 from snakemake.remote import FTP
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 
 ###################
@@ -22,7 +23,7 @@ localrule: macs2_save_broad
 ########################
 
 
-design = pandas.read_csv(
+design: pandas.DataFrame = pandas.read_csv(
     config.get("design", "../config/design.tsv"),
     sep="\t",
     header=0,
@@ -39,30 +40,30 @@ FTP = FTP.RemoteProvider()
 
 
 # This let all temporary file end-up in the same directory
-tmp = os.environ.get("TMP", "temp")
+tmp: str = os.environ.get("TMP", "temp")
 
 
 # Mouse has less chromosomes, but this will work anyway
 # Does not work for organisms with more than 22 autosomal chromosomes
 # Does not work for organisms with no X/Y system for sexual chromosomes
-canonical_chromosomes += list(map(str, range(1, 23))) + ["X", "Y"]
+canonical_chromosomes = list(map(str, range(1, 23))) + ["X", "Y"]
 canonical_chromosomes += [f"chr{chrom}" for chrom in canonical_chromosomes]
 
 
 # Protocol. It can be either : `chip-seq`, `atac-seq`, `cut&run`, or `cut&tag`
-protocol = config.get("protocol", "chip-seq")
+protocol: str = config.get("protocol", "chip-seq")
 
 ################################
 ### Paths to reference files ###
 ################################
 
 # Main genome informations
-species = config.get("reference", {}).get("species", "homo_sapiens")
-build = config.get("reference", {}).get("build", "GRCh38")
-release = config.get("reference", {}).get("release", "109")
+species: str = config.get("reference", {}).get("species", "homo_sapiens")
+build: str = config.get("reference", {}).get("build", "GRCh38")
+release: str = config.get("reference", {}).get("release", "109")
 
 # Genome sequence (FASTA, not gzipped)
-genome_fasta_path = config.get("reference", {}).get("genome_fasta")
+genome_fasta_path: str = config.get("reference", {}).get("genome_fasta")
 if not genome_fasta_path:
     logging.info(
         "Missing genome FASTA path in the file `config.yaml`. "
@@ -72,12 +73,12 @@ if not genome_fasta_path:
 
 
 # Genome sequences indexes
-genome_fai_path = genome_fasta_path + ".fai"
-genome_dict_path = ".".join(genome_fasta_path.split(".")[:-1]) + ".dict"
+genome_fai_path: str = genome_fasta_path + ".fai"
+genome_dict_path: str = ".".join(genome_fasta_path.split(".")[:-1]) + ".dict"
 
 
 # Genome annotation (GFF/GTF, not gzipped)
-genome_annotation_path = config.get("reference", {}).get("genome_gtf")
+genome_annotation_path: str = config.get("reference", {}).get("genome_gtf")
 if not genome_annotation_path:
     logging.info(
         "Missing GTF path in the file `config.yaml`. "
@@ -87,7 +88,7 @@ if not genome_annotation_path:
 
 
 # Bowtie2 genome index
-bowtie2_index_path = config.get("reference", {}).get("bowtie2_index")
+bowtie2_index_path: List[str] = config.get("reference", {}).get("bowtie2_index")
 if not bowtie2_index_path:
     logging.info(
         "Missing Bowtie2 index path in the file `config.yaml`. "
@@ -105,13 +106,13 @@ if not bowtie2_index_path:
 
 
 # Genome blacklisted regions
-blacklist_path = config.get("reference", {}).get("blacklist")
+blacklist_path: str = config.get("reference", {}).get("blacklist")
 if not blacklist_path:
     blacklist_path = f"reference/blacklist/{species}.{build}.{release}.bed.gz"
 
 
 # See: https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html
-effective_genome_size = config.get("library", {}).get("effective_genome_size")
+effective_genome_size: int = config.get("library", {}).get("effective_genome_size")
 if not effective_genome_size:
     default_effective_genome_size = {
         "GRCz10": {
@@ -171,14 +172,119 @@ if not effective_genome_size:
             "200": 2_520_869_189,
         },
     }
-    read_length = config.get("library", {}).get("read_length", 100)
+    read_length: int = config.get("library", {}).get("read_length", 100)
     effective_genome_size = default_effective_genome_size.get(build).get(
         read_length, 2_805_636_331
     )
 
+
+##########################
+### Protocol functions ###
+##########################
+
+
+def protocol_is_atac(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is Atac-seq
+    """
+    return protocol.lower().startswith("atac")
+
+
+def protocol_is_medip(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is MeDIP-seq
+    """
+    return protocol.lower().startswith("medip")
+
+
+def protocol_is_chip(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is ChIP-seq
+    """
+    return protocol.lower().startswith("chip")
+
+
+#############################################
+### Experimental design related functions ###
+#############################################
+
+
+def is_paired(sample: str, design: pandas.DataFrame = design) -> Optional[str]:
+    """
+    Return path to downstream read file if a sample is pair-ended, else return `None`
+    """
+    if "Downstream_file" in design.keys():
+        down: str = design["Downstream_file"].loc[sample]
+        if (down is not None) and (down != ""):
+            return down
+
+
+def has_fragment_size(
+    sample: str, design: pandas.DataFrame = design, sample_is_paired: bool = False
+) -> Union[str, int]:
+    """
+    Return the expected fragement size of a single-ended sample.
+
+    Raise warning if this information is missing
+    """
+    if "Fragment_size" in design.keys():
+        fragment_size: Union[str, int] = design["Fragment_size"].loc[sample]
+        if (fragment_size is not None) and (fragment_size != ""):
+            return fragment_size
+        elif not sample_is_paired:
+            raise Warning(f"Single-ended sample `{sample}` has no fragment size")
+
+
+def has_input(sample: str, design: pandas.DataFrame = design) -> Optional[str]:
+    """
+    Return input sample id if there is an input. Else return `None`
+    """
+    if "Input_id" in design.keys():
+        input_id: str = design["Input_id"].loc[sample]
+        if (input_id is not None) and (input_id != ""):
+            return input_id
+
+
+############################################
+### Differential Peak Coverage functions ###
+############################################
+
+
+def get_samples_per_condition(
+    wildcards, design: pandas.DataFrame = design
+) -> List[str]:
+    """
+    For a `wildcards.condition` return the list of samples id
+    belonging to that condition
+    """
+    return (
+        design[design.eq(wildcards.condition).any(axis=1)]
+        .index.drop_duplicates()
+        .tolist()
+    )
+
+
+def get_input_per_condition(wildcards, design: pandas.DataFrame = design) -> List[str]:
+    """
+    For a `wildcards.condition` return the list of input id
+    corresponding to the samples belonging to that condition
+    """
+    input_samples: List[str] = []
+    for sample in get_samples_per_condition(wildcards, design):
+        input_id: str = has_input(sample)
+        if input_id:
+            input_samples.append(input_id)
+
+    return list(set(input_samples))
+
+
 ###################
 ### IO function ###
 ###################
+
+################
+### Trimming ###
+################
 
 
 def get_fastp_input(
@@ -190,11 +296,55 @@ def get_fastp_input(
     fastp_input = {
         "sample": [design["Upstream_file"].loc[wildcards.sample]],
     }
-    if "Downstream_file" in design.keys():
-        down = design["Downstream_file"].loc[wildcards.sample]
-        if down is not None and down != "":
-            fastp_input["sample"].append(down)
+    down = is_paired(wildcards.sample, design=design)
+    if down:
+        fastp_input["sample"].append(down)
+
     return fastp_input
+
+
+def get_fastp_output_html(design: pandas.DataFrame = design) -> List[str]:
+    """
+    Return the list of fastp reports
+    """
+    html_list = []
+    for sample in design.index:
+        down = is_paired(sample)
+        if down:
+            html_list.append("data_output/QC/fastp/{sample}.se.html")
+        else:
+            html_list.append("data_output/QC/fastp/{sample}.pe.html")
+
+    return html_list
+
+
+def get_multiqc_trimming_input(
+    wildcards, protocol: str = protocol, design: pandas.DataFrame = design
+) -> List[str]:
+    """
+    Return the expected list of input files for multiqc right after trimming
+    """
+    multiqc_trimming_input = []
+    for sample in design.index:
+        down = is_paired(sample)
+        if down:
+            multiqc_trimming_input.append(f"data_output/qc/fastp/{sample}.pe.html")
+
+            multiqc_trimming_input.append(f"fastq_screen/{sample}.1.txt")
+
+            multiqc_trimming_input.append(f"fastq_screen/{sample}.2.txt")
+
+        else:
+            multiqc_trimming_input.append(f"data_output/qc/fastp/{sample}.se.html")
+
+            multiqc_trimming_input.append(f"fastq_screen/{sample}.txt")
+
+    return multiqc_trimming_input
+
+
+###############
+### Mapping ###
+###############
 
 
 def get_bowtie2_align_input(
@@ -204,53 +354,19 @@ def get_bowtie2_align_input(
     Return the list of bowtie2 align input
     """
     bowtie2_align_input = {"idx": bowtie2_index_path}
-    if "Downstream_file" in design.keys():
-        down = design["Downstream_file"].loc[wildcards.sample]
-        if (down is not None) and (down != ""):
-            bowtie2_align_input["sample"] = expand(
-                "fastp/trimmed/pe/{sample}.{stream}.fastq",
-                stream=["1", "2"],
-                sample=[wildcards.sample],
-            )
-        else:
-            bowtie2_align_input["sample"] = expand(
-                "fastp/trimmed/se/{sample}.fastq", sample=[wildcards.sample]
-            )
+    down = is_paired(wildcards.sample, design=design)
+    if down:
+        bowtie2_align_input["sample"] = expand(
+            "fastp/trimmed/pe/{sample}.{stream}.fastq",
+            stream=["1", "2"],
+            sample=[wildcards.sample],
+        )
+    else:
+        bowtie2_align_input["sample"] = expand(
+            "fastp/trimmed/se/{sample}.fastq", sample=[wildcards.sample]
+        )
 
     return bowtie2_align_input
-
-
-def get_fastp_output_html(design: pandas.DataFrame = design) -> List[str]:
-    """
-    Return the list of fastp reports
-    """
-    html_list = []
-    for sample in design.index:
-        down = design["Downstream_file"].loc[sample]
-        if (down is not None) and (down != ""):
-            html_list.append("data_output/qc/fastp/{sample}.se.html")
-        else:
-            html_list.append("data_output/qc/fastp/{sample}.pe.html")
-    return html_list
-
-
-def get_deeptools_bamcoverage_input(
-    wildcards, protocol: str = protocol, blacklist_path: str = blacklist_path
-) -> Dict[str, str]:
-    """
-    Return the expected list of DeepTools input file list
-    """
-    deeptools_bamcoverage_input = {"blacklist": blacklist_path}
-    if protocol == "ataq-seq":
-        deeptools_bamcoverage_input["bam"] = "deeptools/alignment_sieve/{sample}.bam"
-        deeptools_bamcoverage_input[
-            "bai"
-        ] = "deeptools/alignment_sieve/{sample}.bam.bai"
-    else:
-        deeptools_bamcoverage_input["bam"] = "sambamba/markdup/{sample}.bam"
-        deeptools_bamcoverage_input["bai"] = "sambamba/markdup/{sample}.bam.bai"
-
-    return deeptools_bamcoverage_input
 
 
 def get_fastq_screen_input(
@@ -269,14 +385,13 @@ def get_fastq_screen_input(
     fastq_screen_input = []
 
     # Let the fastq file be the first file in the input file list
-    if "Downstream_file" in design.keys():
-        down = design["Downstream_file"].loc[wildcards.sample]
-        if (down is not None) and (down != ""):
-            fastq_screen_input.append(
-                f"fastp/trimmed/pe/{wildcards.sample}.{wildcards.stream}.fastq"
-            )
-        else:
-            fastq_screen_input.append(f"fastp/trimmed/se/{wildcards.sample}.fastq")
+    down = is_paired(wildcards.sample, design=design)
+    if down:
+        fastq_screen_input.append(
+            f"fastp/trimmed/pe/{wildcards.sample}.{wildcards.stream}.fastq"
+        )
+    else:
+        fastq_screen_input.append(f"fastp/trimmed/se/{wildcards.sample}.fastq")
 
     # Let the config file be the second input
     fq_conf = config.get("reference", {}).get(
@@ -294,54 +409,6 @@ def get_fastq_screen_input(
     return fastq_screen_input
 
 
-def get_macs2_callpeak_input(wildcards, protocol: str = "chip-seq") -> Dict[str, str]:
-    """
-    Return expected list of input files for Macs2 callpeak
-    """
-    macs2_callpeak_input = {}
-    if protocol == "atac-seq":
-        macs2_callpeak_input["teatment"] = "deeptools/alignment_sieve/{sample}.bam"
-    else:
-        macs2_callpeak_input["teatment"] = "sambamba/markdup/{sample}.bam"
-
-    if "Input" in design.keys():
-        down = design["Input"].loc[wildcards.sample]
-        if (down is not None) and (down != ""):
-            if protocol == "atac-seq":
-                macs2_callpeak_input["control"] = "deeptools/alignment_sieve/{down}.bam"
-            else:
-                macs2_callpeak_input["control"] = "sambamba/markdup/{down}.bam"
-
-    return macs2_callpeak_input
-
-
-def get_macs2_params(
-    wildcards, effective_genome_size: int = effective_genome_size
-) -> str:
-    """
-    Return expected parameters for Macs2 callpeak
-    """
-    extra = f" --gsize {effective_genome_size} "
-    if "Downstream_file" in design.keys():
-        down = design["Downstream_file"].loc[wildcards.sample]
-        if (down is not None) and (down != ""):
-            extra += " --format BAMPE "
-    else:
-        extra += " --format BAM "
-
-        if "Fragment_size" in design.keys():
-            fs = design["Fragment_size"].loc[wildcards.sample]
-            if (down is not None) and (down != ""):
-                extra += f" --nomodel --extsize {fs} "
-            else:
-                raise ValueError(
-                    "Single-ended reads should have a "
-                    "`Fragment_size` associated in the design file."
-                )
-
-    return extra
-
-
 def get_samtools_stats_input(wildcards, protocol: str = protocol) -> Dict[str, str]:
     """
     Return expected input files for Samtools stats
@@ -349,10 +416,10 @@ def get_samtools_stats_input(wildcards, protocol: str = protocol) -> Dict[str, s
     if str(wildcards.step) == "raw":
         return {
             "bam": f"bowtie2/align/{wildcards.sample}.bam",
-            "bai": f"bowtie2/align/{wildcards.sample}.bam.bai"
+            "bai": f"bowtie2/align/{wildcards.sample}.bam.bai",
         }
 
-    if protocol == "atac-seq":
+    if protocol_is_atac(protocol):
         return {
             "bam": f"deeptools/alignment_sieve/{wildcards.sample}.bam",
             "bai": f"deeptools/alignment_sieve/{wildcards.sample}.bam.bai",
@@ -364,40 +431,9 @@ def get_samtools_stats_input(wildcards, protocol: str = protocol) -> Dict[str, s
     }
 
 
-def get_multiqc_trimming_input(wildcards, protocol: str = protocol, design: pandas.DataFrame = design) -> List[str]:
-    """
-    Return the expected list of input files for multiqc right after trimming
-    """
-    multiqc_trimming_input = []
-    for sample in design.index:
-        if "Downstream_file" in design.keys():
-            down = design["Downstream_file"].loc[sample]
-            if (down is not None) and (down != ""):
-                multiqc_trimming_input.append(
-                    f"data_output/qc/fastp/{sample}.pe.html"
-                )
-                
-                multiqc_trimming_input.append(
-                    f"fastq_screen/{sample}.1.txt"
-                )
-
-                multiqc_trimming_input.append(
-                    f"fastq_screen/{sample}.2.txt"
-                )
-
-        else:
-            multiqc_trimming_input.append(
-                f"data_output/qc/fastp/{sample}.se.html"
-            )
-
-            multiqc_trimming_input.append(
-                f"fastq_screen/{sample}.txt"
-            )
-    
-    return multiqc_trimming_input
-
-
-def get_multiqc_mapping_input(wildcards, protocol: str = protocol, design: pandas.DataFrame = design) -> List[str]:
+def get_multiqc_mapping_input(
+    wildcards, protocol: str = protocol, design: pandas.DataFrame = design
+) -> List[str]:
     """
     Return the expected list of input files for multiqc right after mapping
     """
@@ -415,9 +451,7 @@ def get_multiqc_mapping_input(wildcards, protocol: str = protocol, design: panda
     ]
 
     for sample in design.index:
-        multiqc_mapping_input.append(
-            f"sambamba/markdup/{sample}.bam"
-        )
+        multiqc_mapping_input.append(f"sambamba/markdup/{sample}.bam")
 
         for step in ["raw", "cleaned"]:
             multiqc_mapping_input.append(
@@ -434,13 +468,41 @@ def get_multiqc_mapping_input(wildcards, protocol: str = protocol, design: panda
     return multiqc_mapping_input
 
 
-def get_deeptools_plotfingerprint_input(wildcards, protocol: str = protocol, design: pandas.DataFrame = design) -> Dict[str, List[str]]:
+################
+### Coverage ###
+################
+
+
+def get_deeptools_bamcoverage_input(
+    wildcards, protocol: str = protocol, blacklist_path: str = blacklist_path
+) -> Dict[str, str]:
+    """
+    Return the expected list of DeepTools input file list
+    """
+    deeptools_bamcoverage_input = {"blacklist": blacklist_path}
+    if protocol_is_atac(protocol):
+        deeptools_bamcoverage_input["bam"] = "deeptools/alignment_sieve/{sample}.bam"
+        deeptools_bamcoverage_input[
+            "bai"
+        ] = "deeptools/alignment_sieve/{sample}.bam.bai"
+    else:
+        deeptools_bamcoverage_input["bam"] = "sambamba/markdup/{sample}.bam"
+        deeptools_bamcoverage_input["bai"] = "sambamba/markdup/{sample}.bam.bai"
+
+    return deeptools_bamcoverage_input
+
+
+def get_deeptools_plotfingerprint_input(
+    wildcards, protocol: str = protocol, design: pandas.DataFrame = design
+) -> Dict[str, List[str]]:
     """
     Return the list of expected input files for deeptools plot fingerprint
     """
-    bam_prefix = "sambamba/markdup/"
-    if protocol == "atac-seq":
-        bam_prefix = "deeptools/alignment_sieve/"
+    bam_prefix = (
+        "deeptools/alignment_sieve/"
+        if protocol_is_atac(protocol)
+        else "sambamba/markdup/"
+    )
 
     deeptools_plotfingerprint_input = {"bam_files": [], "bam_idx": []}
     for sample in design.index:
@@ -453,6 +515,159 @@ def get_deeptools_plotfingerprint_input(wildcards, protocol: str = protocol, des
         )
 
     return deeptools_plotfingerprint_input
+
+
+def get_medips_params_extra(
+    wildcards, design: pandas.DataFrame = design, build: str = build
+) -> List[str]:
+    """
+    Return expected optional parameters for MEDIPS::MEDIPS.createSet(...)
+    """
+    medips_params_extra = []
+    medips_base = config.get("medips", {}).get("medips_createset_extra", "")
+
+    if build.lower() == "grch38":
+        medips_base += ", BSgenome = BSgenome.Hsapiens.UCSC.hg38"
+    elif build.lower() == "grcm38":
+        medips_base += ", BSgenome = BSgenome.Mmusculus.UCSC.mm10"
+    else:
+        raise NotImplementedError(f"{build} genome not implemented for MeDIP-Seq")
+
+    for sample in get_samples_per_condition(wildcards, design):
+        down = is_paired(wilcards.sample)
+        fragment_size = has_fragment_size(wilcards.sample, sample_is_paired=bool(down))
+        if down:
+            medips_params_extra.append(medips_base + ", paired = TRUE")
+        elif fragment_size:
+            # Case the bam is single-ended and properly annotated
+            medips_params_extra.append(medips_base + f", extend = {fragment_size}")
+
+    return medips_params_extra
+
+
+def get_medips_meth_coverage_input(
+    wildcards: snakemake.utils.Wildcards,
+    design: pandas.DataFrame = design,
+    config: Dict[str, Any] = config,
+) -> Dict[str, Union[str, List[str]]]:
+    """
+    Return list of input expected by rule medips_meth_coverage
+    """
+    # Gathering comparison information
+    comparisons = config.get("differential_peak_coverage")
+    if not comparison:
+        raise ValueError(
+            "No differential peak coverage information provided in "
+            "configuration file. Please fill configuration file."
+        )
+
+    # Gathering reference/tested samples
+    reference = None
+    tested = None
+    for models in comparisons:
+        if models["model_name"] == wilcards.comparison:
+            reference = models["reference"]
+            tested = models["tested"]
+            break
+    else:
+        raise ValueError("Could not find a comparison " f"named: {wilcards.comparison}")
+
+    reference_samples = get_samples_per_condition(
+        snakemake.io.Wildcards(fromdict={"condition": reference})
+    )
+    tested_samples = get_samples_per_condition(
+        snakemake.io.Wildcards(fromdict={"condition": tested})
+    )
+
+    # Building output dictionary
+    medips_meth_coverage_input = {
+        "mset1": expand("sambamba/markdup/{sample}.bam", sample=tested_samples),
+        "mset2": expand("sambamba/markdup/{sample}.bam", sample=reference_samples),
+        "cset": f"medips/coupling/{tested}.RDS",
+    }
+
+    # Looking for input samples, if any
+    # ... in reference condition,
+    reference_input_samples = get_input_per_condition(
+        snakemake.io.Wildcards(fromdict={"condition": reference})
+    )
+    if len(reference_input_samples) > 0:
+        medips_meth_coverage_input["iset1"] = expand(
+            "sambamba/markdup/{sample}.bam", sample=reference_input_samples
+        )
+
+    # ... and in tested condition.
+    tested_input_samples = get_input_per_condition(
+        snakemake.io.Wildcards(fromdict={"condition": tested})
+    )
+    if len(tested_input_samples) > 0:
+        medips_meth_coverage_input["iset1"] = expand(
+            "sambamba/markdup/{sample}.bam", sample=tested_input_samples
+        )
+
+    return medips_meth_coverage_input
+
+
+####################
+### Peak Calling ###
+####################
+
+
+def get_macs2_callpeak_input(wildcards, protocol: str = "chip-seq") -> Dict[str, str]:
+    """
+    Return expected list of input files for Macs2 callpeak
+    """
+    macs2_callpeak_input = {}
+    if protocol_is_atac(protocol):
+        macs2_callpeak_input[
+            "teatment"
+        ] = f"deeptools/alignment_sieve/{wildcards.sample}.bam"
+    else:
+        macs2_callpeak_input["teatment"] = f"sambamba/markdup/{wildcards.sample}.bam"
+
+    input_id = has_input(wilcards.sample, design=design)
+    if (input_id is not None) and (input_id != ""):
+        if protocol_is_atac(wilcards.sample):
+            macs2_callpeak_input[
+                "control"
+            ] = f"deeptools/alignment_sieve/{input_id}.bam"
+        else:
+            macs2_callpeak_input["control"] = f"sambamba/markdup/{input_id}.bam"
+
+    return macs2_callpeak_input
+
+
+def get_macs2_params(
+    wildcards,
+    effective_genome_size: int = effective_genome_size,
+    design: pandas.DataFrame = design,
+) -> str:
+    """
+    Return expected parameters for Macs2 callpeak
+    """
+    extra = f" --gsize {effective_genome_size} "
+    down = is_paired(wildcards.sample, design=design)
+    if down:
+        extra += " --format BAMPE "
+    else:
+        extra += " --format BAM "
+
+        fragment_size = has_fragment_size(wilcards.sample, sample_is_paired=False)
+        if fragment_size:
+            extra += f" --nomodel --extsize {fs} "
+        else:
+            raise ValueError(
+                "Single-ended reads should have a "
+                "`Fragment_size` associated in the design file."
+                f"{wilcards.sample} has none."
+            )
+
+    return extra
+
+
+########################
+### Main Target rule ###
+########################
 
 
 def targets(
@@ -486,35 +701,27 @@ def targets(
         expected_targets["multiqc_trim"] = "data_output/QC/Mapping.QC.html"
 
     if steps.get("mapping", False):
-        if protocol == "atac-seq":
-            expected_targets["mapping"] = expand(
-                "data_output/CRAM-shifted/{sample}.cram",
-                design.index
-            )
-        else:
-            expected_targets["mapping"] = expand(
-                "data_output/CRAM/{sample}.cram",
-                sample=design.index
-            )
-        expected_targets["multiqc_map"] = "data_output/QC/Mapping.QC.html",
+        expected_targets["mapping"] = expand(
+            "data_output/CRAM/{sample}.cram", sample=design.index
+        )
+        expected_targets["multiqc_map"] = ("data_output/QC/Mapping.QC.html",)
 
     if steps.get("coverage", False):
         expected_targets["bam_coverage"] = expand(
-            "data_output/Coverage/{sample}.bw",
-            design.index
+            "data_output/Coverage/{sample}.bw", design.index
         )
 
     if steps.get("calling", False):
         if config.get("macs2", {}).get("broad", False):
             expected_targets["macs2_broad"] = expand(
                 "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls",
-                sample = design.index,
+                sample=design.index,
             )
 
         if config.get("macs2", {}).get("narrow", False):
             expected_targets["macs2_broad"] = expand(
                 "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
-                sample = design.index,
+                sample=design.index,
             )
 
     if steps.get("diff_cov", False):
