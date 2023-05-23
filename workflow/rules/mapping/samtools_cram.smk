@@ -17,4 +17,4 @@ rule samtools_cram:
         extra="",
         region="",
     wrapper:
-        "v1.29.0/bio/samtools/view"
+        "v1.31.1/bio/samtools/view"

@@ -14,4 +14,4 @@ rule deeptools_plot_fingerprint:
     params:
         " --skipZeros ",
     wrapper:
-        "v1.29.0/bio/deeptools/plotfingerprint"
+        "v1.31.1/bio/deeptools/plotfingerprint"

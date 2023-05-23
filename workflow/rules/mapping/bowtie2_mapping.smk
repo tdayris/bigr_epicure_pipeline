@@ -13,7 +13,7 @@ rule bowtie2_align:
     params:
         extra="--very-sensitive",
     wrapper:
-        "v1.29.0/bio/bowtie2/align"
+        "v1.31.1/bio/bowtie2/align"
 
 
 rule sambamba_sort_bowtie2_aligned:
@@ -31,7 +31,7 @@ rule sambamba_sort_bowtie2_aligned:
     params:
         extra=lambda wildcards, attempt: f"--memory-limit {attempt * 19 * 1024}MiB",
     wrapper:
-        "1.29.0/bio/sambamba/sort"
+        "v1.31.1/bio/sambamba/sort"
 
 
 rule sambamba_index_raw_bowtie2:
@@ -49,4 +49,4 @@ rule sambamba_index_raw_bowtie2:
     log:
         "logs/sambamba/index/{sample}.raw.log",
     wrapper:
-        "v1.29.0/bio/sambamba/index"
+        "v1.31.1/bio/sambamba/index"

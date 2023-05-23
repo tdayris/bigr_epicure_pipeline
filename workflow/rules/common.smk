@@ -50,8 +50,8 @@ canonical_chromosomes = list(map(str, range(1, 23))) + ["X", "Y"]
 canonical_chromosomes += [f"chr{chrom}" for chrom in canonical_chromosomes]
 
 
-# Protocol. It can be either : `chip-seq`, `atac-seq`, `cut&run`, or `cut&tag`
-protocol: str = config.get("protocol", "chip-seq")
+# Protocol. It can be either : `chip-seq`, `atac-seq`, `cut&run`, `cut&tag`, or `medip-seq`
+protocol: str = config.get("protocol", "chip-seq").lower().replace(" ", "")
 
 ################################
 ### Paths to reference files ###
@@ -187,21 +187,40 @@ def protocol_is_atac(protocol: str = protocol) -> bool:
     """
     Return `True` if protocol is Atac-seq
     """
-    return protocol.lower().startswith("atac")
+    return protocol.startswith("atac")
 
 
 def protocol_is_medip(protocol: str = protocol) -> bool:
     """
     Return `True` if protocol is MeDIP-seq
     """
-    return protocol.lower().startswith("medip")
+    return protocol.startswith("medip")
 
 
 def protocol_is_chip(protocol: str = protocol) -> bool:
     """
     Return `True` if protocol is ChIP-seq
     """
-    return protocol.lower().startswith("chip")
+    return protocol.startswith("chip")
+
+def protocol_is_cutntag(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is Cut & Tag
+    """
+    return protocol == "cut&tag"
+
+def protocol_is_cutnrun(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is Cut & Run
+    """
+    return protocol == "cut&run"
+
+def protocol_is_ogseq(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is 8-OxoG-seq
+    """
+    return "og" in protocol
+
 
 
 #############################################
@@ -723,6 +742,8 @@ def targets(
                 "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
                 sample=design.index,
             )
+
+        
 
     if steps.get("diff_cov", False):
         raise NotImplementedError("Differential coverage analysis not yet implemented")

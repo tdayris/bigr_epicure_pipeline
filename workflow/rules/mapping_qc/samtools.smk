@@ -14,4 +14,4 @@ rule samtools_stats:
     log:
         "logs/samtools/stats/{sample}.{step}.log",
     wrapper:
-        "v1.29.0/bio/samtools/stats"
+        "v1.31.1/bio/samtools/stats"

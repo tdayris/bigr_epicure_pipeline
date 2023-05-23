@@ -22,4 +22,4 @@ rule bowtie2_build:
     params:
         extra="-f",
     wrapper:
-        "v1.29.0/bio/bowtie2/build"
+        "v1.31.1/bio/bowtie2/build"

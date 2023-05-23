@@ -19,7 +19,7 @@ rule blacklist_grch38:
     params:
         "--verbose",
     shell:
-        "bash.yaml"
+        "../../envs/bash.yaml"
     shell:
         "mv {params} {input} {output} > {log} 2>&1"
 
@@ -45,7 +45,7 @@ rule blacklist_mm10:
     params:
         "--verbose",
     shell:
-        "bash.yaml"
+        "../../envs/bash.yaml"
     shell:
         "mv {params} {input} {output} > {log} 2>&1"
 
@@ -71,7 +71,7 @@ rule blacklist_grch37:
     params:
         "--verbose",
     shell:
-        "bash.yaml"
+        "../../envs/bash.yaml"
     shell:
         "mv {params} {input} {output} > {log} 2>&1"
 
@@ -97,6 +97,6 @@ rule blacklist_mm9:
     params:
         "--verbose",
     shell:
-        "bash.yaml"
+        "../../envs/bash.yaml"
     shell:
         "mv {params} {input} {output} > {log} 2>&1"

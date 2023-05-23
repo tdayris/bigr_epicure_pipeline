@@ -25,12 +25,7 @@ rule macs2_callpeak_broad:
 
 rule macs2_save_broad:
     input:
-        multiext(
-            "macs2/callpeak/{sample}",
-            "_peaks.xls",
-            "_peaks.broadPeak",
-            "_peaks.gappedPeak",
-        ),
+        "macs2/callpeak/{sample}_peaks.xls",
     output:
         "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls",
     threads: 1
@@ -75,12 +70,7 @@ rule macs2_callpeak_narrow:
 
 rule macs2_save_narrow:
     input:
-        multiext(
-            "macs2/callpeak/{sample}",
-            "_peaks.xls",
-            "_peaks.narrowPeak",
-            "_summits.bed",
-        ),
+        "macs2/callpeak/{sample}_peaks.xls",
     output:
         "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
     threads: 1
@@ -96,3 +86,24 @@ rule macs2_save_narrow:
         "-cvhP",
     shell:
         "rsync {params} {input} {output} > {log} 2>&1"
+
+
+# peaktype = {narrow, broad, gapped}
+rule macs2_peaks_to_bed:
+    input:
+        peak="macs2/callpeak/{sample}_peaks.{peaktype}Peak",
+    output:
+        bed=temp("macs2/callpeak/{sample}_peaks.{peaktype}Peak.bed"),
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 512,
+        runtime=lambda wildcards, attempt: attempt * 15,
+        tmpdir=tmp,
+    log:
+        "logs/macs2/peak2bed/{sample}.{peaktype}.log"
+    params:
+        'BEGIN {FS="\t"} {print $1 FS $2 FS $3 FS $4 FS $5 FS $6}'
+    conda:
+        "../../envs/bash.yaml"
+    shell:
+        "awk '{params}' {input} > {output} 2> {log}"

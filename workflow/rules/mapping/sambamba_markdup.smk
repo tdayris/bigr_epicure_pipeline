@@ -13,4 +13,4 @@ rule sambamba_markdup:
     log:
         "logs/sambamba/markdup/{sample}.log",
     wrapper:
-        "v1.29.0/bio/sambamba/markdup"
+        "v1.31.1/bio/sambamba/markdup"

@@ -57,6 +57,9 @@ steps:
 #
 # * `medip-seq`:
 #    - CpG density calculation for peak-coverage normalization/merging/QC
+#
+# * `og-seq`:
+#
 protocol: atac-seq
 
 # Path to the design file. It must be a TSV-formatted text file
@@ -65,7 +68,8 @@ protocol: atac-seq
 # - Upstream_file   (Required)
 # - Downstream_file (Optional)  Optional for single-ended libraries
 # - Fragment_size   (Optional)  Required if and only if sample is single-ended
-# - Input           (Optional)  Optional Sample_id of the input file
+# - Input           (Optional)  Optional Sample_id of the corresponding input file. 
+#                               Leave empty if this file is an Input.
 # - Protocol        (Optional)  See `protocol` above
 # - Organism        (Optional)  Ensembl organism name. eg. `homo_sapiens`
 # - Build           (Optional)  Ensembl organism build. eg: `GRCh38`

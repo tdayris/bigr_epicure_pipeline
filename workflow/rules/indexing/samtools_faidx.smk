@@ -13,4 +13,4 @@ rule samtools_index:
     params:
         extra="",
     wrapper:
-        "v1.29.0/bio/samtools/faidx"
+        "v1.31.1/bio/samtools/faidx"

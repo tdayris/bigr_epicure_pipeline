@@ -14,4 +14,4 @@ rule multiqc_trimming:
     log:
         "logs/multiqc/trimming.log",
     wrapper:
-        "v1.29.0/bio/multiqc"
+        "v1.31.1/bio/multiqc"

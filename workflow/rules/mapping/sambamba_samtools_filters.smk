@@ -13,7 +13,7 @@ rule sambamba_quality_filter:
     params:
         extra="--with-header --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)'",
     wrapper:
-        "1.29.0/bio/sambamba/view"
+        "v1.31.1/bio/sambamba/view"
 
 
 rule samtools_filter_canonical_chromosomes:
@@ -33,4 +33,4 @@ rule samtools_filter_canonical_chromosomes:
         extra="",
         region=" ".join(canonical_chromosomes),
     wrapper:
-        "v1.29.0/bio/samtools/view"
+        "v1.31.1/bio/samtools/view"
