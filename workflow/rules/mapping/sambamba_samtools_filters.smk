@@ -1,6 +1,7 @@
 rule sambamba_quality_filter:
     input:
-        "sambamba/sort/{sample}.raw.bam" "sambamba/sort/{sample}.raw.bam.bai",
+        "sambamba/sort/{sample}.raw.bam",
+        "sambamba/sort/{sample}.raw.bam.bai",
     output:
         temp("sambamba/view/{sample}.bam"),
     threads: config.get("max_threads", 20)
