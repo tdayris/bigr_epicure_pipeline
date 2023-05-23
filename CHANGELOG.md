@@ -7,6 +7,7 @@
 ## Fix
 
 * User-defined fastq-screen configuration is not used when provided.
+* Sambamba filters now consider bam index
 
 
 # 0.3 – Coverage
