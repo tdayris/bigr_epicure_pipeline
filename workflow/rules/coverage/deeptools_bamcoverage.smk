@@ -27,16 +27,15 @@ rule deeptools_plotcoverage:
         bai=expand("sambamba/markdup/{sample}.bam.bai", sample=sample_list),
         blacklist=blacklist_path,
     output:
-        plot="data_output/Coverage/PlotCoverage.png"
+        plot="data_output/Coverage/PlotCoverage.png",
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 8 * 1024,
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/deeptools/plotcoverage.log"
+        "logs/deeptools/plotcoverage.log",
     params:
-        extra="--skipZeros --centerReads --ignoreDuplicates --minMappingQuality 10"
+        extra="--skipZeros --centerReads --ignoreDuplicates --minMappingQuality 10",
     wrapper:
         "v1.31.1/bio/deeptools/plotcoverage"
-    

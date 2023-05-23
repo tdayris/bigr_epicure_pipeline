@@ -100,9 +100,9 @@ rule macs2_peaks_to_bed:
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
-        "logs/macs2/peak2bed/{sample}.{peaktype}.log"
+        "logs/macs2/peak2bed/{sample}.{peaktype}.log",
     params:
-        'BEGIN {FS="\t"} {print $1 FS $2 FS $3 FS $4 FS $5 FS $6}'
+        'BEGIN {FS="\t"} {print $1 FS $2 FS $3 FS $4 FS $5 FS $6}',
     conda:
         "../../envs/bash.yaml"
     shell:

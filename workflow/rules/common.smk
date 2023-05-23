@@ -203,11 +203,13 @@ def protocol_is_chip(protocol: str = protocol) -> bool:
     """
     return protocol.startswith("chip")
 
+
 def protocol_is_cutntag(protocol: str = protocol) -> bool:
     """
     Return `True` if protocol is Cut & Tag
     """
     return protocol == "cut&tag"
+
 
 def protocol_is_cutnrun(protocol: str = protocol) -> bool:
     """
@@ -215,12 +217,12 @@ def protocol_is_cutnrun(protocol: str = protocol) -> bool:
     """
     return protocol == "cut&run"
 
+
 def protocol_is_ogseq(protocol: str = protocol) -> bool:
     """
     Return `True` if protocol is 8-OxoG-seq
     """
     return "og" in protocol
-
 
 
 #############################################
@@ -742,8 +744,6 @@ def targets(
                 "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
                 sample=design.index,
             )
-
-        
 
     if steps.get("diff_cov", False):
         raise NotImplementedError("Differential coverage analysis not yet implemented")

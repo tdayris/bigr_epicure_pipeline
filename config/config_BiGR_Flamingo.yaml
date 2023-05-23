@@ -1,0 +1,128 @@
+# Maximum number of threads used in a submitted job
+max_threads: 20
+
+steps:
+  # Perform genome download and indexation steps
+  # Automatically turned `true` if mapping is performed
+  # Automatically turned `true` if download_fastq_screen_indexes is `true`
+  install: false
+
+  # Download (true) or not (false) pre-built fastq screen indexes
+  # Set to `false` if you want to use your own indexes
+  # Set to `true` if you want this pipeline to download and store fastq screen indexes
+  download_fastq_screen_indexes: false
+
+  # Perform fastq trimming and quality checks
+  # Automatically turned `true` if mapping is performed
+  trimming: true
+
+  # Perform fastq trimming + mapping.
+  # Missing genome sequences/annotation/indexes will run installation process
+  # Automatically tuned `true` if peak-calling is performed
+  # Automatically tuned `true` if coverage analysis is performed
+  # Automatically tuned `true` if differential coverage analysis is performed
+  # Automatically tuned `true` if motives analysis is performed
+  mapping: true
+
+  # Perform fastq trimming + mapping + coverage
+  # Missing genome sequences/annotation/indexes will run installation process
+  # Automatically tuned `true` if differential coverage analysis is performed
+  coverage: true
+
+  # Perform fastq trimming + mapping + peak-calling
+  # Missing genome sequences/annotation/indexes will run installation process
+  # Automatically tuned `true` if differential coverage analysis is performed
+  # Automatically tuned `true` if motives analysis is performed
+  calling: true
+
+  # Perform fastq trimming + mapping + peak-calling + differential coverage analysis
+  # Missing genome sequences/annotation/indexes will run installation process
+  diff_cov: false
+
+  # Perform fastq trimming + mapping + peak-calling + motives analysis
+  # Missing genome sequences/annotation/indexes will run installation process
+  motives: false
+
+
+# Must be one of: `chip-seq`, `atac-seq`, `medip-seq`
+# Main differences:
+# * `chip-seq`:
+#
+# * `atac-seq`: 
+#    - Read shifting is performed on aligned reads (on BAM files, after deduplication)
+#
+# * `cut&run` :
+#
+# * `cut&tag` :
+#
+# * `medip-seq`:
+#    - CpG density calculation for peak-coverage normalization/merging/QC
+#
+# * `og-seq`:
+#
+protocol: atac-seq
+
+# Path to the design file. It must be a TSV-formatted text file
+# with the following columns (case matters, order does not matter):
+# - Sample_id       (Required)  Must be unique
+# - Upstream_file   (Required)
+# - Downstream_file (Optional)  Optional for single-ended libraries
+# - Fragment_size   (Optional)  Required if and only if sample is single-ended
+# - Input           (Optional)  Optional Sample_id of the corresponding input file. 
+#                               Leave empty if this file is an Input.
+# - Protocol        (Optional)  See `protocol` above
+# - Organism        (Optional)  Ensembl organism name. eg. `homo_sapiens`
+# - Build           (Optional)  Ensembl organism build. eg: `GRCh38`
+# - Release         (Optional)  Ensembl organism release. eg: `109`
+design: config/design.tsv
+
+reference:
+  # Ensembl organism name. eg. `homo_sapiens`.
+  species: homo_sapiens
+
+  # Ensembl organism build. eg: `GRCh38`.
+  build: GRCh38
+
+  # Ensembl organism release. eg: `109`.
+  release: 109
+
+  # Path to genome sequence file (FASTA formatted, NOT gzipped)
+  # A missing sequence file will be downloaded and indexed.
+  # genome_fasta: /path/to/sequences.fasta
+
+  # Path to genome annotation file (GTF formatted, NOT gzipped)
+  # A missing annotation file will be downloaded.
+  # genome_gtf: /path/to/annotation.gtf
+
+  # Path to bowtie2_index directory.
+  # A missing bowtie2 index directory will lead to genome indexation.
+  # bowtie2_index: /path/to/bowtie2_index/dir/
+
+  # Path to blacklisted intervals.
+  # A missing interval file will be downloaded.
+  # blacklist: /path/to/blacklist.bed
+
+  # Path to directory containing fastq_screen configuration file
+  fastq_screen_config: config/fastq_screen_bigr.conf
+
+
+# Macs2 peak caller parameters
+macs2:
+  # Perform broad peak calling using Macs2 (chip-seq)
+  broad: true
+
+  # Perform narrow peak calling using Macs2 (chip-seq)
+  narrow: true
+
+# Options to define differential peak coverage
+differential_peak_coverage:
+  # One item per comparison. For multiple comparisons, add a new item for each single comparison.
+  - model_name: Condition  # Human readable unique comparison name
+    reference: Control  # Reference samples. WARNING: reference ≠ input. Reference = fold-change denominator.
+    tested: Treatment  # Tested samples, the fold-change numerator.
+  # - model_name: Factor
+  #   reference: ReferenceFactorLevel
+  #   tested: TestedFactorLevel
+  # - model_name: OtherFactor
+  #   reference: ReferenceOtherFactorLevel
+  #   tested: TestedOtherFactorLevel

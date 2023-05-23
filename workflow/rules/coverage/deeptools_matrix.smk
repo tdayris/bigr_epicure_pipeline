@@ -3,12 +3,9 @@ rule deeptools_compute_matrix:
         bed=expand(
             "macs2/callpeak/{sample}_peaks.{peaktype}Peak.bed",
             sample=sample_list,
-            allow_missing=True
+            allow_missing=True,
         ),
-        bigwig=expand(
-            "data_output/Coverage/{sample}.bw",
-            sample=sample_list
-        ),
+        bigwig=expand("data_output/Coverage/{sample}.bw", sample=sample_list),
         blacklist=blacklist_path,
     output:
         matrix_gz=temp("deeptools/matrix_files/{command}/{peaktype}.matrix.gz"),
