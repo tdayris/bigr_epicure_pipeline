@@ -1,3 +1,14 @@
+# 0.3.1 – Fixes
+
+## Features
+
+* General usage documentation
+
+## Fix
+
+* User-defined fastq-screen configuration is not used when provided.
+
+
 # 0.3 – Coverage
 
 ## Features
