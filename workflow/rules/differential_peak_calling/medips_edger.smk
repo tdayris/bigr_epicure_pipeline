@@ -15,4 +15,4 @@ rule medips_edger_diff_peak:
     conda:
         "../../envs/medips.yaml"
     script:
-        "../../scripts/medips_edger.R"
+        "../../scripts/medip-seq/medips_edger.R"

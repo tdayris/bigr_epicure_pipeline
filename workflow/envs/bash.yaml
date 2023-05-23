@@ -5,3 +5,4 @@ dependencies:
   - bash=5.2.15
   - curl=8.0.1
   - wget=1.20.3
+  - gawk=5.1.0

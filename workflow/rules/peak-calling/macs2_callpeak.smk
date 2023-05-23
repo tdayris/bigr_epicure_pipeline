@@ -102,8 +102,8 @@ rule macs2_peaks_to_bed:
     log:
         "logs/macs2/peak2bed/{sample}.{peaktype}.log",
     params:
-        'BEGIN {FS="\t"} {print $1 FS $2 FS $3 FS $4 FS $5 FS $6}',
+        script=workflow.source_path("../../scripts/formatter/macs2_to_bed6.awk"),
     conda:
         "../../envs/bash.yaml"
     shell:
-        "awk '{params}' {input} > {output} 2> {log}"
+        "awk --file {params.script} {input} > {output} 2> {log}"

@@ -15,4 +15,4 @@ rule medips_meth_coverage:
     conda:
         "../../envs/medips.yaml"
     script:
-        "../../scripts/medips_meth.R"
+        "../../scripts/medip-seq/medips_meth.R"
