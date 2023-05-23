@@ -2,6 +2,89 @@
 Snakemake pipeline for Epicure analyses: Chip-Seq, Atac-Seq, Cut&Tag, Cut&Run, MeDIP-Seq, 8-OxoG-Seq
 
 
+# Summary
+
+1. [Installation]()
+1. [Deployment]()
+1. [Configuration]()
+1. [Run this workflow]()
+1. [Report]()
+1. [Pipeline components]()
+1. [Material and methods]()
+    1. [ChIP-Seq]()
+    1. [Atac-Seq]()
+    1. [Cut&Tag]()
+    1. [Cut&Run]()
+    1. [MeDIP-Seq]()
+    1. [OG-Seq]()
+
+
+# Installation (following Snakemake-Workflows guidelines)
+
+_note: This action has already been done for you if you work at Gustave Roussy. See at the end of this section_
+
+1. Install [snakemake](https://snakemake.readthedocs.io) and [snakedeploy](https://snakedeploy.readthedocs.io/en/latest/) with [mamba](https://github.com/mamba-org/mamba) package manager. Given that Mamba is installed, run:
+
+`mamba create -c conda-forge -c bioconda --name bigr_epicure_pipeline snakemake snakedeploy pandas`
+
+2. Ensure your conda environment is activated in your bash terminal:
+
+`conda shell.bash activate bigr_epicure_pipeline`
+
+Alternatively, if you work at Gustave Roussy, you can use our shared environment:
+
+`conda shell.bash activate /mnt/beegfs/pipelines/unofficial-snakemake-wrappers/shared_conda/bigr_epicure_pipeline`
+
+
+# Deployment (following Snakemake-Workflows guidelines)
+
+_note: This action has been made easier for you if you work at Gustave Roussy. See at the end of this section_
+
+Given that Snakemake and Snakedeploy are installed and available (see [Installation]()), the workflow can be deployed as follows.
+
+1. Go to your working directory:
+
+`cd path/to/my/project`
+
+2. Deploy workflow:
+
+`snakedeploy deploy-workflow https://github.com/tdayris/bigr_epicure_pipeline . --tag v0.3.0`
+
+Snakedeploy will create two folders `workflow` and `config`. The former contains the deployment of the chosen workflow as a [Snakemake module](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-and-combining-pre-exising-workflows), the latter contains configuration files which will be modified in the next step in order to configure the workflow to your needs. Later, when executing the workflow, Snakemake will automatically find the main `Snakefile` in the `workflow` subfolder.
+
+3. Consider to put the exact version of the pipeline and all modifications you might want perform under version control. _e.g._ by [managing it via a (private) Github repository](https://docs.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line)
+
+
+# Configure workflow (following Snakemake-Workflows guidelines)
+
+See dedicated [`config/README.md`]() file for dedicated explanations of all options and consequences.
+
+# Run workflow (following Snakemake-Workflows guidelines)
+
+_note: This action has been made easier for you if you work at Gustave Roussy. See at the end of this section_
+
+Given that the workflow has been properly deployed and configured, it can be executed as follows.
+
+Fow running the workflow while deploying any necessary software via conda (using the Mamba package manager by default), run Snakemake with
+
+`snakemake --cores all --use-conda `
+
+Alternatively, for users at Gustave Roussy, you may use:
+
+`bash workflow/scripts/misc/bigr_launcher.sh`
+
+Snakemake will automatically detect the main `Snakefile` in the `workflow` subfolder and execute the workflow module that has been defined by the deployment in step 2.
+
+For further options, e.g. for cluster and cloud execution, see [the docs](https://snakemake.readthedocs.io/).
+
+# Generate report (following Snakemake-Workflows guidelines)
+
+After finalizing your data analysis, you can automatically generate an interactive visual HTML report for inspection of results together with parameters and code inside of the browser via 
+
+`snakemake --report report.zip`
+
+The resulting `report.zip` file can be passed on to collaborators, provided as a supplementary file in publications, or uploaded to a service like [Zenodo](https://zenodo.org/) in order to obtain a citable [DOI](https://en.wikipedia.org/wiki/Digital_object_identifier). 
+
 # Pipeline description
 
 _note: The following steps may not be perform in that exact order._
