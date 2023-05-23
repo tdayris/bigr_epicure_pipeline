@@ -418,7 +418,7 @@ def get_fastq_screen_input(
     fq_conf = config.get("reference", {}).get(
         "fastq_screen_config", "../../../config/fastq_screen.conf"
     )
-    fastq_screen_input.append("../../../config/fastq_screen.conf")
+    fastq_screen_input.append(fq_conf)
 
     # Optional other input files
     if config.get("reference", {}).get("download_fastq_screen_indexes", False):
