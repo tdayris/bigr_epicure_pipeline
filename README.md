@@ -4,13 +4,18 @@ Snakemake pipeline for Epicure analyses: Chip-Seq, Atac-Seq, Cut&Tag, Cut&Run, M
 
 # Summary
 
-1. [Usage]()
+1. [Usage](https://github.com/tdayris/bigr_epicure_pipeline#usage)
     1. [Installation](https://github.com/tdayris/bigr_epicure_pipeline#installation-following-snakemake-workflows-guidelines)
     1. [Deployment](https://github.com/tdayris/bigr_epicure_pipeline#deployment-following-snakemake-workflows-guidelines)
     1. [Configuration](https://github.com/tdayris/bigr_epicure_pipeline#configure-workflow-following-snakemake-workflows-guidelines)
     1. [Run this workflow](https://github.com/tdayris/bigr_epicure_pipeline#run-workflow-following-snakemake-workflows-guidelines)
     1. [Report](https://github.com/tdayris/bigr_epicure_pipeline#generate-report-following-snakemake-workflows-guidelines)
 1. [Pipeline components](https://github.com/tdayris/bigr_epicure_pipeline#pipeline-description)
+    1. [Preprocessing](https://github.com/tdayris/bigr_epicure_pipeline#pre-pocessing)
+    1. [Read mapping](https://github.com/tdayris/bigr_epicure_pipeline#read-mapping)
+    1. [Coverage](https://github.com/tdayris/bigr_epicure_pipeline#coverage)
+    1. [Peak Calling](https://github.com/tdayris/bigr_epicure_pipeline#peak-calling)
+    1. [Differential Peak Coverage](https://github.com/tdayris/bigr_epicure_pipeline#differential-peak-calling)
 1. [Material and methods](https://github.com/tdayris/bigr_epicure_pipeline#material-and-methods)
     1. [ChIP-Seq](https://github.com/tdayris/bigr_epicure_pipeline#chip-seq)
     1. [Atac-Seq](https://github.com/tdayris/bigr_epicure_pipeline#atac-seq)
@@ -199,7 +204,7 @@ Genome coverage was assessed with [MeDIPS](https://bioconductor.org/packages/rel
 
 ## OG-Seq
 
-Not yes available.
+Not yet available.
 
 ## Citations
 
