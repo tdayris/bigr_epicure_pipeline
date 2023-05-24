@@ -5,12 +5,14 @@
 * General usage documentation
 * Report available
 * Medip-seq DGE + Annotation
+* Linter script
 
 ## Fix
 
 * User-defined fastq-screen configuration is not used when provided.
 * Sambamba filters now consider bam index
 * Missing modules in MultiQC
+* Multiple linter suggestions accepted
 
 
 # 0.3 – Coverage
