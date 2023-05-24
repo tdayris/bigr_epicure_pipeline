@@ -17,6 +17,7 @@ base::library(package = "MEDIPS", character.only = TRUE)
 base::library(package = "BSgenome.Hsapiens.UCSC.hg38", character.only = TRUE)
 base::library(package = "BSgenome.Mmusculus.UCSC.mm10", character.only = TRUE)
 base::library(package = "DNAcopy", character.only = TRUE)
+base::message("Libraries loaded")
 
 
 mset1 <- base::readRDS(file = base::as.character(x = "mset1"))

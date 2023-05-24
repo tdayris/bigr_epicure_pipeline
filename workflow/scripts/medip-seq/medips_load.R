@@ -16,6 +16,7 @@ sink(log_file, type = "message")
 base::library(package = "MEDIPS", character.only = TRUE)
 base::library(package = "BSgenome.Hsapiens.UCSC.hg38", character.only = TRUE)
 base::library(package = "BSgenome.Mmusculus.UCSC.mm10", character.only = TRUE)
+base::message("Libraries loaded")
 
 medips_sets <- c()
 
