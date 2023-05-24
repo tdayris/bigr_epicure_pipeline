@@ -6,11 +6,8 @@ rule deeptools_plot_heatmap:
             "data_output/Heatmaps/{peaktype}/{command}.png",
             caption="../../report/coverage/plot_heatmap.rst",
             category="Results",
-            labels={
-                "type": "figure",
-                "category": "Results"
-            }
-        )
+            labels={"type": "figure", "category": "Results"},
+        ),
     threads: 1
     resources:
         mem_mb=lambda wilcards, attempt: attempt * 1024 * 8,

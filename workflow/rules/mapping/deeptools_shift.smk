@@ -11,7 +11,7 @@ rule deeptools_alignment_sieve:
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/deeptools.log",
+        "logs/deeptools/alignmentsieve/{sample}.log",
     params:
         extra="--ATACshift --BED",
     wrapper:

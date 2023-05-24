@@ -6,10 +6,7 @@ rule multiqc_trimming:
             "data_output/QC/Trimming.QC.html",
             caption="../../report/multiqc/trimming.rst",
             category="Quality Control",
-            labels={
-                "type": "html",
-                "category": "QC"
-            },
+            labels={"type": "html", "category": "QC"},
         ),
         directory("data_output/QC/Trimming.QC.data"),
     threads: 1

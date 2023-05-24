@@ -18,7 +18,7 @@ rule blacklist_grch38:
     cache: "omit-software"
     params:
         "--verbose",
-    shell:
+    conda:
         "../../envs/bash.yaml"
     shell:
         "mv {params} {input} {output} > {log} 2>&1"
@@ -44,7 +44,7 @@ rule blacklist_mm10:
     cache: "omit-software"
     params:
         "--verbose",
-    shell:
+    conda:
         "../../envs/bash.yaml"
     shell:
         "mv {params} {input} {output} > {log} 2>&1"
@@ -70,7 +70,7 @@ rule blacklist_grch37:
     cache: "omit-software"
     params:
         "--verbose",
-    shell:
+    conda:
         "../../envs/bash.yaml"
     shell:
         "mv {params} {input} {output} > {log} 2>&1"
@@ -96,7 +96,7 @@ rule blacklist_mm9:
     cache: "omit-software"
     params:
         "--verbose",
-    shell:
+    conda:
         "../../envs/bash.yaml"
     shell:
         "mv {params} {input} {output} > {log} 2>&1"

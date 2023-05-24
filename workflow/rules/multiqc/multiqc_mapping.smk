@@ -6,10 +6,7 @@ rule multiqc_mapping:
             "data_output/QC/Mapping.QC.html",
             caption="../../report/multiqc/mapping.rst",
             category="Quality Control",
-            labels={
-                "type": "html",
-                "category": "QC"
-            },
+            labels={"type": "html", "category": "QC"},
         ),
         directory("data_output/QC/Mapping.QC.data"),
     threads: 1

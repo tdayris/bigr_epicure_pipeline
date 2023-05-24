@@ -12,10 +12,10 @@ from typing import Any, Dict, List, Optional, Union
 ###################
 
 # Simple rsync copy
-localrule: macs2_save_narrow
+# localrule: macs2_save_narrow
 
 # Simple rsync copy
-localrule: macs2_save_broad
+# localrule: macs2_save_broad
 
 
 ########################
@@ -73,7 +73,7 @@ if not genome_fasta_path:
 
 
 # Genome sequences indexes
-genome_fai_path: str = genome_fasta_path + ".fai"
+genome_fai_path: str = f"{genome_fasta_path}.fai"
 genome_dict_path: str = ".".join(genome_fasta_path.split(".")[:-1]) + ".dict"
 
 
@@ -394,8 +394,6 @@ def get_fastq_screen_input(
     wildcards,
     config: Dict[str, Any] = config,
     design: pandas.DataFrame = design,
-    default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes,
-    fastq_screen_index_path: str = fastq_screen_index_path,
 ) -> List[str]:
     """
     Return the list of expected input files for fastq_screen
@@ -558,10 +556,10 @@ def get_medips_params_extra(
         down = is_paired(wilcards.sample)
         fragment_size = has_fragment_size(wilcards.sample, sample_is_paired=bool(down))
         if down:
-            medips_params_extra.append(medips_base + ", paired = TRUE")
+            medips_params_extra.append(f"{medips_base}, paired = TRUE")
         elif fragment_size:
             # Case the bam is single-ended and properly annotated
-            medips_params_extra.append(medips_base + f", extend = {fragment_size}")
+            medips_params_extra.append(f"{medips_base}, extend = {fragment_size}")
 
     return medips_params_extra
 
@@ -750,3 +748,5 @@ def targets(
 
     if steps.get("motives", False):
         raise NotImplementedError("Mitives analysis not yet implemented")
+
+    return expected_targets

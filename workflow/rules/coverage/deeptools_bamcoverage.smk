@@ -23,13 +23,13 @@ rule deeptools_bamcoverage:
 
 rule deeptools_plotcoverage:
     input:
-        bam=expand("sambamba/markdup/{sample}.bam", sample=sample_list),
-        bai=expand("sambamba/markdup/{sample}.bam.bai", sample=sample_list),
+        bam=expand("sambamba/markdup/{sample}.bam", sample=design.index),
+        bai=expand("sambamba/markdup/{sample}.bam.bai", sample=design.index),
         blacklist=blacklist_path,
     output:
         plot=report(
-            "data_output/Coverage/PlotCoverage.png", 
-            caption="../../report/coverage/plot_coverage.rst", 
+            "data_output/Coverage/PlotCoverage.png",
+            caption="../../report/coverage/plot_coverage.rst",
             category="Quality Control",
             labels={
                 "type": "figure",

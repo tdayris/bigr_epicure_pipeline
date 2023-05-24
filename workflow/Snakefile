@@ -1,3 +1,4 @@
+
 include: "rules/common.smk"
 # Genome reference data acquisition (if user did not
 # provide any genomic reference in configuration file)
@@ -16,19 +17,19 @@ include: "rules/mapping/bowtie2_mapping.smk"
 include: "rules/mapping/sambamba_samtools_filters.smk"
 include: "rules/mapping/sambamba_markdup.smk"
 include: "rules/mapping/deeptools_shift.smk"
-include: "rules/mapping/picard_collect_multiple_metrics.smk"
+include: "rules/mapping_qc/picard_collect_mutiple_metrics.smk"
 include: "rules/mapping_qc/samtools.smk"
 # Peak-Calling
-include: "rules/macs2_callpeak.smk"
+include: "rules/peak-calling/macs2_callpeak.smk"
 # Coverage
 include: "rules/coverage/deeptools_bamcoverage.smk"
 include: "rules/coverage/deeptools_matrix.smk"
 include: "rules/coverage/deeptools_plot_heatmap.smk"
 include: "rules/mapping_qc/deeptools_fingerprint.smk"
-# QC
-include: "rules/trimming/fastq_screen.smk"
+# QC aggregation
 include: "rules/multiqc/multiqc_mapping.smk"
 include: "rules/multiqc/multiqc_trimming.smk"
+
 
 
 rule target:
