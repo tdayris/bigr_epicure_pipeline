@@ -18,8 +18,8 @@ rule multiqc_mapping:
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     params:
-        extra=" --module fastp --module fastq_screen --module ",
+        extra=" --module fastp --module fastq_screen --module samtools --module picard --module deeptools",
     log:
-        "logs/multiqc/trimming.log",
+        "logs/multiqc/mapping.log",
     wrapper:
         "v1.31.1/bio/multiqc"
