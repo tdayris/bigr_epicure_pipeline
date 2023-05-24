@@ -4,11 +4,12 @@ Snakemake pipeline for Epicure analyses: Chip-Seq, Atac-Seq, Cut&Tag, Cut&Run, M
 
 # Summary
 
-1. [Installation](https://github.com/tdayris/bigr_epicure_pipeline#installation-following-snakemake-workflows-guidelines)
-1. [Deployment](https://github.com/tdayris/bigr_epicure_pipeline#deployment-following-snakemake-workflows-guidelines)
-1. [Configuration](https://github.com/tdayris/bigr_epicure_pipeline#configure-workflow-following-snakemake-workflows-guidelines)
-1. [Run this workflow](https://github.com/tdayris/bigr_epicure_pipeline#run-workflow-following-snakemake-workflows-guidelines)
-1. [Report](https://github.com/tdayris/bigr_epicure_pipeline#generate-report-following-snakemake-workflows-guidelines)
+1. [Usage]()
+    1. [Installation](https://github.com/tdayris/bigr_epicure_pipeline#installation-following-snakemake-workflows-guidelines)
+    1. [Deployment](https://github.com/tdayris/bigr_epicure_pipeline#deployment-following-snakemake-workflows-guidelines)
+    1. [Configuration](https://github.com/tdayris/bigr_epicure_pipeline#configure-workflow-following-snakemake-workflows-guidelines)
+    1. [Run this workflow](https://github.com/tdayris/bigr_epicure_pipeline#run-workflow-following-snakemake-workflows-guidelines)
+    1. [Report](https://github.com/tdayris/bigr_epicure_pipeline#generate-report-following-snakemake-workflows-guidelines)
 1. [Pipeline components](https://github.com/tdayris/bigr_epicure_pipeline#pipeline-description)
 1. [Material and methods]()
     1. [ChIP-Seq]()
@@ -152,13 +153,47 @@ Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lo
 
 A quality control is made _both before and after_ these filters to ensure no valuable data is lost. These quality controls are made using [Picard](https://broadinstitute.github.io/picard/command-line-overview.html#CollectMultipleMetrics) version [3.0.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/picard/collectmultiplemetrics.html#software-dependencies), and [Samtools](http://www.htslib.org/doc/samtools-stats.html) version [1.17](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/samtools/stats.html#software-dependencies).
 
+Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). The same tool was used to normalize tracks, and plot both quality controls and peak coverage heatmaps.
+
 ## Atac-Seq
+
+Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/bowtie2/align.html#software-dependencies). 
+
+Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/sambamba/view.html#software-dependencies). Initial filters keep only mapped reads, and reads with a mapped mate. Mapping qualities must be equal or above 30, or are filtered out. Only canonical chromosomes are kept at this step. Deduplication removes duplicated reads and their mates. Read shifting was performed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/alignmentSieve.html) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/alignmentSieve.html), as described in [Buenrostro et al. 2013](https://pubmed.ncbi.nlm.nih.gov/24097267/).
+
+A quality control is made _both before and after_ these filters to ensure no valuable data is lost. These quality controls are made using [Picard](https://broadinstitute.github.io/picard/command-line-overview.html#CollectMultipleMetrics) version [3.0.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/picard/collectmultiplemetrics.html#software-dependencies), and [Samtools](http://www.htslib.org/doc/samtools-stats.html) version [1.17](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/samtools/stats.html#software-dependencies).
+
+Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). The same tool was used to normalize tracks, and plot both quality controls and peak coverage heatmaps.
 
 ## Cut&Tag
 
+Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/bowtie2/align.html#software-dependencies). 
+
+Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/sambamba/view.html#software-dependencies). Initial filters keep only mapped reads, and reads with a mapped mate. Mapping qualities must be equal or above 30, or are filtered out. Only canonical chromosomes are kept at this step. Deduplication removes duplicated reads and their mates. Read shifting was performed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/alignmentSieve.html) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/alignmentSieve.html), as described in [Buenrostro et al. 2013](https://pubmed.ncbi.nlm.nih.gov/24097267/).
+
+A quality control is made _both before and after_ these filters to ensure no valuable data is lost. These quality controls are made using [Picard](https://broadinstitute.github.io/picard/command-line-overview.html#CollectMultipleMetrics) version [3.0.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/picard/collectmultiplemetrics.html#software-dependencies), and [Samtools](http://www.htslib.org/doc/samtools-stats.html) version [1.17](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/samtools/stats.html#software-dependencies).
+
+Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). The same tool was used to normalize tracks, and plot both quality controls and peak coverage heatmaps.
+
 ## Cut&Run
 
+Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/bowtie2/align.html#software-dependencies). 
+
+Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/sambamba/view.html#software-dependencies). Initial filters keep only mapped reads, and reads with a mapped mate. Mapping qualities must be equal or above 30, or are filtered out. Only canonical chromosomes are kept at this step. Deduplication removes duplicated reads and their mates. Read shifting was performed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/alignmentSieve.html) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/alignmentSieve.html), as described in [Buenrostro et al. 2013](https://pubmed.ncbi.nlm.nih.gov/24097267/).
+
+A quality control is made _both before and after_ these filters to ensure no valuable data is lost. These quality controls are made using [Picard](https://broadinstitute.github.io/picard/command-line-overview.html#CollectMultipleMetrics) version [3.0.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/picard/collectmultiplemetrics.html#software-dependencies), and [Samtools](http://www.htslib.org/doc/samtools-stats.html) version [1.17](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/samtools/stats.html#software-dependencies).
+
+Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). The same tool was used to normalize tracks, and plot both quality controls and peak coverage heatmaps.
+
 ## MeDIP-Seq
+
+Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/bowtie2/align.html#software-dependencies). 
+
+Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/sambamba/view.html#software-dependencies). Initial filters keep only mapped reads, and reads with a mapped mate. Mapping qualities must be equal or above 30, or are filtered out. Only canonical chromosomes are kept at this step. Deduplication removes duplicated reads and their mates.
+
+A quality control is made _both before and after_ these filters to ensure no valuable data is lost. These quality controls are made using [Picard](https://broadinstitute.github.io/picard/command-line-overview.html#CollectMultipleMetrics) version [3.0.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/picard/collectmultiplemetrics.html#software-dependencies), and [Samtools](http://www.htslib.org/doc/samtools-stats.html) version [1.17](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/samtools/stats.html#software-dependencies).
+
+Genome coverage was assessed with [MeDIPS](https://bioconductor.org/packages/release/bioc/vignettes/MEDIPS/inst/doc/MEDIPS.pdf) version [1.50.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/25802a43cc212fa96d39d16e7cee6b98a356a71e/workflow/envs/medips.yaml#L8).
 
 ## OG-Seq
 
@@ -169,6 +204,8 @@ A quality control is made _both before and after_ these filters to ensure no val
 1. Sambamba: `Tarasov, Artem, et al. "Sambamba: fast processing of NGS alignment formats." Bioinformatics 31.12 (2015): 2032-2034.`
 1. Ensembl: `Martin, Fergal J., et al. "Ensembl 2023." Nucleic Acids Research 51.D1 (2023): D933-D941.`
 1. Snakemake: `Köster, Johannes, and Sven Rahmann. "Snakemake—a scalable bioinformatics workflow engine." Bioinformatics 28.19 (2012): 2520-2522.`
+1. Atac-Seq: `Buenrostro, Jason D., et al. "Transposition of native chromatin for fast and sensitive epigenomic profiling of open chromatin, DNA-binding proteins and nucleosome position." Nature methods 10.12 (2013): 1213-1218.`
+1. MeDIPS: `Lienhard, Matthias, et al. "MEDIPS: genome-wide differential coverage analysis of sequencing data derived from DNA enrichment experiments." Bioinformatics 30.2 (2014): 284-286.`
 1. [Snakemake-Wrappers](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/index.html)
 1. [Snakemake-Workflows](https://snakemake.github.io/snakemake-workflow-catalog/?rules=true)
 1. [BiGR Epicure](https://github.com/tdayris/bigr_epicure_pipeline)
