@@ -3,6 +3,7 @@
 ## Features
 
 * General usage documentation
+* Report available
 
 ## Fix
 

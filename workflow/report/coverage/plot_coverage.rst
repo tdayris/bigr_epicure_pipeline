@@ -1,0 +1,1 @@
+This image contains coverage quality control over samples. You may find information about how to read this graphs on the `official DeepTools PlotCoverage documentation <https://deeptools.readthedocs.io/en/develop/content/tools/plotCoverage.html#what-the-plots-tell-you>`_

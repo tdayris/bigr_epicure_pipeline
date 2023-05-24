@@ -1,0 +1,1 @@
+This image contains a heatmap for scores over associated with genomic regions over samples. You may find information about how to read this graphs on the `official DeepTools PlotHeatmap documentation <https://deeptools.readthedocs.io/en/develop/content/tools/plotHeatmap.html?highlight=plotheatmap#usage-examples>`_

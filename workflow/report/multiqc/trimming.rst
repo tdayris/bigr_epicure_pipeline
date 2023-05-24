@@ -1,0 +1,1 @@
+This MultiQC report contains aggregated quality controls related to read Trimming. This is a HTML file, open-it in your favorite web-browser. You do not need any internet connection to open this file.

@@ -1,0 +1,1 @@
+This image contains signal specificity quality control over samples. You may find information about how to read this graphs on the `official DeepTools PlotFingerprint documentation <https://deeptools.readthedocs.io/en/develop/content/tools/plotFingerprint.html?highlight=plotfingerprint#what-the-plots-tell-you>`_

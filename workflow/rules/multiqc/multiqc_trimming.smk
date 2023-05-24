@@ -2,8 +2,16 @@ rule multiqc_trimming:
     input:
         unpack(get_multiqc_trimming_input),
     output:
-        "data_output/QC/Mapping.QC.html",
-        directory("data_output/QC/Mapping.QC.data"),
+        report(
+            "data_output/QC/Trimming.QC.html",
+            caption="../../report/multiqc/trimming.rst",
+            category="Quality Control",
+            labels={
+                "type": "html",
+                "category": "QC"
+            },
+        ),
+        directory("data_output/QC/Trimming.QC.data"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,

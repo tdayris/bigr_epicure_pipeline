@@ -2,7 +2,15 @@ rule deeptools_plot_fingerprint:
     input:
         unpack(get_deeptools_plotfingerprint_input),
     output:
-        fingerprint="data_output/QC/fingerprint.png",
+        fingerprint=report(
+            "data_output/QC/fingerprint.png",
+            caption="../../report/coverage/plot_fingerprint.rst",
+            category="Quality Control",
+            labels={
+                "type": "figure",
+                "category": "QC",
+            },
+        ),
         counts=temp("deeptools/plot_fingerprint/raw_counts.tab"),
     threads: config.get("max_threads", 20)
     resources:

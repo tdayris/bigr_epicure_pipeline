@@ -27,7 +27,15 @@ rule deeptools_plotcoverage:
         bai=expand("sambamba/markdup/{sample}.bam.bai", sample=sample_list),
         blacklist=blacklist_path,
     output:
-        plot="data_output/Coverage/PlotCoverage.png",
+        plot=report(
+            "data_output/Coverage/PlotCoverage.png", 
+            caption="../../report/coverage/plot_coverage.rst", 
+            category="Quality Control",
+            labels={
+                "type": "figure",
+                "category": "QC",
+            },
+        ),
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 8 * 1024,
