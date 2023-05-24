@@ -3,13 +3,14 @@
 # __email__ = "thibault.dayris@gustaveroussy.fr"
 # __license__ = "MIT"
 
-# This script calculates the local densities of a defined sequence pattern (e.g. CpGs) 
+# This script calculates the local densities of a defined 
+# sequence pattern (e.g. CpGs) 
 
 # Sink the stderr and stdout to the snakemake log file
 # https://stackoverflow.com/a/48173272
-log.file <- file(snakemake@log[[1]], open = "wt")
-sink(log.file)
-sink(log.file, type = "message")
+log_file <- file(snakemake@log[[1]], open = "wt")
+sink(log_file)
+sink(log_file, type = "message")
 
 
 # Load libraries

@@ -9,6 +9,7 @@
 
 * User-defined fastq-screen configuration is not used when provided.
 * Sambamba filters now consider bam index
+* Missing modules in MultiQC
 
 
 # 0.3 – Coverage
