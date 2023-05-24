@@ -11,17 +11,19 @@ Snakemake pipeline for Epicure analyses: Chip-Seq, Atac-Seq, Cut&Tag, Cut&Run, M
     1. [Run this workflow](https://github.com/tdayris/bigr_epicure_pipeline#run-workflow-following-snakemake-workflows-guidelines)
     1. [Report](https://github.com/tdayris/bigr_epicure_pipeline#generate-report-following-snakemake-workflows-guidelines)
 1. [Pipeline components](https://github.com/tdayris/bigr_epicure_pipeline#pipeline-description)
-1. [Material and methods]()
-    1. [ChIP-Seq]()
-    1. [Atac-Seq]()
-    1. [Cut&Tag]()
-    1. [Cut&Run]()
-    1. [MeDIP-Seq]()
-    1. [OG-Seq]()
+1. [Material and methods](https://github.com/tdayris/bigr_epicure_pipeline#material-and-methods)
+    1. [ChIP-Seq](https://github.com/tdayris/bigr_epicure_pipeline#chip-seq)
+    1. [Atac-Seq](https://github.com/tdayris/bigr_epicure_pipeline#atac-seq)
+    1. [Cut&Tag](https://github.com/tdayris/bigr_epicure_pipeline#cuttag)
+    1. [Cut&Run](https://github.com/tdayris/bigr_epicure_pipeline#cutrun)
+    1. [MeDIP-Seq](https://github.com/tdayris/bigr_epicure_pipeline#medip-seq)
+    1. [OG-Seq](https://github.com/tdayris/bigr_epicure_pipeline#og-seq)
 1. [Up-comming features](https://github.com/tdayris/bigr_epicure_pipeline#roadmap)
 
 
-# Installation (following Snakemake-Workflows guidelines)
+# Usage
+
+## Installation (following Snakemake-Workflows guidelines)
 
 _note: This action has already been done for you if you work at Gustave Roussy. See at the end of this section_
 
@@ -38,7 +40,7 @@ Alternatively, if you work at Gustave Roussy, you can use our shared environment
 `conda shell.bash activate /mnt/beegfs/pipelines/unofficial-snakemake-wrappers/shared_conda/bigr_epicure_pipeline`
 
 
-# Deployment (following Snakemake-Workflows guidelines)
+## Deployment (following Snakemake-Workflows guidelines)
 
 _note: This action has been made easier for you if you work at Gustave Roussy. See at the end of this section_
 
@@ -57,11 +59,11 @@ Snakedeploy will create two folders `workflow` and `config`. The former contains
 3. Consider to put the exact version of the pipeline and all modifications you might want perform under version control. _e.g._ by [managing it via a (private) Github repository](https://docs.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line)
 
 
-# Configure workflow (following Snakemake-Workflows guidelines)
+## Configure workflow (following Snakemake-Workflows guidelines)
 
 See dedicated [`config/README.md`](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/config/README.md) file for dedicated explanations of all options and consequences.
 
-# Run workflow (following Snakemake-Workflows guidelines)
+## Run workflow (following Snakemake-Workflows guidelines)
 
 _note: This action has been made easier for you if you work at Gustave Roussy. See at the end of this section_
 
@@ -79,7 +81,7 @@ Snakemake will automatically detect the main `Snakefile` in the `workflow` subfo
 
 For further options, e.g. for cluster and cloud execution, see [the docs](https://snakemake.readthedocs.io/).
 
-# Generate report (following Snakemake-Workflows guidelines)
+## Generate report (following Snakemake-Workflows guidelines)
 
 After finalizing your data analysis, you can automatically generate an interactive visual HTML report for inspection of results together with parameters and code inside of the browser via 
 
@@ -196,6 +198,8 @@ A quality control is made _both before and after_ these filters to ensure no val
 Genome coverage was assessed with [MeDIPS](https://bioconductor.org/packages/release/bioc/vignettes/MEDIPS/inst/doc/MEDIPS.pdf) version [1.50.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/25802a43cc212fa96d39d16e7cee6b98a356a71e/workflow/envs/medips.yaml#L8).
 
 ## OG-Seq
+
+Not yes available.
 
 ## Citations
 
