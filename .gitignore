@@ -3,6 +3,7 @@
 tests/logs
 tests/reference
 tests/cache
+tests/*.fq.gz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
