@@ -151,6 +151,14 @@ _note: The following steps may not be perform in that exact order._
 | ------------ | ---- | ---------------------------------------------------------------------------------------------------------------------- | ------ |
 | [Peak-Calling](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/rules/coverage/medips_meth.smk) | MEDIPS | Incoming | Search for significant variation in peak coverage with EdgeR (MeDIP-Seq only) |
 
+
+## Peak annotation
+
+| Step       | Tool   | Documentation | Reason                                                           |
+| ---------- | ------ | ------------- | ---------------------------------------------------------------- |
+| Annotation | MEDIPS | Incoming      | Annotate peaks with Ensembl-mart through MEDIPS (MeDIP-Seq only) |
+
+
 # Material and Methods
 
 ## ChIP-Seq

@@ -4,6 +4,7 @@
 
 * General usage documentation
 * Report available
+* Medip-seq DGE + Annotation
 
 ## Fix
 
