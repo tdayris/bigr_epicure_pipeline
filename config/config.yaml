@@ -10,11 +10,11 @@ steps:
   # Download (true) or not (false) pre-built fastq screen indexes
   # Set to `false` if you want to use your own indexes
   # Set to `true` if you want this pipeline to download and store fastq screen indexes
-  download_fastq_screen_indexes: true
+  download_fastq_screen_indexes: false
 
   # Perform fastq trimming and quality checks
   # Automatically turned `true` if mapping is performed
-  trimming: true
+  trimming: false
 
   # Perform fastq trimming + mapping.
   # Missing genome sequences/annotation/indexes will run installation process
