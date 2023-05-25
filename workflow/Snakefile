@@ -34,4 +34,4 @@ include: "rules/multiqc/multiqc_trimming.smk"
 
 rule target:
     input:
-        **targets(config),
+        **targets(),

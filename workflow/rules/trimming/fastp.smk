@@ -3,7 +3,7 @@ rule fastp_single_ended:
         unpack(get_fastp_input),
     output:
         trimmed=temp("fastp/trimmed/se/{sample}.fastq"),
-        html="data_output/qc/fastp/{sample}.se.html",
+        html="data_output/QC/fastp/{sample}.se.html",
         json=temp("fastp/report/se/{sample}.json"),
     threads: 1
     resources:
@@ -31,7 +31,7 @@ rule fastp_pair_ended:
                 allow_missing=True,
             )
         ),
-        html="data_output/qc/fastp/{sample}.pe.html",
+        html="data_output/QC/fastp/{sample}.pe.html",
         json=temp("fastp/report/pe/{sample}.json"),
     threads: 1
     resources:

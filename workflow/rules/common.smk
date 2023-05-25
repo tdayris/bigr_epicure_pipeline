@@ -7,24 +7,13 @@ from snakemake.remote import FTP
 from typing import Any, Dict, List, Optional, Union
 
 
-###################
-### Local rules ###
-###################
-
-# Simple rsync copy
-# localrule: macs2_save_narrow
-
-# Simple rsync copy
-# localrule: macs2_save_broad
-
-
 ########################
 ### Load design file ###
 ########################
 
 
 design: pandas.DataFrame = pandas.read_csv(
-    config.get("design", "../config/design.tsv"),
+    config.get("designs", "../config/design.tsv"),
     sep="\t",
     header=0,
     index_col=0,
@@ -94,7 +83,7 @@ if not bowtie2_index_path:
         "Missing Bowtie2 index path in the file `config.yaml`. "
         "A new one will be created."
     )
-    bowtie2_index = multiext(
+    bowtie2_index_path = multiext(
         f"reference/bowtie2_index/{species}.{build}.{release}",
         ".1.bt2",
         ".2.bt2",
@@ -350,9 +339,9 @@ def get_fastp_output_html(design: pandas.DataFrame = design) -> List[str]:
     for sample in design.index:
         down = is_paired(sample)
         if down:
-            html_list.append("data_output/QC/fastp/{sample}.se.html")
+            html_list.append(f"data_output/QC/fastp/{sample}.pe.html")
         else:
-            html_list.append("data_output/QC/fastp/{sample}.pe.html")
+            html_list.append(f"data_output/QC/fastp/{sample}.se.html")
 
     return html_list
 
@@ -367,7 +356,7 @@ def get_multiqc_trimming_input(
     for sample in design.index:
         down = is_paired(sample)
         if down:
-            multiqc_trimming_input.append(f"data_output/qc/fastp/{sample}.pe.html")
+            multiqc_trimming_input.append(f"data_output/QC/fastp/{sample}.pe.html")
 
             multiqc_trimming_input.append(f"fastq_screen/{sample}.1.txt")
 
@@ -387,7 +376,9 @@ def get_multiqc_trimming_input(
 
 
 def get_bowtie2_align_input(
-    wildcards, design: pandas.DataFrame = design, bowtie2_index: str = bowtie2_index
+    wildcards,
+    design: pandas.DataFrame = design,
+    bowtie2_index: str = bowtie2_index_path,
 ) -> Dict[str, List[str]]:
     """
     Return the list of bowtie2 align input
@@ -412,7 +403,7 @@ def get_fastq_screen_input(
     wildcards,
     config: Dict[str, Any] = config,
     design: pandas.DataFrame = design,
-    default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes
+    default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes,
 ) -> List[str]:
     """
     Return the list of expected input files for fastq_screen
@@ -703,10 +694,25 @@ def get_macs2_params(
     return extra
 
 
+#############################
+### Wildcards constraints ###
+#############################
+
+
+wildcard_constraints:
+    sample=r"|".join(design.index),
+    protocol=protocol,
+    release=release,
+    build=build,
+    species=species,
+    peaktype=r"|".join(["narrow", "broad", "gapped"]),
+    step=r"|".join(["raw", ""]),
+    command=r"|".join(["scale-region", "reference-point"]),
+
+
 ########################
 ### Main Target rule ###
 ########################
-
 
 
 def targets(
@@ -716,7 +722,7 @@ def targets(
     genome_fasta_path: str = genome_fasta_path,
     genome_annotation_path: str = genome_annotation_path,
     bowtie2_index_path: str = bowtie2_index_path,
-    default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes
+    default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes,
 ):
     """
     Return the list of expected output files, depending on the
@@ -730,16 +736,14 @@ def targets(
         expected_targets["genome_fasta"] = genome_fasta_path
         expected_targets["bowtie2_index"] = bowtie2_index_path
         if steps.get("download_fastq_screen_indexes", False):
-            expected_targets["fastq_screen_indexes"] = (
-                expand(
-                    "reference/fastq_screen/index/{fq_genome}",
-                    fq_genome=default_fastq_screen_genomes,
-                ),
-        )
+            expected_targets["fastq_screen_indexes"] = expand(
+                "reference/fastq_screen/index/{fq_genome}",
+                fq_genome=default_fastq_screen_genomes,
+            )
 
     if steps.get("trimming", False):
         expected_targets["fastp"] = get_fastp_output_html(design=design)
-        expected_targets["multiqc_trim"] = "data_output/QC/Mapping.QC.html"
+        expected_targets["multiqc_trim"] = "data_output/QC/Trimming.QC.html"
 
     if steps.get("mapping", False):
         expected_targets["mapping"] = expand(
@@ -771,5 +775,5 @@ def targets(
     if steps.get("motives", False):
         raise NotImplementedError("Mitives analysis not yet implemented")
 
-    logging.info(expected_targets)
+    print(expected_targets)
     return expected_targets
