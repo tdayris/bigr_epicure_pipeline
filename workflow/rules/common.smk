@@ -749,7 +749,7 @@ def targets(
 
     if steps.get("coverage", False):
         expected_targets["bam_coverage"] = expand(
-            "data_output/Coverage/{sample}.bw", design.index
+            "data_output/Coverage/{sample}.bw", sample=design.index
         )
 
     if steps.get("calling", False):
