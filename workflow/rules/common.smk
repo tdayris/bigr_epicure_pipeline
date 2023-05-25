@@ -771,4 +771,5 @@ def targets(
     if steps.get("motives", False):
         raise NotImplementedError("Mitives analysis not yet implemented")
 
+    logging.info(expected_targets)
     return expected_targets
