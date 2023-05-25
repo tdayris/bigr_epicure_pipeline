@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Union
 
 
 design: pandas.DataFrame = pandas.read_csv(
-    config.get("designs", "../config/design.tsv"),
+    config.get("designs", "config/design.tsv"),
     sep="\t",
     header=0,
     index_col=0,
