@@ -1,3 +1,21 @@
+# 0.3.2 – BiGR
+
+## Features
+
+* CSAW scripts available
+
+## Fix
+
+* Fastp SE/PE detection fixed
+* Bowtie2 expected input files now includes complete list of index files
+* MultiQC now looks for correct fastp repository
+
+
+## Known bug
+
+* FastScreen index download creates sub-directories leading to Snakemake error
+
+
 # 0.3.1 – Fixes
 
 ## Features
