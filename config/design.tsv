@@ -1,7 +1,7 @@
 Sample_id	Upstream_file	Downstream_file	Condition	Input	Fragment_size
-S1\S1.R1.fq.gz	S1.R2.fq.gz	WT	I1	
-S2\S2.R1.fq.gz	S2.R2.fq.gz	WT	I1	
-I1\I1.R1.fq.gz	I1.R2.fq.gz			
-S3\S3.R1.fq.gz	S3.R2.fq.gz	Mut	I2	
-S4\S4.R1.fq.gz	S4.R2.fq.gz	Mut	I2	
-I2\I2.R1.fq.gz	I2.R2.fq.gz			
+S1	S1.R1.fq.gz	S1.R2.fq.gz	WT	I1	
+S2	S2.R1.fq.gz	S2.R2.fq.gz	WT	I1	
+I1	I1.R1.fq.gz	I1.R2.fq.gz			
+S3	S3.R1.fq.gz	S3.R2.fq.gz	Mut	I2	
+S4	S4.R1.fq.gz	S4.R2.fq.gz	Mut	I2	
+I2	I2.R1.fq.gz	I2.R2.fq.gz			
