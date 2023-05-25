@@ -178,6 +178,24 @@ if not effective_genome_size:
     )
 
 
+default_fastq_screen_genomes: List[str] = [
+    "Adapters/",
+    "Arabidopsis/",
+    "Drosophila/",
+    "E_coli/",
+    "Human/",
+    "Lambda/",
+    "Mitochondria/",
+    "Mouse/",
+    "PhiX/",
+    "Rat/",
+    "Vectors/",
+    "Worm/",
+    "Yeast/",
+    "rRNA/",
+]
+
+
 ##########################
 ### Protocol functions ###
 ##########################
@@ -394,6 +412,7 @@ def get_fastq_screen_input(
     wildcards,
     config: Dict[str, Any] = config,
     design: pandas.DataFrame = design,
+    default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes
 ) -> List[str]:
     """
     Return the list of expected input files for fastq_screen
@@ -420,7 +439,7 @@ def get_fastq_screen_input(
 
     # Optional other input files
     if config.get("reference", {}).get("download_fastq_screen_indexes", False):
-        for fq_genome in fastq_screen_genomes:
+        for fq_genome in default_fastq_screen_genomes:
             fastq_screen_input.append(
                 f"reference/fastq_screen/index/{fq_genome}",
             )
@@ -689,6 +708,7 @@ def get_macs2_params(
 ########################
 
 
+
 def targets(
     config: Dict[str, Any] = config,
     design: pandas.DataFrame = design,
@@ -696,6 +716,7 @@ def targets(
     genome_fasta_path: str = genome_fasta_path,
     genome_annotation_path: str = genome_annotation_path,
     bowtie2_index_path: str = bowtie2_index_path,
+    default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes
 ):
     """
     Return the list of expected output files, depending on the
@@ -708,11 +729,12 @@ def targets(
         expected_targets["gtf"] = genome_annotation_path
         expected_targets["genome_fasta"] = genome_fasta_path
         expected_targets["bowtie2_index"] = bowtie2_index_path
-        expected_targets["fastq_screen_indexes"] = (
-            expand(
-                "reference/fastq_screen/index/{fq_genome}",
-                fq_genome=fastq_screen_genomes,
-            ),
+        if steps.get("download_fastq_screen_indexes", False):
+            expected_targets["fastq_screen_indexes"] = (
+                expand(
+                    "reference/fastq_screen/index/{fq_genome}",
+                    fq_genome=default_fastq_screen_genomes,
+                ),
         )
 
     if steps.get("trimming", False):
