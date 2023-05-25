@@ -4,8 +4,8 @@ rule get_genome:
     params:
         species="{species}",
         datatype="dna",
-        build="{release}",
-        release="{build}",
+        build="{build}",
+        release="{release}",
     threads: 2
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,

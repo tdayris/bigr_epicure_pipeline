@@ -702,9 +702,9 @@ def get_macs2_params(
 wildcard_constraints:
     sample=r"|".join(design.index),
     protocol=protocol,
-    release=release,
-    build=build,
-    species=species,
+    release=str(release),
+    build=str(build),
+    species=str(species),
     peaktype=r"|".join(["narrow", "broad", "gapped"]),
     step=r"|".join(["raw", ""]),
     command=r"|".join(["scale-region", "reference-point"]),
