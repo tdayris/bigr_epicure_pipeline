@@ -6,5 +6,5 @@ channels:
 dependencies:
   - snakemake=7.26.0
   - pandas=2.0.1
-  - python=3.11.3
+  - python=3.10.11
   - snakedeploy=0.8.6
