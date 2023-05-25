@@ -4,7 +4,7 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - snakemake-minimal=7.26.0
+  - snakemake=7.26.0
   - pandas=2.0.1
   - python=3.9.16
   - snakedeploy=0.8.6

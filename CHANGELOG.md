@@ -3,6 +3,7 @@
 ## Features
 
 * CSAW scripts available
+* Downgrade Python to 3.9
 
 ## Fix
 
