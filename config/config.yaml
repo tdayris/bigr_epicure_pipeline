@@ -22,26 +22,26 @@ steps:
   # Automatically tuned `true` if coverage analysis is performed
   # Automatically tuned `true` if differential coverage analysis is performed
   # Automatically tuned `true` if motives analysis is performed
-  mapping: true
+  mapping: false
 
   # Perform fastq trimming + mapping + coverage
   # Missing genome sequences/annotation/indexes will run installation process
   # Automatically tuned `true` if differential coverage analysis is performed
-  coverage: true
+  coverage: false
 
   # Perform fastq trimming + mapping + peak-calling
   # Missing genome sequences/annotation/indexes will run installation process
   # Automatically tuned `true` if differential coverage analysis is performed
   # Automatically tuned `true` if motives analysis is performed
-  calling: true
+  calling: false
 
   # Perform fastq trimming + mapping + peak-calling + differential coverage analysis
   # Missing genome sequences/annotation/indexes will run installation process
-  diff_cov: true
+  diff_cov: false
 
   # Perform fastq trimming + mapping + peak-calling + motives analysis
   # Missing genome sequences/annotation/indexes will run installation process
-  motives: true
+  motives: false
 
 
 # Must be one of: `chip-seq`, `atac-seq`, `medip-seq`
