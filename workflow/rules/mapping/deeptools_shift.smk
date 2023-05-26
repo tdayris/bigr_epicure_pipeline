@@ -4,7 +4,7 @@ rule deeptools_alignment_sieve:
         aln_idx="sambamba/markdup/{sample}.bam.bai",
         blacklist=blacklist_path,
     output:
-        temp("deeptools/alignment_sieve/{sample}.bed"),
+        temp("deeptools/alignment_sieve/{sample}.bam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,
@@ -13,6 +13,6 @@ rule deeptools_alignment_sieve:
     log:
         "logs/deeptools/alignmentsieve/{sample}.log",
     params:
-        extra="--ATACshift --BED",
+        extra=" --ATACshift ",
     wrapper:
         "master/bio/deeptools/alignmentsieve"

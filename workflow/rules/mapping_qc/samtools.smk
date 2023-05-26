@@ -2,7 +2,7 @@ rule samtools_stats:
     input:
         unpack(get_samtools_stats_input),
     output:
-        "samtools/stats/{sample}.{step}.txt",
+        "samtools/stats/{sample}{step}.txt",
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,

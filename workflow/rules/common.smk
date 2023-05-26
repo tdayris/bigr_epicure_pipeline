@@ -3,7 +3,7 @@ import os
 import pandas
 import snakemake
 
-from snakemake.remote import FTP
+from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 
@@ -25,7 +25,7 @@ design: pandas.DataFrame = pandas.read_csv(
 ########################
 
 # FTP handler for possible downloads
-FTP = FTP.RemoteProvider()
+HTTPS = HTTPRemoteProvider()
 
 
 # This let all temporary file end-up in the same directory
@@ -509,14 +509,14 @@ def get_multiqc_mapping_input(
     for sample in design.index:
         multiqc_mapping_input.append(f"sambamba/markdup/{sample}.bam")
 
-        for step in ["raw", "cleaned"]:
+        for step in [".raw", ""]:
             multiqc_mapping_input.append(
-                f"samtools/stats/{sample}.{step}.txt",
+                f"samtools/stats/{sample}{step}.txt",
             )
 
         for picard_file in picard_files:
             multiqc_mapping_input.append(
-                f"picard/collectmultiplemetrics/stats/{sample}.{picard_file}"
+                f"picard/collectmultiplemetrics/stats/{sample}{picard_file}"
             )
 
     multiqc_mapping_input.append("deeptools/plot_fingerprint/raw_counts.tab")
@@ -555,9 +555,9 @@ def get_deeptools_plotfingerprint_input(
     Return the list of expected input files for deeptools plot fingerprint
     """
     bam_prefix = (
-        "deeptools/alignment_sieve/"
+        "deeptools/alignment_sieve"
         if protocol_is_atac(protocol)
-        else "sambamba/markdup/"
+        else "sambamba/markdup"
     )
 
     deeptools_plotfingerprint_input = {"bam_files": [], "bam_idx": []}
@@ -733,8 +733,10 @@ wildcard_constraints:
     build=str(build),
     species=str(species),
     peaktype=r"|".join(["narrow", "broad", "gapped"]),
-    step=r"|".join(["raw", ""]),
+    step=r"|".join([".raw", ""]),
     command=r"|".join(["scale-region", "reference-point"]),
+    tool=r"|".join(["bowtie2", "sambamba", "deeptools"]),
+    subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve"]),
 
 
 ########################

@@ -1,7 +1,7 @@
 rule picard_collect_multiple_metrics:
     input:
-        bam="",
-        bai="",
+        bam="sambamba/markdup/{sample}.bam",
+        bai="sambamba/markdup/{sample}.bam.bai",
         ref=genome_fasta_path,
         ref_fai=genome_fai_path,
         ref_dict=genome_dict_path,
