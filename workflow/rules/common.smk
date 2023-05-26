@@ -475,11 +475,11 @@ def get_samtools_stats_input(wildcards, protocol: str = protocol) -> Dict[str, s
             "bai": f"bowtie2/align/{wildcards.sample}.bam.bai",
         }
 
-    if protocol_is_atac(protocol):
-        return {
-            "bam": f"deeptools/alignment_sieve/{wildcards.sample}.bam",
-            "bai": f"deeptools/alignment_sieve/{wildcards.sample}.bam.bai",
-        }
+    # if protocol_is_atac(protocol):
+    #     return {
+    #         "bam": f"deeptools/alignment_sieve/{wildcards.sample}.bam",
+    #         "bai": f"deeptools/alignment_sieve/{wildcards.sample}.bam.bai",
+    #     }
 
     return {
         "bam": f"sambamba/markdup/{wildcards.sample}.bam",
