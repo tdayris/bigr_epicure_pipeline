@@ -362,14 +362,14 @@ def get_multiqc_trimming_input(
 
             multiqc_trimming_input.append(f"fastq_screen/{sample}.2.fastq_screen.txt")
 
-            multiqc_trimming_input.append(f"fastp/report/pe/{sample}.json")
+            multiqc_trimming_input.append(f"fastp/report/pe/{sample}.fastp.json")
 
         else:
             multiqc_trimming_input.append(f"data_output/qc/fastp/{sample}.se.html")
 
             multiqc_trimming_input.append(f"fastq_screen/{sample}.fastq_screen.txt")
 
-            multiqc_trimming_input.append(f"fastp/report/se/{sample}.json")
+            multiqc_trimming_input.append(f"fastp/report/se/{sample}.fastp.json")
 
     return multiqc_trimming_input
 

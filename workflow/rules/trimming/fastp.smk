@@ -4,7 +4,7 @@ rule fastp_single_ended:
     output:
         trimmed=temp("fastp/trimmed/se/{sample}.fastq"),
         html="data_output/QC/fastp/{sample}.se.html",
-        json=temp("fastp/report/se/{sample}.json"),
+        json=temp("fastp/report/se/{sample}.fastp.json"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,
@@ -32,7 +32,7 @@ rule fastp_pair_ended:
             )
         ),
         html="data_output/QC/fastp/{sample}.pe.html",
-        json=temp("fastp/report/pe/{sample}.json"),
+        json=temp("fastp/report/pe/{sample}.fastp.json"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,
