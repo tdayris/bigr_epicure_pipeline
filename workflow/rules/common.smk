@@ -64,6 +64,7 @@ if not genome_fasta_path:
 # Genome sequences indexes
 genome_fai_path: str = f"{genome_fasta_path}.fai"
 genome_dict_path: str = ".".join(genome_fasta_path.split(".")[:-1]) + ".dict"
+genome_twobit_path: str = ".".join(genome_fasta_path.split(".")[:-1]) + ".2bit"
 
 
 # Genome annotation (GFF/GTF, not gzipped)
@@ -229,7 +230,7 @@ def protocol_is_ogseq(protocol: str = protocol) -> bool:
     """
     Return `True` if protocol is 8-OxoG-seq
     """
-    return "og" in protocol
+    return ("og" in protocol) or ("ox" in protocol)
 
 
 #############################################
@@ -473,6 +474,12 @@ def get_samtools_stats_input(wildcards, protocol: str = protocol) -> Dict[str, s
         return {
             "bam": f"bowtie2/align/{wildcards.sample}.bam",
             "bai": f"bowtie2/align/{wildcards.sample}.bam.bai",
+        }
+
+    if protocol_is_ogseq(protocol):
+        return {
+            "bam": f"deeptools/corrected/{wildcards.sample}.bam",
+            "bai": f"deeptools/corrected/{wildcards.sample}.bam.bai",
         }
 
     # if protocol_is_atac(protocol):

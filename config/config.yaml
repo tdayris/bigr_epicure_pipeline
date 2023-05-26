@@ -105,6 +105,11 @@ reference:
   # Path to directory containing fastq_screen configuration file
   fastq_screen_config: config/fastq_screen.conf
 
+  # Path to genome sequence in TwoBit format
+  # A missing genome sequence in TwoBit format will lead
+  # to a fasta to TwoBit conversion
+  # two_bits: /path/to/sequence.2bit
+
 
 # Macs2 peak caller parameters
 macs2:
