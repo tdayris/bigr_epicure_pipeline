@@ -3,7 +3,7 @@
 # __email__ = "thibault.dayris@gustaveroussy.fr"
 # __license__ = "MIT"
 
-# This script annotates differential peak coverage
+# This script counts reads over sliding windows with csaw
 
 # Sink the stderr and stdout to the snakemake log file
 # https://stackoverflow.com/a/48173272
