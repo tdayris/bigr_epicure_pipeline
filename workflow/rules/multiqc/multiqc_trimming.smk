@@ -8,7 +8,7 @@ rule multiqc_trimming:
             category="Quality Control",
             labels={"type": "html", "category": "QC"},
         ),
-        directory("data_output/QC/Trimming.QC.data"),
+        directory("data_output/QC/Trimming.QC_data"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,
