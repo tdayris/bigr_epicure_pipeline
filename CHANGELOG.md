@@ -1,3 +1,16 @@
+# 0.4.0 – Bins
+
+## Features
+
+* Rose binsize in DeepTools from 25 to 50 to reduce matrix size
+* MultiQC now sticks to the input file list
+
+
+## Fix
+
+* MultiQC now detects all log files
+
+
 # 0.3.2 – BiGR
 
 ## Features

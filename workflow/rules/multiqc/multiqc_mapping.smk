@@ -16,6 +16,7 @@ rule multiqc_mapping:
         tmpdir=tmp,
     params:
         extra=" --module fastp --module fastq_screen --module samtools --module picard --module deeptools",
+        use_input_files_only=True,
     log:
         "logs/multiqc/mapping.log",
     wrapper:

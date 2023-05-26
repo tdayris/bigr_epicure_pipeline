@@ -4,7 +4,7 @@ import pandas
 import snakemake
 
 from snakemake.remote import FTP
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 
 ########################
@@ -304,6 +304,29 @@ def get_input_per_condition(wildcards, design: pandas.DataFrame = design) -> Lis
             input_samples.append(input_id)
 
     return list(set(input_samples))
+
+
+def get_sample_genome(
+    wildcards, 
+    design: pandas.DataFrame = design,
+    organism: str = organism,
+    build: str = build,
+    release: Union[str, int] = release,
+) -> Tuple[Union[str, int]]:
+    """
+    For a `wildcards.sample` return the corresponding dict:
+    {genome, build, release}
+    """
+    if "Organism" in design.columns:
+        organism = design["Organism"].loc[wildcards.sample] or organism
+        
+    if "Release" in design.columns:
+        release = design["Release"].loc[wildcards.sample] or release
+
+    if "Build" in design.columns:
+        build = design["Build"].loc[wildcards.sample] or build
+
+    return organism, build, release
 
 
 ###################

@@ -16,6 +16,7 @@ rule multiqc_trimming:
         tmpdir=tmp,
     params:
         extra=" --module fastp --module fastq_screen ",
+        use_input_files_only=True,
     log:
         "logs/multiqc/trimming.log",
     wrapper:

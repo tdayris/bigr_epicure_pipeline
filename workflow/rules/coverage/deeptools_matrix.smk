@@ -20,6 +20,6 @@ rule deeptools_compute_matrix:
         "logs/deeptools/computematrix/{command}.{peaktype}.log",
     params:
         command="{command}",
-        extra="--skipZeros ",
+        extra="--skipZeros --binSize 50",
     wrapper:
         "v1.31.1/bio/deeptools/computematrix"
