@@ -358,14 +358,18 @@ def get_multiqc_trimming_input(
         if down:
             multiqc_trimming_input.append(f"data_output/QC/fastp/{sample}.pe.html")
 
-            multiqc_trimming_input.append(f"fastq_screen/{sample}.1.txt")
+            multiqc_trimming_input.append(f"fastq_screen/{sample}.1.fastq_screen.txt")
 
-            multiqc_trimming_input.append(f"fastq_screen/{sample}.2.txt")
+            multiqc_trimming_input.append(f"fastq_screen/{sample}.2.fastq_screen.txt")
+
+            multiqc_trimming_input.append(f"fastp/report/pe/{sample}.json")
 
         else:
             multiqc_trimming_input.append(f"data_output/qc/fastp/{sample}.se.html")
 
-            multiqc_trimming_input.append(f"fastq_screen/{sample}.txt")
+            multiqc_trimming_input.append(f"fastq_screen/{sample}.fastq_screen.txt")
+
+            multiqc_trimming_input.append(f"fastp/report/se/{sample}.json")
 
     return multiqc_trimming_input
 

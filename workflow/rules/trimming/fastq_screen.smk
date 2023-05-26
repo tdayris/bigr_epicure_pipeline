@@ -2,8 +2,8 @@ rule fastq_screen_paired:
     input:
         unpack(get_fastq_screen_input),
     output:
-        png=temp("data_output/{sample}.{stream}.png"),
-        txt=temp("fastq_screen/{sample}.{stream}.txt"),
+        png=temp("data_output/{sample}.{stream}.fastq_screen.png"),
+        txt=temp("fastq_screen/{sample}.{stream}.fastq_screen.txt"),
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 12,
