@@ -18,6 +18,6 @@ echo -e "I2\tI2.R1.fq.gz\tI2.R2.fq.gz\t\t\t" >> ../config/design.tsv
 snakemake -c 1 --use-conda -s ../workflow/Snakefile --cache --lint
 
 
-snakemake -c 1 --use-conda -s ../workflow/Snakefile --cache -n -p
+snakemake -c 1 --use-conda -s ../workflow/Snakefile --cache -n -p --configfile ../config/config.yaml
 
 unset SNAKEMAKE_OUTPUT_CACHE
