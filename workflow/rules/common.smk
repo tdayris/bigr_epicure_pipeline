@@ -743,7 +743,7 @@ wildcard_constraints:
     step=r"|".join([".raw", ""]),
     command=r"|".join(["scale-region", "reference-point"]),
     tool=r"|".join(["bowtie2", "sambamba", "deeptools"]),
-    subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve"]),
+    subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve", "corrected"]),
 
 
 ########################
