@@ -20,6 +20,7 @@ rule sambamba_quality_filter:
 rule samtools_filter_canonical_chromosomes:
     input:
         "sambamba/view/{sample}.bam",
+        "sambamba/view/{sample}.bam.bai",
     output:
         bam=temp("samtools/view/{sample}.bam"),
         idx=temp("samtools/view/{sample}.bam.bai"),
