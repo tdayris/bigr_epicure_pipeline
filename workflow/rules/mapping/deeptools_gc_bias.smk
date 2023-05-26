@@ -13,7 +13,7 @@ rule deeptools_estimate_gc_bias:
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/deeptools/compute_gc_bias/{sample}.log"
+        "logs/deeptools/compute_gc_bias/{sample}.log",
     params:
         extra="--plotFileFormat png ",
         genome_size=effective_genome_size,
@@ -40,14 +40,14 @@ rule correct_gc_bias:
         genome=genome_twobit_path,
         freq="deeptools/gc_bias/{sample}.freq.txt",
     output:
-        temp("deeptools/corrected/{sample}.bam")
+        temp("deeptools/corrected/{sample}.bam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/deeptools/correct_gc_bias/{sample}.log"
+        "logs/deeptools/correct_gc_bias/{sample}.log",
     params:
         extra="",
         genome_size=effective_genome_size,
