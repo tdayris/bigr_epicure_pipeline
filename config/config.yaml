@@ -14,7 +14,7 @@ steps:
 
   # Perform fastq trimming and quality checks
   # Automatically turned `true` if mapping is performed
-  trimming: false
+  trimming: true
 
   # Perform fastq trimming + mapping.
   # Missing genome sequences/annotation/indexes will run installation process
@@ -22,12 +22,12 @@ steps:
   # Automatically tuned `true` if coverage analysis is performed
   # Automatically tuned `true` if differential coverage analysis is performed
   # Automatically tuned `true` if motives analysis is performed
-  mapping: false
+  mapping: true
 
   # Perform fastq trimming + mapping + coverage
   # Missing genome sequences/annotation/indexes will run installation process
   # Automatically tuned `true` if differential coverage analysis is performed
-  coverage: false
+  coverage: true
 
   # Perform fastq trimming + mapping + peak-calling
   # Missing genome sequences/annotation/indexes will run installation process
