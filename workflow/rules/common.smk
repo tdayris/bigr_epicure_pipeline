@@ -7,6 +7,12 @@ from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 
+#########################
+### Logging behaviour ###
+#########################
+logging.basicConfig(filename="epicure_pipeline.log", filemode="w", level=logging.DEBUG)
+
+
 ########################
 ### Load design file ###
 ########################
