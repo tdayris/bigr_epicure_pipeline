@@ -16,6 +16,24 @@ rule samtools_index:
         "v1.31.1/bio/samtools/faidx"
 
 
+rule picard_create_sequence_dict:
+    input:
+        "reference/{species}.{build}.{release}.fasta",
+    output:
+        "reference/{species}.{build}.{release}.dict",
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,
+        runtime=lambda wildcards, attempt: attempt * 10,
+        tmpdir=tmp,
+    log:
+        "logs/picard/create_dict/{species}.{build}.{release}.log",
+    params:
+        extra="",
+    wrapper:
+        "v1.31.1/bio/picard/createsequencedictionary"
+
+
 rule sambamba_bam_index:
     input:
         "{tool}/{subcommand}/{sample}.bam",
