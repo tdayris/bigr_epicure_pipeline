@@ -307,9 +307,9 @@ def get_input_per_condition(wildcards, design: pandas.DataFrame = design) -> Lis
 
 
 def get_sample_genome(
-    wildcards, 
+    wildcards,
     design: pandas.DataFrame = design,
-    organism: str = organism,
+    species: str = species,
     build: str = build,
     release: Union[str, int] = release,
 ) -> Tuple[Union[str, int]]:
@@ -317,16 +317,16 @@ def get_sample_genome(
     For a `wildcards.sample` return the corresponding dict:
     {genome, build, release}
     """
-    if "Organism" in design.columns:
-        organism = design["Organism"].loc[wildcards.sample] or organism
-        
+    if "Species" in design.columns:
+        species = design["Species"].loc[wildcards.sample] or species
+
     if "Release" in design.columns:
         release = design["Release"].loc[wildcards.sample] or release
 
     if "Build" in design.columns:
         build = design["Build"].loc[wildcards.sample] or build
 
-    return organism, build, release
+    return species, build, release
 
 
 ###################
