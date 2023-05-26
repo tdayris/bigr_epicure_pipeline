@@ -19,6 +19,7 @@ include: "rules/mapping/sambamba_markdup.smk"
 include: "rules/mapping/deeptools_shift.smk"
 include: "rules/mapping_qc/picard_collect_mutiple_metrics.smk"
 include: "rules/mapping_qc/samtools.smk"
+include: "rules/mapping/samtools_cram.smk"
 # Peak-Calling
 include: "rules/peak-calling/macs2_callpeak.smk"
 # Coverage
