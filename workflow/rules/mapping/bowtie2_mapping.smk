@@ -27,9 +27,9 @@ rule sambamba_sort_bowtie2_aligned:
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/sambamba/sort/{sample}.bowtie2.log",
+        "logs/sambamba/sort/{sample}.bowtie2cr.log",
     params:
-        extra=lambda wildcards, attempt: f"--memory-limit {attempt * 19 * 1024}MiB",
+        extra=lambda wildcards, resources: f"--memory-limit {resources.mem_mb - 1024}MiB",
     wrapper:
         "v1.31.1/bio/sambamba/sort"
 
