@@ -4,11 +4,19 @@
 
 * Rose binsize in DeepTools from 25 to 50 to reduce matrix size
 * MultiQC now sticks to the input file list
+* General bam index rule that works for all `{tool}/{subcommand}/{sample}.bam` files
+* `pipeline_lint.sh` now also performs a dry-run
 
 
 ## Fix
 
 * MultiQC now detects all log files
+* Picard missing input files
+
+
+## Misc
+
+* Blacklist download protocol changed
 
 
 # 0.3.2 – BiGR
