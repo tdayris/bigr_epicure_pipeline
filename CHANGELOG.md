@@ -1,3 +1,10 @@
+# 0.4.1 – Mapping
+
+## Fix
+
+* Snakemake logging does not go to stdout anymore
+* Bam indexed before Samtools sequence retrieval 
+
 # 0.4.0 – Bins
 
 ## Features
