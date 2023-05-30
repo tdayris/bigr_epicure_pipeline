@@ -13,7 +13,6 @@ sink(log_file, type = "message")
 
 
 # Load libraries
-base::library(package = "edgeR", character.only = TRUE)
 base::library(package = "csaw", character.only = TRUE)
 base::message("Libraries loaded")
 
@@ -34,28 +33,111 @@ if (filter_method == "average_log_cpm") {
     # not that good in case of large variability in sequencing library sizes
 
     base::message("Filtering based on count size (aveLogCPM)")
+
     min_cpm <- 5
     if ("min_cpm" %in% base::names(snakemake@params)) {
         min_cpm <- base::as.numeric(x = snakemake@params[["min_cpm"]])
     }
     abundance <- edgeR::aveLogCPM(SummarizedExperiment::asDGEList(counts))
     keep <- abundances > aveLogCPM(min_cpm, lib.size=mean(counts$totals))
-    counts <- counts[keep,]
+    counts <- counts[keep, ]
 } else if (filter_method == "proportion") {
     # Filter based on estimated proportion of signal of interest / noise
     # Not that good if site proportion varies across samples
+
+    base::message("Filtering based on signal / noise proportion")
+
     proportion <- 0.999
     if ("proportion" %in% base::names(x = snakemake@params)) {
         proportion <- base::as.numeric(x = snakemake@params[["proportion"]])
     }
 
     keep <- csaw::filterWindowsProportion(counts)$filter > proportion
-    counts <- counts[keep,]
+    counts <- counts[keep, ]
+} else if (filter_method == "global_enrichment") {
+    # Filtering by global enrichment. The degree of background enrichment
+    # is estimated by counting reads into large bins across the genome.
+    # Not that good if there are differences in the background coverage
+    # across the genome.
+
+    base::message("Filtering based on global enrichment")
+
+    binned <- base::readRDS(
+        file = base::as.character(x = snakemake@input[["binned"]])
+    )
+
+    filter_stat <- csaw::filterWindowsGlobal(
+        data = counts,
+        background = binned
+    )
+
+    keep <- filter_stat$filter > log2(3)
+    counts <- counts[keep, ]
+} else if (filter_method == "local_enrichment") {
+    # Mimicking single-sample peak callers.
+    # Not good if any peaks are in the neighborhood ! Please make
+    # sure there are not peak clusters of any kind.
+
+    base::message("Filtering based on local enrichment")
+
+    neighbor <- base::readRDS(
+        file = base::snakemake@input[["neighbor"]]
+    )
+
+    filter_stat <- csaw::filterWindowsLocal(
+        data = counts,
+        background = neighbor
+    )
+
+    keep <- filter_stat$filter > log2(3)
+    counts <- counts[keep, ]
+} else if (filter_method == "local_maxima") {
+    # Use highest average abundance within 1kbp on either side.
+    # Very aggressive, use only in datasets with sharp binding.
+
+    base::message("Filtering based on local peak maxima")
+
+    maxed <- base::readRDS(
+        file = base::as.character(x = snakemake@input[["maxed"]])
+    )
+
+    filter_stat <- csaw::filterWindowsLocal(
+        data = counts,
+        background = neighbor
+    )
+
+    keep <- filter_stat$filter > log2(3)
+    counts <- counts[keep, ]
+} else if (filter_method == "input_controls") {
+    # Use negative controls for ChIP-seq to account for
+    # both sequencing and mapping biases in ChIP-seq data
+
+    base::message("Filtering based on negative controls (aka Input)")
+
+    input_counts <- base::readRDS(
+        file = base::snakemake@input[["input_counts"]]
+    )
+
+    scale_info <- csaw::scaleControlFilter(
+        data = counts,
+        background <- input_counts
+    )
+
+    filter_stat <- csaw::filterWindowsControl(
+        data = counts,
+        background = input_counts,
+        prior.count = 5,
+        scale.info = scale_info
+    )
+
+    keep <- filter.stat$filter > log2(3)
+    counts <- counts[keep, ]
+} else {
+    base::stop("Unknown filter method")
 }
 
 # Saving results
 base::saveRDS(
-    object = counts, 
+    object = counts,
     file = base::as.character(x = snakemake@output[["rds"]])
 )
-
