@@ -10,6 +10,7 @@
 * Sambamba index bam key error fixed
 * Sambamba filter output format
 * Proper closing syntax in R scripts
+* Unsorted bam before markduplicates
 
 # 0.5.0 – Single-sample Peak Calling
 
