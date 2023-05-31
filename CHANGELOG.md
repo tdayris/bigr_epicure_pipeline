@@ -1,3 +1,14 @@
+# 0.5.0 – Single-sample Peak Calling
+
+## Fix
+
+* Macs2: fixed ambiguous rule resulution
+
+## Features
+
+* Single-sample calling
+* csaw initial release
+
 # 0.4.1 – Mapping
 
 ## Fix
