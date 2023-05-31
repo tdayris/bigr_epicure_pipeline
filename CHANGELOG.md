@@ -4,6 +4,7 @@
 
 * Sambamba index bam key error fixed
 * Sambamba filter output format
+* Proper closing syntax in R scripts
 
 # 0.5.0 – Single-sample Peak Calling
 

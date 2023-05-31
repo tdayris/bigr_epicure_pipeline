@@ -61,3 +61,8 @@ base::saveRDS(
     file = base::as.character(x = snakemake@output[["rds"]])
 )
 base::message("Process over")
+
+# Proper syntax to close the connection for the log file
+# but could be optional for Snakemake wrapper
+base::sink(type = "message");
+base::sink();
