@@ -770,7 +770,7 @@ def get_csaw_count_params(wilcards, design: pandas.DataFrame = design, protocol:
     return extra
 
 
-def get_csaw_read_param(wildcards, design: pandas.DataFrame = design) -> str:
+def get_csaw_read_param(wildcards, design: pandas.DataFrame = design, protocol: str = protocol) -> str:
     """
     Return best parameters for csaw::readParam()
     """
@@ -779,6 +779,9 @@ def get_csaw_read_param(wildcards, design: pandas.DataFrame = design) -> str:
         extra += ", pe = 'both'"
     else:
         extra += ", pe = 'none'"
+
+    if protocol_is_medip(protocol):
+        extra += ", forward=logical(0)"
 
     return extra
     
