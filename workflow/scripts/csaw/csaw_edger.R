@@ -52,7 +52,7 @@ base::message("GLM model fitted")
 
 results <- edgeR::glmQLFTest(
     glmfit = fit,
-    coef = snakemake@params[["factor"]]
+    coef = utils::tail(x = base::colnames(x = design), 1)
 )
 base::message("Window counts tested")
 
