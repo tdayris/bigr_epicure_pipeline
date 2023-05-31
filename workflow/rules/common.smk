@@ -359,6 +359,18 @@ def get_sample_list_from_comparison_name(
     return sample_list
 
 
+def get_comparison_names(config: Dict[str, Any] = config) -> List[str]:
+    """
+    Return complete list of comparisons
+    """
+    comparison_names = []
+    if "differential_peak_coverage" in config.keys():
+        for comparison in config["differential_peak_coverage"]:
+            comparison_names.append(comparison["model_name"])
+    
+    return comparison_names
+
+
 def get_sample_genome(
     wildcards,
     design: pandas.DataFrame = design,
@@ -975,7 +987,17 @@ def targets(
             )
 
     if steps.get("diff_cov", False):
-        
+        comparison_list = get_comparison_names()
+        if len(comparison_list) > 0:
+            expected_targets["annotated_csaw_tsv"] = expand(
+                "data_output/Differential_Binding/{comparison_name}.tsv",
+                comparison_list
+            )
+
+            expected_targets["distance_to_tss"] = expand(
+                "data_output/DifferentialBinding/{comparison_name}/Distance_to_TSS.png"
+                comparison_list
+            )
 
     if steps.get("motives", False):
         raise NotImplementedError("Mitives analysis not yet implemented")
