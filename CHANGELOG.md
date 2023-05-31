@@ -3,6 +3,7 @@
 ## Fix
 
 * Sambamba index bam key error fixed
+* Sambamba filter output format
 
 # 0.5.0 – Single-sample Peak Calling
 
