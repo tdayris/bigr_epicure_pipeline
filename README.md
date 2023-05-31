@@ -176,6 +176,8 @@ A quality control is made _both before and after_ these filters to ensure no val
 
 Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). The same tool was used to normalize tracks, and plot both quality controls and peak coverage heatmaps.
 
+Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. The peak annotation was done using [ChIPSeeker](https://bioconductor.org/packages/release/bioc/vignettes/ChIPseeker/inst/doc/ChIPseeker.html#peak-annotation) version [1.34.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml), using [Org.eg.db](https://bioconductor.org/packages/3.16/data/annotation/html/org.Hs.eg.db.html) annotations version [3.16.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml)
+
 ## Atac-Seq
 
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/bowtie2/align.html#software-dependencies). 
@@ -185,6 +187,8 @@ Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lo
 A quality control is made _both before and after_ these filters to ensure no valuable data is lost. These quality controls are made using [Picard](https://broadinstitute.github.io/picard/command-line-overview.html#CollectMultipleMetrics) version [3.0.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/picard/collectmultiplemetrics.html#software-dependencies), and [Samtools](http://www.htslib.org/doc/samtools-stats.html) version [1.17](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/samtools/stats.html#software-dependencies).
 
 Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). The same tool was used to normalize tracks, and plot both quality controls and peak coverage heatmaps.
+
+Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. The peak annotation was done using [ChIPSeeker](https://bioconductor.org/packages/release/bioc/vignettes/ChIPseeker/inst/doc/ChIPseeker.html#peak-annotation) version [1.34.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml), using [Org.eg.db](https://bioconductor.org/packages/3.16/data/annotation/html/org.Hs.eg.db.html) annotations version [3.16.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml)
 
 ## Cut&Tag
 
@@ -196,6 +200,8 @@ A quality control is made _both before and after_ these filters to ensure no val
 
 Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). The same tool was used to normalize tracks, and plot both quality controls and peak coverage heatmaps.
 
+Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. The peak annotation was done using [ChIPSeeker](https://bioconductor.org/packages/release/bioc/vignettes/ChIPseeker/inst/doc/ChIPseeker.html#peak-annotation) version [1.34.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml), using [Org.eg.db](https://bioconductor.org/packages/3.16/data/annotation/html/org.Hs.eg.db.html) annotations version [3.16.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml)
+
 ## Cut&Run
 
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/bowtie2/align.html#software-dependencies). 
@@ -205,6 +211,8 @@ Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lo
 A quality control is made _both before and after_ these filters to ensure no valuable data is lost. These quality controls are made using [Picard](https://broadinstitute.github.io/picard/command-line-overview.html#CollectMultipleMetrics) version [3.0.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/picard/collectmultiplemetrics.html#software-dependencies), and [Samtools](http://www.htslib.org/doc/samtools-stats.html) version [1.17](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/samtools/stats.html#software-dependencies).
 
 Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). The same tool was used to normalize tracks, and plot both quality controls and peak coverage heatmaps.
+
+Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. The peak annotation was done using [ChIPSeeker](https://bioconductor.org/packages/release/bioc/vignettes/ChIPseeker/inst/doc/ChIPseeker.html#peak-annotation) version [1.34.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml), using [Org.eg.db](https://bioconductor.org/packages/3.16/data/annotation/html/org.Hs.eg.db.html) annotations version [3.16.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml)
 
 ## MeDIP-Seq
 
@@ -216,6 +224,8 @@ A quality control is made _both before and after_ these filters to ensure no val
 
 Genome coverage was assessed with [MeDIPS](https://bioconductor.org/packages/release/bioc/vignettes/MEDIPS/inst/doc/MEDIPS.pdf) version [1.50.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/25802a43cc212fa96d39d16e7cee6b98a356a71e/workflow/envs/medips.yaml#L8).
 
+Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. The peak annotation was done using [ChIPSeeker](https://bioconductor.org/packages/release/bioc/vignettes/ChIPseeker/inst/doc/ChIPseeker.html#peak-annotation) version [1.34.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml), using [Org.eg.db](https://bioconductor.org/packages/3.16/data/annotation/html/org.Hs.eg.db.html) annotations version [3.16.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml)
+
 ## OG-Seq / OxiDIP-Seq
 
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/bowtie2/align.html#software-dependencies). 
@@ -225,6 +235,8 @@ Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lo
 A quality control is made _both before and after_ these filters to ensure no valuable data is lost. These quality controls are made using [Picard](https://broadinstitute.github.io/picard/command-line-overview.html#CollectMultipleMetrics) version [3.0.0](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/picard/collectmultiplemetrics.html#software-dependencies), and [Samtools](http://www.htslib.org/doc/samtools-stats.html) version [1.17](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/wrappers/samtools/stats.html#software-dependencies).
 
 Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.1](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). The same tool was used to normalize tracks, and plot both quality controls and peak coverage heatmaps.
+
+Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. The peak annotation was done using [ChIPSeeker](https://bioconductor.org/packages/release/bioc/vignettes/ChIPseeker/inst/doc/ChIPseeker.html#peak-annotation) version [1.34.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml), using [Org.eg.db](https://bioconductor.org/packages/3.16/data/annotation/html/org.Hs.eg.db.html) annotations version [3.16.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml)
 
 ## Citations
 
@@ -237,6 +249,9 @@ Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/e
 1. MeDIPS: `Lienhard, Matthias, et al. "MEDIPS: genome-wide differential coverage analysis of sequencing data derived from DNA enrichment experiments." Bioinformatics 30.2 (2014): 284-286.`
 1. DeepTools: `Ramírez, Fidel, et al. "deepTools: a flexible platform for exploring deep-sequencing data." Nucleic acids research 42.W1 (2014): W187-W191.`
 1. UCSC: `Nassar LR, Barber GP, Benet-Pagès A, Casper J, Clawson H, Diekhans M, Fischer C, Gonzalez JN, Hinrichs AS, Lee BT, Lee CM, Muthuraman P, Nguy B, Pereira T, Nejad P, Perez G, Raney BJ, Schmelter D, Speir ML, Wick BD, Zweig AS, Haussler D, Kuhn RM, Haeussler M, Kent WJ. The UCSC Genome Browser database: 2023 update. Nucleic Acids Res. 2022 Nov 24;. PMID: 36420891`
+1. ChIPSeeker: `Yu, Guangchuang, Li-Gen Wang, and Qing-Yu He. "ChIPseeker: an R/Bioconductor package for ChIP peak annotation, comparison and visualization." Bioinformatics 31.14 (2015): 2382-2383.`
+1. CSAW: `Lun, Aaron TL, and Gordon K. Smyth. "csaw: a Bioconductor package for differential binding analysis of ChIP-seq data using sliding windows." Nucleic acids research 44.5 (2016): e45-e45.`
+1. Macs2: `Gaspar, John M. "Improved peak-calling with MACS2." BioRxiv (2018): 496521.`
 1. [Snakemake-Wrappers](https://snakemake-wrappers.readthedocs.io/en/v1.31.1/index.html)
 1. [Snakemake-Workflows](https://snakemake.github.io/snakemake-workflow-catalog/?rules=true)
 1. [BiGR Epicure](https://github.com/tdayris/bigr_epicure_pipeline)
