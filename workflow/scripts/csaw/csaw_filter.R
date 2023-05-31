@@ -17,7 +17,7 @@ base::library(package = "csaw", character.only = TRUE)
 base::message("Libraries loaded")
 
 
-counts <- base::readRDS(file = base::as.character(x = snakemake@input[["rds"]]))
+counts <- base::readRDS(file = base::as.character(x = snakemake@input[["counts"]]))
 
 
 filter_method <- "average_log_cpm"
