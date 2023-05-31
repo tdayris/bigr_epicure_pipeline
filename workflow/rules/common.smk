@@ -313,6 +313,48 @@ def get_input_per_condition(wildcards, design: pandas.DataFrame = design) -> Lis
     return list(set(input_samples))
 
 
+def get_condition_from_comparison_name(comparison_name: str, config: Dict[str, Any]) -> Dict[str]:
+    """
+    Return a dictionary containing {ref: reference-level-name, test: tested-level-name}
+    from a comparison name.
+    """
+    if "differential_peak_coverage" in config.keys():
+        for comparison in config["differential_peak_coverage"]:
+            if comparison["model_name"] == comparison_name:
+                return {
+                    "ref": config["differential_peak_coverage"]["reference"],
+                    "test": config["differential_peak_coverage"]["tested"],
+                }
+        raise KeyError(
+            f"{comparison_name} is not a comparison name available in "
+            "configfile. Available names are: "
+            f"{[c['model_name'] for c in config['differential_peak_coverage']]}"
+        )
+    else:
+        return {"ref": None, "test": None}
+
+
+def get_sample_list_from_comparison_name(comparison_name: str, signal: str, design: pandas.DataFrame = design) -> List[str]:
+    """
+    Return list of samples belonging to a given comparison
+    """
+    condition_dict = get_condition_from_comparison_name(wildcards.comparison_name)
+    sample_list = get_samples_per_condition(condition_dict["ref"], design)
+    sample_list += get_samples_per_condition(condition_dict["test"], design)
+    
+    if str(wilcards.signal) == "input":
+        if any(has_input(sample) for sample in sample_list):
+            sample_list = get_input_per_condition(condition_dict["ref"], design)
+            sample_list += get_input_per_condition(condition_dict["test"], design)
+        else:
+            raise ValueError(
+                "No sample have corresponding input. "
+                "Filtering and normalisation cannot be done using Input files."
+            )
+
+    return sample_list
+
+
 def get_sample_genome(
     wildcards,
     design: pandas.DataFrame = design,
@@ -677,6 +719,86 @@ def get_medips_meth_coverage_input(
     return medips_meth_coverage_input
 
 
+def get_csaw_count_input(wildcards, design: pandas.DataFrame = design, protocol: str = protocol) -> Dict[str, Union[str, List[str]]]:
+    """
+    Return expected list of input files for csaw-count
+    """
+    sample_list = get_sample_list_from_comparison_name(wilcards.comparison_name, wilcards.signal, design)
+
+    bam_prefix = "sambamba/markdup"
+    if protocol_is_atac(protocol):
+        bam_prefix = "deeptools/alignment_sieve"
+    elif protocol_is_ogseq(protocol):
+        bam_prefix = "deeptools/corrected"
+
+
+    library = "se"
+    if all(is_paired(sample) for sample in sample_list):
+        library = "pe"
+
+    return {
+        "bams": [f"{bam_prefix}/{sample}.bam" for sample in sample_list],
+        "bais": [f"{bam_prefix}/{sample}.bam.bai" for sample in sample_list],
+        "read_params": f"csaw/readparam.{library}.RDS"
+    }
+
+
+def get_csaw_count_params(wilcards, design: pandas.DataFrame = design, protocol: str = protocol) -> str:
+    """
+    Return best parameters considering IO files list
+    """
+    extra = "width = 100, filter = 10"
+    if str(wildcards.signal) == "binned":
+        extra += ", bin = TRUE"
+
+    if protocol_is_atac(protocol):
+        extra += ", shift = 4"
+
+
+    sample_list = get_sample_list_from_comparison_name(wilcards.comparison_name, wilcards.signal, design)
+    if any(is_paired(sample) for sample in sample_list):
+        if not all(is_paired(sample) for sample in sample_list):
+            raise ValueError(
+                "Analysis of mixed Single-end / Pair-end "
+                "libraries are not yet available"
+            )
+    else:
+        fragment_lengths = ', '.join([has_fragment_size(sample) for sample in sample_list])
+        extra += f", ext=c({fragment_lengths})"
+
+
+    return extra
+
+
+def get_csaw_read_param(wildcards, design: pandas.DataFrame = design) -> str:
+    """
+    Return best parameters for csaw::readParam()
+    """
+    extra = "dedup = TRUE, minq = 30"
+    if str(wilcards.library) == "pe":
+        extra += ", pe = 'both'"
+    else:
+        extra += ", pe = 'none'"
+
+    return extra
+    
+
+def get_csaw_filter_input(wilcards, design: pandas.DataFrame = design) -> Dict[str, str]:
+    """
+    Return the list of input files expected by csaw_filter.R
+    """
+    csaw_filter_input = {
+        "counts": f"csaw/count/{wildcards.comparison_name}.tested.RDS",
+    }
+    input_list = get_sample_list_from_comparison_name(wilcards.comparison_name, "input", design)
+    if len(input_list) > 0:
+        csaw_filter_input["input_counts"] = f"csaw/count/{wildcards.comparison_name}.input.RDS"
+    else:
+        csaw_filter_input["binned"] = f"csaw/count/{wildcards.comparison_name}.binned.RDS"
+
+    return csaw_filter_input
+
+
 ####################
 ### Peak Calling ###
 ####################
@@ -734,6 +856,11 @@ def get_macs2_params(
     return extra
 
 
+############################
+### Differential Binding ###
+############################
+
+
 #############################
 ### Wildcards constraints ###
 #############################
@@ -750,6 +877,8 @@ wildcard_constraints:
     command=r"|".join(["scale-region", "reference-point"]),
     tool=r"|".join(["bowtie2", "sambamba", "deeptools"]),
     subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve", "corrected"]),
+    signal=r"|".join(["tested", "input", "binned"]),
+    library=r"|".join(["se", "pe"])
 
 
 ########################
