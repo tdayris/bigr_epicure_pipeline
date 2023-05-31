@@ -47,6 +47,6 @@ rule sambamba_bam_index:
     log:
         "logs/samtools/index/{tool}.{subcommand}/{sample}.log",
     params:
-        "",
+        extra="",
     wrapper:
         "v1.31.1/bio/sambamba/index"
