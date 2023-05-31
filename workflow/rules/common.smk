@@ -959,15 +959,23 @@ def targets(
                 "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls",
                 sample=design.index,
             )
+            expected_targets["dit_tss_broad"] = expand(
+                "data_output/PeakCalling/broad/Distance_to_TSS/{sample}.png",
+                sample=design.index,
+            )
 
         if config.get("macs2", {}).get("narrow", False):
             expected_targets["macs2_narrow"] = expand(
                 "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
                 sample=design.index,
             )
+            expected_targets["dit_tss_narrow"] = expand(
+                "data_output/PeakCalling/narrow/Distance_to_TSS/{sample}.png",
+                sample=design.index,
+            )
 
     if steps.get("diff_cov", False):
-        raise NotImplementedError("Differential coverage analysis not yet implemented")
+        
 
     if steps.get("motives", False):
         raise NotImplementedError("Mitives analysis not yet implemented")

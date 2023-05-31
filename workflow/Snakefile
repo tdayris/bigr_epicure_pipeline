@@ -33,6 +33,9 @@ include: "rules/differential_binding/csaw_db.smk"
 # QC aggregation
 include: "rules/multiqc/multiqc_mapping.smk"
 include: "rules/multiqc/multiqc_trimming.smk"
+# Annotation
+include: "rules/annotation/chipseeker_peak_annotate.smk"
+include: "rules/annotation/chipseeker_plot_distance_to_tss.smk"
 
 
 

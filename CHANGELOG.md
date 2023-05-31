@@ -1,4 +1,9 @@
-# 0.5.1 – SPC Fixes
+# 0.6.0 – SPC Fixes
+
+## Featues
+
+* ChIPSeeker annotation
+* ChIPSeeker distance to tss graph
 
 ## Fix
 
