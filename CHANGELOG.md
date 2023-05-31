@@ -1,3 +1,9 @@
+# 0.5.1 – SPC Fixes
+
+## Fix
+
+* Sambamba index bam key error fixed
+
 # 0.5.0 – Single-sample Peak Calling
 
 ## Fix
