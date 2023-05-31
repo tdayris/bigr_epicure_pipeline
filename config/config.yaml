@@ -33,7 +33,7 @@ steps:
   # Missing genome sequences/annotation/indexes will run installation process
   # Automatically tuned `true` if differential coverage analysis is performed
   # Automatically tuned `true` if motives analysis is performed
-  calling: false
+  calling: true
 
   # Perform fastq trimming + mapping + peak-calling + differential coverage analysis
   # Missing genome sequences/annotation/indexes will run installation process
