@@ -4,7 +4,7 @@ rule macs2_callpeak_broad:
     output:
         temp(
             multiext(
-                "macs2/callpeak/{sample}",
+                "macs2/callpeak_broad/{sample}",
                 "_peaks.xls",
                 "_peaks.broadPeak",
                 "_peaks.gappedPeak",
@@ -20,12 +20,12 @@ rule macs2_callpeak_broad:
     params:
         lambda wildcards: get_macs2_params(wildcards),
     wrapper:
-        "v1.29.0/bio/macs2/callpeak"
+        "v1.31.1/bio/macs2/callpeak"
 
 
 rule macs2_save_broad:
     input:
-        "macs2/callpeak/{sample}_peaks.xls",
+        "macs2/callpeak_broad/{sample}_peaks.xls",
     output:
         "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls",
     threads: 1
@@ -49,7 +49,7 @@ rule macs2_callpeak_narrow:
     output:
         temp(
             multiext(
-                "macs2/callpeak/{sample}",
+                "macs2/callpeak_narrow/{sample}",
                 "_peaks.xls",
                 "_peaks.narrowPeak",
                 "_summits.bed",
@@ -65,12 +65,12 @@ rule macs2_callpeak_narrow:
     params:
         lambda wildcards: get_macs2_params(wildcards),
     wrapper:
-        "v1.29.0/bio/macs2/callpeak"
+        "v1.31.1/bio/macs2/callpeak"
 
 
 rule macs2_save_narrow:
     input:
-        "macs2/callpeak/{sample}_peaks.xls",
+        "macs2/callpeak_narrow/{sample}_peaks.xls",
     output:
         "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
     threads: 1
@@ -91,9 +91,9 @@ rule macs2_save_narrow:
 # peaktype = {narrow, broad, gapped}
 rule macs2_peaks_to_bed:
     input:
-        peak="macs2/callpeak/{sample}_peaks.{peaktype}Peak",
+        peak="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak",
     output:
-        bed=temp("macs2/callpeak/{sample}_peaks.{peaktype}Peak.bed"),
+        bed=temp("macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,

@@ -313,7 +313,9 @@ def get_input_per_condition(wildcards, design: pandas.DataFrame = design) -> Lis
     return list(set(input_samples))
 
 
-def get_condition_from_comparison_name(comparison_name: str, config: Dict[str, Any]) -> Dict[str]:
+def get_condition_from_comparison_name(
+    comparison_name: str, config: Dict[str, Any]
+) -> Dict[str, Optional[str]]:
     """
     Return a dictionary containing {ref: reference-level-name, test: tested-level-name}
     from a comparison name.
@@ -334,14 +336,16 @@ def get_condition_from_comparison_name(comparison_name: str, config: Dict[str, A
         return {"ref": None, "test": None}
 
 
-def get_sample_list_from_comparison_name(comparison_name: str, signal: str, design: pandas.DataFrame = design) -> List[str]:
+def get_sample_list_from_comparison_name(
+    comparison_name: str, signal: str, design: pandas.DataFrame = design
+) -> List[str]:
     """
     Return list of samples belonging to a given comparison
     """
     condition_dict = get_condition_from_comparison_name(wildcards.comparison_name)
     sample_list = get_samples_per_condition(condition_dict["ref"], design)
     sample_list += get_samples_per_condition(condition_dict["test"], design)
-    
+
     if str(wilcards.signal) == "input":
         if any(has_input(sample) for sample in sample_list):
             sample_list = get_input_per_condition(condition_dict["ref"], design)
@@ -719,18 +723,21 @@ def get_medips_meth_coverage_input(
     return medips_meth_coverage_input
 
 
-def get_csaw_count_input(wildcards, design: pandas.DataFrame = design, protocol: str = protocol) -> Dict[str, Union[str, List[str]]]:
+def get_csaw_count_input(
+    wildcards, design: pandas.DataFrame = design, protocol: str = protocol
+) -> Dict[str, Union[str, List[str]]]:
     """
     Return expected list of input files for csaw-count
     """
-    sample_list = get_sample_list_from_comparison_name(wilcards.comparison_name, wilcards.signal, design)
+    sample_list = get_sample_list_from_comparison_name(
+        wilcards.comparison_name, wilcards.signal, design
+    )
 
     bam_prefix = "sambamba/markdup"
     if protocol_is_atac(protocol):
         bam_prefix = "deeptools/alignment_sieve"
     elif protocol_is_ogseq(protocol):
         bam_prefix = "deeptools/corrected"
-
 
     library = "se"
     if all(is_paired(sample) for sample in sample_list):
@@ -739,11 +746,13 @@ def get_csaw_count_input(wildcards, design: pandas.DataFrame = design, protocol:
     return {
         "bams": [f"{bam_prefix}/{sample}.bam" for sample in sample_list],
         "bais": [f"{bam_prefix}/{sample}.bam.bai" for sample in sample_list],
-        "read_params": f"csaw/readparam.{library}.RDS"
+        "read_params": f"csaw/readparam.{library}.RDS",
     }
 
 
-def get_csaw_count_params(wilcards, design: pandas.DataFrame = design, protocol: str = protocol) -> str:
+def get_csaw_count_params(
+    wilcards, design: pandas.DataFrame = design, protocol: str = protocol
+) -> str:
     """
     Return best parameters considering IO files list
     """
@@ -754,8 +763,9 @@ def get_csaw_count_params(wilcards, design: pandas.DataFrame = design, protocol:
     if protocol_is_atac(protocol):
         extra += ", shift = 4"
 
-
-    sample_list = get_sample_list_from_comparison_name(wilcards.comparison_name, wilcards.signal, design)
+    sample_list = get_sample_list_from_comparison_name(
+        wilcards.comparison_name, wilcards.signal, design
+    )
     if any(is_paired(sample) for sample in sample_list):
         if not all(is_paired(sample) for sample in sample_list):
             raise ValueError(
@@ -763,14 +773,17 @@ def get_csaw_count_params(wilcards, design: pandas.DataFrame = design, protocol:
                 "libraries are not yet available"
             )
     else:
-        fragment_lengths = ', '.join([has_fragment_size(sample) for sample in sample_list])
+        fragment_lengths = ", ".join(
+            [has_fragment_size(sample) for sample in sample_list]
+        )
         extra += f", ext=c({fragment_lengths})"
-
 
     return extra
 
 
-def get_csaw_read_param(wildcards, design: pandas.DataFrame = design, protocol: str = protocol) -> str:
+def get_csaw_read_param(
+    wildcards, design: pandas.DataFrame = design, protocol: str = protocol
+) -> str:
     """
     Return best parameters for csaw::readParam()
     """
@@ -784,20 +797,28 @@ def get_csaw_read_param(wildcards, design: pandas.DataFrame = design, protocol: 
         extra += ", forward=logical(0)"
 
     return extra
-    
 
-def get_csaw_filter_input(wilcards, design: pandas.DataFrame = design) -> Dict[str, str]:
+
+def get_csaw_filter_input(
+    wilcards, design: pandas.DataFrame = design
+) -> Dict[str, str]:
     """
     Return the list of input files expected by csaw_filter.R
     """
     csaw_filter_input = {
         "counts": f"csaw/count/{wildcards.comparison_name}.tested.RDS",
     }
-    input_list = get_sample_list_from_comparison_name(wilcards.comparison_name, "input", design)
+    input_list = get_sample_list_from_comparison_name(
+        wilcards.comparison_name, "input", design
+    )
     if len(input_list) > 0:
-        csaw_filter_input["input_counts"] = f"csaw/count/{wildcards.comparison_name}.input.RDS"
+        csaw_filter_input[
+            "input_counts"
+        ] = f"csaw/count/{wildcards.comparison_name}.input.RDS"
     else:
-        csaw_filter_input["binned"] = f"csaw/count/{wildcards.comparison_name}.binned.RDS"
+        csaw_filter_input[
+            "binned"
+        ] = f"csaw/count/{wildcards.comparison_name}.binned.RDS"
 
     return csaw_filter_input
 
@@ -807,7 +828,9 @@ def get_csaw_filter_input(wilcards, design: pandas.DataFrame = design) -> Dict[s
 ####################
 
 
-def get_macs2_callpeak_input(wildcards, protocol: str = "chip-seq") -> Dict[str, str]:
+def get_macs2_callpeak_input(
+    wildcards, design: pandas.DataFrame = design, protocol: str = "chip-seq"
+) -> Dict[str, str]:
     """
     Return expected list of input files for Macs2 callpeak
     """
@@ -819,9 +842,9 @@ def get_macs2_callpeak_input(wildcards, protocol: str = "chip-seq") -> Dict[str,
     else:
         macs2_callpeak_input["teatment"] = f"sambamba/markdup/{wildcards.sample}.bam"
 
-    input_id = has_input(wilcards.sample, design=design)
+    input_id = has_input(wildcards.sample, design=design)
     if (input_id is not None) and (input_id != ""):
-        if protocol_is_atac(wilcards.sample):
+        if protocol_is_atac(wildcards.sample):
             macs2_callpeak_input[
                 "control"
             ] = f"deeptools/alignment_sieve/{input_id}.bam"
@@ -881,7 +904,7 @@ wildcard_constraints:
     tool=r"|".join(["bowtie2", "sambamba", "deeptools"]),
     subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve", "corrected"]),
     signal=r"|".join(["tested", "input", "binned"]),
-    library=r"|".join(["se", "pe"])
+    library=r"|".join(["se", "pe"]),
 
 
 ########################
@@ -938,7 +961,7 @@ def targets(
             )
 
         if config.get("macs2", {}).get("narrow", False):
-            expected_targets["macs2_broad"] = expand(
+            expected_targets["macs2_narrow"] = expand(
                 "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
                 sample=design.index,
             )

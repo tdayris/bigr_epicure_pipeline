@@ -27,6 +27,9 @@ include: "rules/coverage/deeptools_bamcoverage.smk"
 include: "rules/coverage/deeptools_matrix.smk"
 include: "rules/coverage/deeptools_plot_heatmap.smk"
 include: "rules/mapping_qc/deeptools_fingerprint.smk"
+include: "rules/coverage/csaw_count.smk"
+# Differential binding
+include: "rules/differential_binding/csaw_db.smk"
 # QC aggregation
 include: "rules/multiqc/multiqc_mapping.smk"
 include: "rules/multiqc/multiqc_trimming.smk"
