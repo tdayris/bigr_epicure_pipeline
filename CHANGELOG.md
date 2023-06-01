@@ -14,6 +14,7 @@
 * Unsorted bam before markduplicates
 * Merged blacklist bed files in order to fix spurious normalization in DeepTools
 * MultiQC mapping output
+* Fix Macs2 IO with input files
 
 # 0.5.0 – Single-sample Peak Calling
 

@@ -849,10 +849,10 @@ def get_macs2_callpeak_input(
     macs2_callpeak_input = {}
     if protocol_is_atac(protocol):
         macs2_callpeak_input[
-            "teatment"
+            "treatment"
         ] = f"deeptools/alignment_sieve/{wildcards.sample}.bam"
     else:
-        macs2_callpeak_input["teatment"] = f"sambamba/markdup/{wildcards.sample}.bam"
+        macs2_callpeak_input["treatment"] = f"sambamba/markdup/{wildcards.sample}.bam"
 
     input_id = has_input(wildcards.sample, design=design)
     if (input_id is not None) and (input_id != ""):
