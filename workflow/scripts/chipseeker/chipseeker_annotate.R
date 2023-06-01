@@ -23,7 +23,7 @@ base::library(package = "EnsDb.Mmusculus.v79", character.only = TRUE)
 base::message("Libraries loaded")
 
 organism <- "hg38"
-if "organism" %in% base::names(x = snakemake@params) {
+if ("organism" %in% base::names(x = snakemake@params)) {
     organism <- base::as.character(x = snakemake@params[["organism"]])
 }
 
