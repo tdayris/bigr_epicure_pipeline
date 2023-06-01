@@ -37,7 +37,7 @@ if (organism == "hg38") {
 } else {
     base::stop("Unknown organism annotation")
 }
-seqlevelsStyle(edb) <- "UCSC"
+# seqlevelsStyle(edb) <- "UCSC"
 
 ranges <- NULL
 if ("ranges" %in% base::names(x = snakemake@input)) {
