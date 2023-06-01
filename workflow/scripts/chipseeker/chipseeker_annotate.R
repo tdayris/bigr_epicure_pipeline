@@ -29,15 +29,15 @@ if ("organism" %in% base::names(x = snakemake@params)) {
 
 organism <- base::tolower(x = organism)
 if (organism == "hg38") {
-    anno_db <- org.Hs.eg.db
+    anno_db <- "org.Hs.eg.db"
     edb <- EnsDb.Hsapiens.v86
 } else if (organism == "mm10") {
-    anno_db <- org.Mm.eg.db
+    anno_db <- "org.Mm.eg.db"
     edb <- EnsDb.Mmusculus.v79
 } else {
     base::stop("Unknown organism annotation")
 }
-# seqlevelsStyle(edb) <- "UCSC"
+seqlevelsStyle(edb) <- "Ensembl"
 
 ranges <- NULL
 if ("ranges" %in% base::names(x = snakemake@input)) {
