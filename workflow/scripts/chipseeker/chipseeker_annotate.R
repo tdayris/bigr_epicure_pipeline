@@ -43,7 +43,7 @@ ranges <- NULL
 if ("ranges" %in% base::names(x = snakemake@input)) {
     ranges <- base::readRDS(file = base::as.character(x = snakemake@input[["ranges"]]))
 } else {
-    ranges <- ChIPSeeker::readPeakFile(
+    ranges <- ChIPseeker::readPeakFile(
         peakfile = base::as.character(x = snakemake@input[["bed"]]),
         as = "GRanges"
     )
