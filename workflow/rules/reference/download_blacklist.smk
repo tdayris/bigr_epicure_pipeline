@@ -80,3 +80,21 @@ rule blacklist_mm9:
         "../../envs/bash.yaml"
     shell:
         "wget {params.extra} {params.address} -O {output} > {log} 2>&1"
+
+
+rule bedtools_merge_blacklist:
+    input:
+        "reference/blacklist/{species}.{build}.{release}.bed.gz",
+    output:
+        "reference/blacklist/{species}.{build}.{release}.merged.bed.gz",
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
+        runtime=lambda wildcards, attempt: attempt * 30,
+        tmpdir=tmp,
+    log:
+        "logs/bedtools/merge/blacklist/{species}.{build}.{release}.log",
+    params:
+        extra="-d 5",
+    wrapper:
+        "v1.31.1/bio/bedtools/merge"

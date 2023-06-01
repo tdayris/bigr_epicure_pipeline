@@ -104,7 +104,7 @@ if not bowtie2_index_path:
 # Genome blacklisted regions
 blacklist_path: str = config.get("reference", {}).get("blacklist")
 if not blacklist_path:
-    blacklist_path = f"reference/blacklist/{species}.{build}.{release}.bed.gz"
+    blacklist_path = f"reference/blacklist/{species}.{build}.{release}.merged.bed.gz"
 
 
 # See: https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html
