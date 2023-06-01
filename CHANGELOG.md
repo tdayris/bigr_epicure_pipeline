@@ -1,9 +1,10 @@
-# 0.6.0 – SPC Fixes
+# 0.6.0 – Annotation
 
 ## Featues
 
 * ChIPSeeker annotation
 * ChIPSeeker distance to tss graph
+* DeepTools fingerprint metrics for MultiQC
 
 ## Fix
 
