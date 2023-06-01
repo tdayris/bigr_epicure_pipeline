@@ -12,6 +12,7 @@ rule deeptools_plot_fingerprint:
             },
         ),
         counts=temp("deeptools/plot_fingerprint/raw_counts.tab"),
+        metrics=temp("deeptools/plot_fingerprint/qc_metrics.txt"),
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 4 * 1024,
