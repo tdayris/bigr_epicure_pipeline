@@ -13,6 +13,7 @@
 * Proper closing syntax in R scripts
 * Unsorted bam before markduplicates
 * Merged blacklist bed files in order to fix spurious normalization in DeepTools
+* MultiQC mapping output
 
 # 0.5.0 – Single-sample Peak Calling
 

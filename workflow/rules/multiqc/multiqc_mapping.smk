@@ -8,7 +8,7 @@ rule multiqc_mapping:
             category="Quality Control",
             labels={"type": "html", "category": "QC"},
         ),
-        directory("data_output/QC/Mapping.QC.data"),
+        directory("data_output/QC/Mapping.QC_data"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,
