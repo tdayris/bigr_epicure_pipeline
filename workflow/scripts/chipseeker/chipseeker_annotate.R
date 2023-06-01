@@ -68,6 +68,7 @@ base::message(command)
 
 # Annotating
 annotation <- base::eval(base::parse(text = command))
+base::message("Data annotated")
 
 
 # Saving results
@@ -75,6 +76,7 @@ base::saveRDS(
     object = annotation,
     file = base::as.character(x = snakemake@output[["rds"]])
 )
+base::message("RDS saved")
 
 utils::write.table(
     base::as.data.frame(annotation),
