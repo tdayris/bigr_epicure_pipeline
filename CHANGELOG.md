@@ -5,6 +5,8 @@
 * ChIPSeeker annotation
 * ChIPSeeker distance to tss graph
 * DeepTools fingerprint metrics for MultiQC
+* Upset-plot in ChIPSeeker
+* Cumulative histogram in ChIPSeeker
 
 ## Fix
 

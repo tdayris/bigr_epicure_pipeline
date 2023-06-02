@@ -917,6 +917,7 @@ wildcard_constraints:
     subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve", "corrected"]),
     signal=r"|".join(["tested", "input", "binned"]),
     library=r"|".join(["se", "pe"]),
+    chipseeker_plot=r"|".join(["UpsetVenn", "Feature_Distribution", "Distance_to_TSS"])
 
 
 ########################
@@ -982,7 +983,7 @@ def targets(
                 sample=design.index,
             )
             expected_targets["dit_tss_narrow"] = expand(
-                "data_output/PeakCalling/narrow/Distance_to_TSS/{sample}.png",
+                "data_output/PeakCalling/narrow/{chipseeker_plot}/{sample}.png",
                 sample=design.index,
             )
 
