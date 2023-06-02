@@ -10,13 +10,13 @@
 log_file <- file(snakemake@log[[1]], open = "wt")
 sink(log_file)
 sink(log_file, type = "message")
-
+base::message("Logging defined")
 
 # Load libraries
 base::library(package = "ChIPseeker", character.only = TRUE)
 base::message("Libraries loaded")
 
-ranges <- readRDS(
+ranges <- base::readRDS(
     file = base::as.character(x = snakemake@input[["ranges"]])
 )
 base::message("Ranges loaded")
