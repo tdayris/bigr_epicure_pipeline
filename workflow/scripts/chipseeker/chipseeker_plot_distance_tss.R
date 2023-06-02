@@ -30,10 +30,7 @@ png(
   type = "cairo"
 )
 
-ChIPseeker::plotDistToTSS(
-    peakAnno = ranges,
-    title = "Distribution of transcription factor-binding loci\nrelative to TSS"
-)
+ChIPseeker::plotDistToTSS(ranges)
 
 
 dev.off()
