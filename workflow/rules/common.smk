@@ -985,6 +985,7 @@ def targets(
             expected_targets["dit_tss_narrow"] = expand(
                 "data_output/PeakCalling/narrow/{chipseeker_plot}/{sample}.png",
                 sample=design.index,
+                chipseeker_plot=["UpsetVenn", "Feature_Distribution", "Distance_to_TSS"]
             )
 
     if steps.get("diff_cov", False):
