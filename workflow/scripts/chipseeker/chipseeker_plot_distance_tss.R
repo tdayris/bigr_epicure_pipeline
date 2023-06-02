@@ -17,7 +17,7 @@ base::library(package = "ChIPseeker", character.only = TRUE)
 base::message("Libraries loaded")
 
 ranges <- readRDS(
-    file = base::as.character(x = snakemake@input[["rds"]])
+    file = base::as.character(x = snakemake@input[["ranges"]])
 )
 
 # Build plot
@@ -31,13 +31,13 @@ png(
 
 ChIPSeeker::plotDistToTSS(
     peakAnno,
-    title="Distribution of transcription factor-binding loci\nrelative to TSS"
+    title = "Distribution of transcription factor-binding loci\nrelative to TSS"
 )
 
 
-dev.off();
+dev.off()
 
 # Proper syntax to close the connection for the log file
 # but could be optional for Snakemake wrapper
-base::sink(type = "message");
-base::sink();
+base::sink(type = "message")
+base::sink()
