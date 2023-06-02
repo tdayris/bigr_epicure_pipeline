@@ -31,7 +31,7 @@ png(
 )
 
 ChIPseeker::plotDistToTSS(
-    peakAnno,
+    peakAnno = ranges,
     title = "Distribution of transcription factor-binding loci\nrelative to TSS"
 )
 
