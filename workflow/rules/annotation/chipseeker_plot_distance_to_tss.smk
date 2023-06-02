@@ -9,7 +9,7 @@ rule chipseeker_plot_distance_to_tss_single_sample:
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/annotate/{sample}.{peaktype}.log"
+        "logs/chipseeker/distanceplot/{sample}.{peaktype}.log"
     params:
         extra=""
     conda:
@@ -29,7 +29,7 @@ rule chipseeker_plot_distance_to_tss_differential_binding:
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/annotate/{comparison_name}.log"
+        "logs/chipseeker/distanceplot/{comparison_name}.log"
     params:
         extra=""
     conda:

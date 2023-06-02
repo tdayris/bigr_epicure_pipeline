@@ -16,6 +16,7 @@
 * MultiQC mapping output
 * Fix Macs2 IO with input files
 * Fix annotation syntax error
+* Fix KeyError in chipseeker plot
 
 # 0.5.0 – Single-sample Peak Calling
 

@@ -3,7 +3,7 @@
 # __email__ = "thibault.dayris@gustaveroussy.fr"
 # __license__ = "MIT"
 
-# This script filters counted reads with csaw
+# This script annotates peaks with CHiPSeeker
 
 # Sink the stderr and stdout to the snakemake log file
 # https://stackoverflow.com/a/48173272

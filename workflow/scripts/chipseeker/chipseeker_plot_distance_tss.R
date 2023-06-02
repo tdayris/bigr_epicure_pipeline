@@ -3,7 +3,7 @@
 # __email__ = "thibault.dayris@gustaveroussy.fr"
 # __license__ = "MIT"
 
-# This script filters counted reads with csaw
+# This script plots distance to TSS using CHiPSeeker
 
 # Sink the stderr and stdout to the snakemake log file
 # https://stackoverflow.com/a/48173272
@@ -19,6 +19,7 @@ base::message("Libraries loaded")
 ranges <- readRDS(
     file = base::as.character(x = snakemake@input[["ranges"]])
 )
+base::message("Ranges loaded")
 
 # Build plot
 png(
@@ -27,15 +28,16 @@ png(
   height = 768,
   units = "px",
   type = "cairo"
-);
+)
 
-ChIPSeeker::plotDistToTSS(
+ChIPseeker::plotDistToTSS(
     peakAnno,
     title = "Distribution of transcription factor-binding loci\nrelative to TSS"
 )
 
 
 dev.off()
+base::message("Plot saved")
 
 # Proper syntax to close the connection for the log file
 # but could be optional for Snakemake wrapper
