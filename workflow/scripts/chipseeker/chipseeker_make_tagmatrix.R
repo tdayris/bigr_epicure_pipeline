@@ -20,7 +20,7 @@ base::message("Libraries loaded")
 
 # Load peaks
 peaks <- base::readRDS(
-    file = base::as.character(x = snakemake@input[["peaks"]])
+    file = base::as.character(x = snakemake@input[["bed"]])
 )
 base::message("Peaks loaded")
 
