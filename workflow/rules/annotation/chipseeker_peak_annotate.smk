@@ -7,7 +7,7 @@ rule chipseeker_annotate_peak_from_ranges:
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
-        runtime=lambda wildcards, attempt: attempt * 20,
+        runtime=lambda wildcards, attempt: attempt * 40,
         tmpdir=tmp,
     log:
         "logs/chipseeker/annotate/{comparison_name}.log"
@@ -28,7 +28,7 @@ rule chipseeker_annotate_peak_from_bed:
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
-        runtime=lambda wildcards, attempt: attempt * 20,
+        runtime=lambda wildcards, attempt: attempt * 40,
         tmpdir=tmp,
     log:
         "logs/chipseeker/annotate/{sample}.{peaktype}.log"
