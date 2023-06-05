@@ -1,7 +1,7 @@
 rule deeptools_compute_matrix:
     input:
         bed=expand(
-            "macs2/callpeak/{sample}_peaks.{peaktype}Peak.bed",
+            "macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
             sample=design.index,
             allow_missing=True,
         ),

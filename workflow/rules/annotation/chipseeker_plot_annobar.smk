@@ -2,7 +2,7 @@ rule chipseeker_plot_annobar_single_sample:
     input:
         ranges="chipseeker/annotation/{sample}.{peaktype}.RDS",
     output:
-        png="data_output/PeakCalling/{peaktype}/Feature_Distribution/{sample}.png"
+        png="data_output/Peak_Calling/{peaktype}/Feature_Distribution/{sample}.png"
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
@@ -22,7 +22,7 @@ rule chipseeker_plot_annobar_differential_binding:
     input:
         ranges="chipseeker/annotation/{comparison_name}.RDS",
     output:
-        png="data_output/DifferentialBinding/{comparison_name}/Feature_Distribution.png"
+        png="data_output/Differential_Binding/{comparison_name}/Feature_Distribution.png"
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,

@@ -6,7 +6,7 @@ rule deeptools_bamcoverage:
         bai="sambamba/markdup/{sample}.bam.bai",
         blacklist=blacklist_path,
     output:
-        temp("data_output/Coverage/{sample}.bw"),
+        "data_output/Coverage/{sample}.bw",
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 4 * 1024,
