@@ -4,9 +4,10 @@ channels:
   - nodefaults
 dependencies:
   - bioconductor-org.mm.eg.db=3.16.0
-  # - bioconductor-txdb.mmusculus.ucsc.mm10.knowngene=3.16.0
+  - bioconductor-txdb.mmusculus.ucsc.mm10.knowngene=3.16.0
   - bioconductor-ensdb.mmusculus.v79=2.99.0
   - bioconductor-org.hs.eg.db=3.16.0
-  # - bioconductor-txdb.hsapiens.ucsc.hg38.knowngene=3.16.0
+  - bioconductor-txdb.hsapiens.ucsc.hg38.knowngene=3.16.0
   - bioconductor-ensdb.hsapiens.v86=2.99.0
   - bioconductor-chipseeker=1.34.0
+  - ggupset=0.3.0
