@@ -30,7 +30,7 @@ rule macs2_save_broad:
         "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls",
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1024,
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
         runtime=lambda wildcards, attempt: attempt * 5,
         tmpdir=tmp,
     log:
@@ -75,7 +75,7 @@ rule macs2_save_narrow:
         "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1024,
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
         runtime=lambda wildcards, attempt: attempt * 5,
         tmpdir=tmp,
     log:
