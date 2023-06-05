@@ -15,7 +15,7 @@ rule chipseeker_genebody_cov_single_sample:
     conda:
         "../../envs/chipseeker.yaml"
     script:
-        "../../scripts/chipseeker/chipseeker_gene_body.R"
+        "../../scripts/chipseeker/chipseeker_plot_gene_body.R"
 
 
 rule chipseeker_genebody_cov_differential_binding:
@@ -35,4 +35,4 @@ rule chipseeker_genebody_cov_differential_binding:
     conda:
         "../../envs/chipseeker.yaml"
     script:
-        "../../scripts/chipseeker/chipseeker_gene_body.R"
+        "../../scripts/chipseeker/chipseeker_plot_gene_body.R"
