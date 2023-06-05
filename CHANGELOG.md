@@ -7,6 +7,7 @@
 * DeepTools fingerprint metrics for MultiQC
 * Upset-plot in ChIPSeeker
 * Cumulative histogram in ChIPSeeker
+* New gene body and genome coverage plots
 
 ## Fix
 
@@ -19,6 +20,8 @@
 * Fix Macs2 IO with input files
 * Fix annotation syntax error
 * Fix KeyError in chipseeker plot
+* Fix naming scheme
+* Fix missing ggupset library
 
 # 0.5.0 – Single-sample Peak Calling
 
