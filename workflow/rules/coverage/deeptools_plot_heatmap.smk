@@ -2,7 +2,7 @@ rule deeptools_plot_heatmap:
     input:
         "deeptools/matrix_files/{command}/{peaktype}.matrix.gz",
     output:
-        report(
+        heatmap_img=report(
             "data_output/Heatmaps/{peaktype}/{command}.png",
             caption="../../report/coverage/plot_heatmap.rst",
             category="Results",
