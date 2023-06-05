@@ -1,6 +1,6 @@
 rule chipseeker_genebody_cov_single_sample:
     input:
-        ranges="chipseeker/annotation/{sample}.{peaktype}.RDS",
+        ranges="chipseeker/tagmatrix/{sample}.{peaktype}.RDS",
     output:
         png="data_output/Peak_Calling/{peaktype}/Gene_Body_Coverage/{sample}.png"
     threads: 1
