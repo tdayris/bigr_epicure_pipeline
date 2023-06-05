@@ -917,7 +917,8 @@ wildcard_constraints:
     subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve", "corrected"]),
     signal=r"|".join(["tested", "input", "binned"]),
     library=r"|".join(["se", "pe"]),
-    chipseeker_plot=r"|".join(["UpsetVenn", "Feature_Distribution", "Distance_to_TSS"])
+    chipseeker_plot=r"|".join(["UpsetVenn", "Feature_Distribution", "Distance_to_TSS"]),
+    comparison_name=r"|".join(get_comparison_names()),
 
 
 ########################
@@ -985,7 +986,7 @@ def targets(
             expected_targets["dit_tss_narrow"] = expand(
                 "data_output/PeakCalling/narrow/{chipseeker_plot}/{sample}.png",
                 sample=design.index,
-                chipseeker_plot=["UpsetVenn", "Feature_Distribution", "Distance_to_TSS"]
+                chipseeker_plot=["UpsetVenn", "Feature_Distribution", "Distance_to_TSS"],
             )
 
     if steps.get("diff_cov", False):
