@@ -897,7 +897,13 @@ def get_macs2_params(
 ############################
 ### Differential Binding ###
 ############################
-
+chipseeker_plot_list = [
+    "UpsetVenn",
+    "Feature_Distribution",
+    "Distance_to_TSS",
+    "Genome_Coverage",
+    "Gene_Body_Coverage",
+]
 
 #############################
 ### Wildcards constraints ###
@@ -917,7 +923,7 @@ wildcard_constraints:
     subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve", "corrected"]),
     signal=r"|".join(["tested", "input", "binned"]),
     library=r"|".join(["se", "pe"]),
-    chipseeker_plot=r"|".join(["UpsetVenn", "Feature_Distribution", "Distance_to_TSS"]),
+    chipseeker_plot=r"|".join(chipseeker_plot_list),
     comparison_name=r"|".join(get_comparison_names()),
 
 
@@ -974,8 +980,11 @@ def targets(
                 sample=design.index,
             )
             expected_targets["dit_tss_broad"] = expand(
-                "data_output/PeakCalling/broad/Distance_to_TSS/{sample}.png",
+                "data_output/Peak_Calling/broad/Distance_to_TSS/{sample}.png",
                 sample=design.index,
+            )
+            expected_targets["deeptools_heatmap"] = expand(
+                "data_output/Heatmaps/broad/{command}.png", command=["reference-point"]
             )
 
         if config.get("macs2", {}).get("narrow", False):
@@ -984,9 +993,12 @@ def targets(
                 sample=design.index,
             )
             expected_targets["dit_tss_narrow"] = expand(
-                "data_output/PeakCalling/narrow/{chipseeker_plot}/{sample}.png",
+                "data_output/Peak_Calling/narrow/{chipseeker_plot}/{sample}.png",
                 sample=design.index,
-                chipseeker_plot=["UpsetVenn", "Feature_Distribution", "Distance_to_TSS"],
+                chipseeker_plot=chipseeker_plot_list,
+            )
+            expected_targets["deeptools_heatmap"] = expand(
+                "data_output/Heatmaps/narrow/{command}.png", command=["reference-point"]
             )
 
     if steps.get("diff_cov", False):
@@ -997,8 +1009,9 @@ def targets(
             )
 
             expected_targets["distance_to_tss"] = expand(
-                "data_output/DifferentialBinding/{comparison_name}/Distance_to_TSS.png",
+                "data_output/Differential_Binding/{comparison_name}/{chipseeker_plot}.png",
                 comparison_list,
+                chipseeker_plot=chipseeker_plot_list,
             )
 
     if steps.get("motives", False):

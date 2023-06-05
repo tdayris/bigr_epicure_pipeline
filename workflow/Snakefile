@@ -38,6 +38,8 @@ include: "rules/annotation/chipseeker_peak_annotate.smk"
 include: "rules/annotation/chipseeker_plot_distance_to_tss.smk"
 include: "rules/annotation/chipseeker_plot_annobar.smk"
 include: "rules/annotation/chipseeker_plot_upsetvenn.smk"
+include: "rules/annotation/chipseeker_genebody.smk"
+include: "rules/annotation/chipseeker_genomecov.smk"
 
 
 
