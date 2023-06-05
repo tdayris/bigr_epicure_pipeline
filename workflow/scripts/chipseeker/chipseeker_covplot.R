@@ -30,7 +30,7 @@ png(
   type = "cairo"
 )
 
-ChIPseeker::plotDistToTSS(ranges)
+ChIPseeker::covplot(ranges)
 
 
 dev.off()
