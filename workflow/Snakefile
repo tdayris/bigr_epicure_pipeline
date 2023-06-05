@@ -41,6 +41,9 @@ include: "rules/annotation/chipseeker_plot_annobar.smk"
 include: "rules/annotation/chipseeker_plot_upsetvenn.smk"
 include: "rules/annotation/chipseeker_genebody.smk"
 include: "rules/annotation/chipseeker_genomecov.smk"
+# Oxidip
+include: "rules/mapping/deeptools_gc_bias.smk"
+include: "rules/indexing/fasta_to_twobit.smk"
 
 
 
