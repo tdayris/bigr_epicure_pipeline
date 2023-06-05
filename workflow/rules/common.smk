@@ -394,6 +394,18 @@ def get_sample_genome(
     return species, build, release
 
 
+def get_tested_sample_list(design: pandas.DataFrame = design) -> List[str]:
+    """
+    Return list of non-input sample ids
+    """
+    sample_list = design.index.tolist()
+    if "Input" in design.columns:
+        input_list = [i for i in design.Input if i != ""]
+        sample_list = list(set(sample_list) - set(input_list))
+
+    return sample_list
+
+
 ###################
 ### IO function ###
 ###################
@@ -970,18 +982,19 @@ def targets(
 
     if steps.get("coverage", False):
         expected_targets["bam_coverage"] = expand(
-            "data_output/Coverage/{sample}.bw", sample=design.index
+            "data_output/Coverage/{sample}.bw", sample=get_tested_sample_list()
         )
 
     if steps.get("calling", False):
         if config.get("macs2", {}).get("broad", False):
             expected_targets["macs2_broad"] = expand(
                 "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls",
-                sample=design.index,
+                sample=get_tested_sample_list(),
             )
             expected_targets["dit_tss_broad"] = expand(
-                "data_output/Peak_Calling/broad/Distance_to_TSS/{sample}.png",
-                sample=design.index,
+                "data_output/Peak_Calling/broad/{chipseeker_plot}/{sample}.png",
+                sample=get_tested_sample_list(),
+                chipseeker_plot=chipseeker_plot_list,
             )
             expected_targets["deeptools_heatmap"] = expand(
                 "data_output/Heatmaps/broad/{command}.png", command=["reference-point"]
@@ -990,11 +1003,11 @@ def targets(
         if config.get("macs2", {}).get("narrow", False):
             expected_targets["macs2_narrow"] = expand(
                 "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
-                sample=design.index,
+                sample=get_tested_sample_list(),
             )
             expected_targets["dit_tss_narrow"] = expand(
                 "data_output/Peak_Calling/narrow/{chipseeker_plot}/{sample}.png",
-                sample=design.index,
+                sample=get_tested_sample_list(),
                 chipseeker_plot=chipseeker_plot_list,
             )
             expected_targets["deeptools_heatmap"] = expand(
