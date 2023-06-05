@@ -988,7 +988,7 @@ def targets(
     if steps.get("calling", False):
         if config.get("macs2", {}).get("broad", False):
             expected_targets["macs2_broad"] = expand(
-                "data_output/Peak_Calling/macs2/{sample}_broad_peaks.xls",
+                "data_output/Peak_Calling/broad/{sample}_peaks.xls",
                 sample=get_tested_sample_list(),
             )
             expected_targets["dit_tss_broad"] = expand(
@@ -1002,7 +1002,7 @@ def targets(
 
         if config.get("macs2", {}).get("narrow", False):
             expected_targets["macs2_narrow"] = expand(
-                "data_output/Peak_Calling/macs2/{sample}_narrow_peaks.xls",
+                "data_output/Peak_Calling/narrow/{sample}_peaks.xls",
                 sample=get_tested_sample_list(),
             )
             expected_targets["dit_tss_narrow"] = expand(
