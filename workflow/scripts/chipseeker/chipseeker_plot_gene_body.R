@@ -26,7 +26,7 @@ tagmatrix_list <- base::lapply(
     snakemake@input[["tagmatrix_list"]],
     function(tagmatrix) base::readRDS(file = base::as.character(x = tagmatrix))
 )
-base::message("File list acquired")
+base::message("tag-matrices list acquired")
 
 
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
