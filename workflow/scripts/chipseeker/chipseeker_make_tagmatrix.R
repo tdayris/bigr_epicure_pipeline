@@ -14,14 +14,24 @@ base::message("Logging defined")
 
 # Load libraries
 base::library(package = "ChIPseeker", character.only = TRUE)
-base::library(package = "TxDb.Hsapiens.UCSC.hg38.knownGene", character.only = TRUE)
-base::library(package = "TxDb.Mmusculus.UCSC.mm10.knownGene", character.only = TRUE)
+base::library(
+    package = "TxDb.Hsapiens.UCSC.hg38.knownGene",
+    character.only = TRUE
+)
+base::library(
+    package = "TxDb.Mmusculus.UCSC.mm10.knownGene",
+    character.only = TRUE
+)
 base::message("Libraries loaded")
 
 # Load peaks
-peaks <- base::readRDS(
-    file = base::as.character(x = snakemake@input[["bed"]])
-)
+if ("bed" %in% base::names(x = snakemake@input)) {
+    peaks <- base::as.character(x = snakemake@input[["bed"]])
+} else if ("ranges" %in% base::names(x = snakemake@input)) {
+    peaks <- base::readRDS(
+        file = base::as.character(x = snakemake@input[["ranges"]])
+    )
+}
 base::message("Peaks loaded")
 
 # Select transcript database
@@ -34,16 +44,16 @@ if ("organism" %in% base::names(x = snakemake@params)) {
 
 # Acquire promoter position
 promoter <- ChIPseeker::getPromoters(
-    TxDb=txdb, 
-    upstream=3000, 
-    downstream=3000,
-    by='gene'
+    TxDb = txdb,
+    upstream = 3000,
+    downstream = 3000,
+    by = 'gene'
 )
 
 # Build tagmatrix
 tagMatrix <- ChIPseeker::getTagMatrix(
-    peak=peaks, 
-    windows=promoter
+    peak = peaks,
+    windows = promoter
 )
 base::message("TagMatrix built")
 
