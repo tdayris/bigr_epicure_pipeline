@@ -15,18 +15,17 @@ base::message("Logging defined")
 # Load libraries
 base::library(package = "ChIPseeker", character.only = TRUE)
 base::library(
-    package = "TxDb.Hsapiens.UCSC.hg38.knownGene", character.only = TRUE
+    package = "TxDb.Hsapiens.UCSC.hg38.knownGene",
+    character.only = TRUE
 )
 base::library(
-    package = "TxDb.Mmusculus.UCSC.mm10.knownGene", character.only = TRUE
+    package = "TxDb.Mmusculus.UCSC.mm10.knownGene",
+    character.only = TRUE
 )
 base::message("Libraries loaded")
 
-tagmatrix_list <- base::lapply(
-    snakemake@input[["tagmatrix_list"]],
-    function(tagmatrix) base::readRDS(file = base::as.character(x = tagmatrix))
-)
-base::message("tag-matrices list acquired")
+files <- base::as.character(x = snakemake@input[["bed"]])
+base::message("File list acquired")
 
 
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
@@ -46,14 +45,14 @@ png(
 )
 
 ChIPseeker::plotPeakProf2(
-    tagmatrix_list,
-    upstream = rel(0.2), 
+    peak = files,
+    upstream = rel(0.2),
     downstream = rel(0.2),
-    conf = 0.95, 
-    by = "gene", 
+    conf = 0.95,
+    by = "gene",
     type = "body",
-    TxDb = txdb, 
-    facet = "row", 
+    TxDb = txdb,
+    facet = "row",
     nbin = 800
 )
 

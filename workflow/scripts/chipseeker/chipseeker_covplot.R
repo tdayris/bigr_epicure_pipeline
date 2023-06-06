@@ -21,7 +21,6 @@ ranges <- ChIPseeker::readPeakFile(
   peakfile = bed_file,
   as = "GRanges"
 )
-base::print(utils::head(ranges))
 base::message("Ranges loaded")
 
 # Build plot
