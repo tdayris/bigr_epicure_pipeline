@@ -14,8 +14,12 @@ base::message("Logging defined")
 
 # Load libraries
 base::library(package = "ChIPseeker", character.only = TRUE)
-base::library(package = "TxDb.Hsapiens.UCSC.hg38.knownGene", character.only = TRUE)
-base::library(package = "TxDb.Mmusculus.UCSC.mm10.knownGene", character.only = TRUE)
+base::library(
+    package = "TxDb.Hsapiens.UCSC.hg38.knownGene", character.only = TRUE
+)
+base::library(
+    package = "TxDb.Mmusculus.UCSC.mm10.knownGene", character.only = TRUE
+)
 base::message("Libraries loaded")
 
 files <- base::sapply(
@@ -42,7 +46,7 @@ png(
 )
 
 ChIPseeker::plotPeakProf2(
-    files, 
+    files,
     upstream = rel(0.2), 
     downstream = rel(0.2),
     conf = 0.95, 
