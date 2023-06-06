@@ -16,3 +16,39 @@ rule deeptools_alignment_sieve:
         extra=" --ATACshift ",
     wrapper:
         "master/bio/deeptools/alignmentsieve"
+
+
+rule sort_deeptools_alignment_sieve:
+    input:
+        "deeptools/alignment_sieve/{sample}.bam"
+    output:
+        temp("deeptools/sorted_sieve/{sample}.bam"),
+    threads: config.get("max_threads", 20)
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 20 * 1024,
+        runtime=lambda wildcards, attempt: attempt * 60 * 5,
+        tmpdir=tmp,
+    log:
+        "logs/sambamba/sort/{sample}.deeptools_alignment_sieve.log",
+    params:
+        extra=lambda wildcards, resources: f"--memory-limit {resources.mem_mb - 1024}MiB",
+    wrapper:
+        "v1.31.1/bio/sambamba/sort"
+
+
+rule sambamba_index_deeptools_alignment_sieve:
+    input:
+        "deeptools/sorted_sieve/{sample}.bam"
+    output:
+        temp("deeptools/sorted_sieve/{sample}.bam.bai"),
+    threads: config.get("max_threads", 20)
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,
+        runtime=lambda wildcards, attempt: attempt * 45,
+        tmpdir=tmp,
+    params:
+        extra="",
+    log:
+        "logs/sambamba/index/{sample}.deeptools_alignment_sieve.log",
+    wrapper:
+        "v1.31.1/bio/sambamba/index"

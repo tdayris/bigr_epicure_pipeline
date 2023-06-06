@@ -572,11 +572,11 @@ def get_samtools_stats_input(wildcards, protocol: str = protocol) -> Dict[str, s
             "bai": f"deeptools/corrected/{wildcards.sample}.bam.bai",
         }
 
-    # if protocol_is_atac(protocol):
-    #     return {
-    #         "bam": f"deeptools/alignment_sieve/{wildcards.sample}.bam",
-    #         "bai": f"deeptools/alignment_sieve/{wildcards.sample}.bam.bai",
-    #     }
+    if protocol_is_atac(protocol):
+        return {
+            "bam": f"deeptools/sorted_sieve/{wildcards.sample}.bam",
+            "bai": f"deeptools/sorted_sieve/{wildcards.sample}.bam.bai",
+        }
 
     return {
         "bam": f"sambamba/markdup/{wildcards.sample}.bam",
@@ -648,10 +648,10 @@ def get_deeptools_bamcoverage_input(
     """
     deeptools_bamcoverage_input = {"blacklist": blacklist_path}
     if protocol_is_atac(protocol):
-        deeptools_bamcoverage_input["bam"] = "deeptools/alignment_sieve/{sample}.bam"
+        deeptools_bamcoverage_input["bam"] = "deeptools/sorted_sieve/{sample}.bam"
         deeptools_bamcoverage_input[
             "bai"
-        ] = "deeptools/alignment_sieve/{sample}.bam.bai"
+        ] = "deeptools/sorted_sieve/{sample}.bam.bai"
     else:
         deeptools_bamcoverage_input["bam"] = "sambamba/markdup/{sample}.bam"
         deeptools_bamcoverage_input["bai"] = "sambamba/markdup/{sample}.bam.bai"
@@ -666,7 +666,7 @@ def get_deeptools_plotfingerprint_input(
     Return the list of expected input files for deeptools plot fingerprint
     """
     bam_prefix = (
-        "deeptools/alignment_sieve"
+        "deeptools/sorted_sieve"
         if protocol_is_atac(protocol)
         else "sambamba/markdup"
     )
