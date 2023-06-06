@@ -19,6 +19,7 @@ base::message("Libraries loaded")
 ranges <- base::readRDS(
     file = base::as.character(x = snakemake@input[["ranges"]])
 )
+base::print(utils::head(ranges))
 base::message("Ranges loaded")
 
 # Build plot
@@ -30,7 +31,7 @@ png(
   type = "cairo"
 )
 
-ChIPseeker::upsetplot(ranges, vennpie=TRUE)
+ChIPseeker::upsetplot(ranges, vennpie = TRUE)
 
 
 dev.off()

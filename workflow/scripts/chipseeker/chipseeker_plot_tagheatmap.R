@@ -19,7 +19,7 @@ base::message("Libraries loaded")
 tagmatrix_list <- base::lapply(
     snakemake@input[["ranges"]],
     function(range_input) base::readRDS(
-        file=base::as.character(x = range_input)
+        file = base::as.character(x = range_input)
     )
 )
 base::message("Ranges loaded")
