@@ -36,7 +36,7 @@ rule csaw_count_edger:
     params:
         extra="",
         design=design.copy(),
-        formula=lambda wildcards, attempt: get_edger_formula(wildcards),
+        formula=lambda wildcards: get_edger_formula(wildcards),
     conda:
         "../../envs/csaw.yaml"
     script:

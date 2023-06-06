@@ -9,7 +9,7 @@ rule csaw_readparam:
     log:
         "logs/csaw/readparam/{library}.log",
     params:
-        extra=lambda wilcards: get_csaw_read_param(wilcards),
+        extra=lambda wildcards: get_csaw_read_param(wildcards),
     conda:
         "../../envs/csaw.yaml"
     script:
@@ -29,7 +29,7 @@ rule csaw_window_count:
     log:
         "logs/csaw/windowcount/{comparison_name}.{signal}.log",
     params:
-        extra=lambda wilcards: get_csaw_count_params(wilcards),
+        extra=lambda wildcards: get_csaw_count_params(wildcards),
     conda:
         "../../envs/csaw.yaml"
     script:

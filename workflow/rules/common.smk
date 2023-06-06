@@ -274,9 +274,9 @@ def has_input(sample: str, design: pandas.DataFrame = design) -> Optional[str]:
     """
     Return input sample id if there is an input. Else return `None`
     """
-    if "Input_id" in design.keys():
-        input_id: str = design["Input_id"].loc[sample]
-        if (input_id is not None) and (input_id != ""):
+    if "Input" in design.keys():
+        input_id: str = design["Input"].loc[sample]
+        if (input_id is not None) and (input_id != "") and not (pandas.isna(input_id)):
             return input_id
 
 
@@ -292,6 +292,8 @@ def get_samples_per_condition(
     For a `wildcards.condition` return the list of samples id
     belonging to that condition
     """
+    if isinstance(wildcards, str):
+        return design[design.eq(wildcards).any(axis=1)].index.drop_duplicates().tolist()
     return (
         design[design.eq(wildcards.condition).any(axis=1)]
         .index.drop_duplicates()
@@ -314,18 +316,18 @@ def get_input_per_condition(wildcards, design: pandas.DataFrame = design) -> Lis
 
 
 def get_condition_from_comparison_name(
-    comparison_name: str, config: Dict[str, Any]
+    comparison_name: str, config: Dict[str, Any] = config
 ) -> Dict[str, Optional[str]]:
     """
     Return a dictionary containing {ref: reference-level-name, test: tested-level-name}
     from a comparison name.
     """
     if "differential_peak_coverage" in config.keys():
-        for comparison in config["differential_peak_coverage"]:
+        for idx, comparison in enumerate(config["differential_peak_coverage"]):
             if comparison["model_name"] == comparison_name:
                 return {
-                    "ref": config["differential_peak_coverage"]["reference"],
-                    "test": config["differential_peak_coverage"]["tested"],
+                    "ref": comparison["reference"],
+                    "test": comparison["tested"],
                 }
         raise KeyError(
             f"{comparison_name} is not a comparison name available in "
@@ -342,11 +344,11 @@ def get_sample_list_from_comparison_name(
     """
     Return list of samples belonging to a given comparison
     """
-    condition_dict = get_condition_from_comparison_name(wildcards.comparison_name)
+    condition_dict = get_condition_from_comparison_name(comparison_name)
     sample_list = get_samples_per_condition(condition_dict["ref"], design)
     sample_list += get_samples_per_condition(condition_dict["test"], design)
 
-    if str(wilcards.signal) == "input":
+    if str(signal).lower() == "input":
         if any(has_input(sample) for sample in sample_list):
             sample_list = get_input_per_condition(condition_dict["ref"], design)
             sample_list += get_input_per_condition(condition_dict["test"], design)
@@ -673,8 +675,8 @@ def get_medips_params_extra(
         raise NotImplementedError(f"{build} genome not implemented for MeDIP-Seq")
 
     for sample in get_samples_per_condition(wildcards, design):
-        down = is_paired(wilcards.sample)
-        fragment_size = has_fragment_size(wilcards.sample, sample_is_paired=bool(down))
+        down = is_paired(wildcards.sample)
+        fragment_size = has_fragment_size(wildcards.sample, sample_is_paired=bool(down))
         if down:
             medips_params_extra.append(f"{medips_base}, paired = TRUE")
         elif fragment_size:
@@ -704,12 +706,14 @@ def get_medips_meth_coverage_input(
     reference = None
     tested = None
     for models in comparisons:
-        if models["model_name"] == wilcards.comparison:
+        if models["model_name"] == wildcards.comparison:
             reference = models["reference"]
             tested = models["tested"]
             break
     else:
-        raise ValueError("Could not find a comparison " f"named: {wilcards.comparison}")
+        raise ValueError(
+            "Could not find a comparison " f"named: {wildcards.comparison}"
+        )
 
     reference_samples = get_samples_per_condition(
         snakemake.io.Wildcards(fromdict={"condition": reference})
@@ -754,7 +758,7 @@ def get_csaw_count_input(
     Return expected list of input files for csaw-count
     """
     sample_list = get_sample_list_from_comparison_name(
-        wilcards.comparison_name, wilcards.signal, design
+        wildcards.comparison_name, wildcards.signal, design
     )
 
     bam_prefix = "sambamba/markdup"
@@ -775,7 +779,7 @@ def get_csaw_count_input(
 
 
 def get_csaw_count_params(
-    wilcards, design: pandas.DataFrame = design, protocol: str = protocol
+    wildcards, design: pandas.DataFrame = design, protocol: str = protocol
 ) -> str:
     """
     Return best parameters considering IO files list
@@ -788,7 +792,7 @@ def get_csaw_count_params(
         extra += ", shift = 4"
 
     sample_list = get_sample_list_from_comparison_name(
-        wilcards.comparison_name, wilcards.signal, design
+        wildcards.comparison_name, wildcards.signal, design
     )
     if any(is_paired(sample) for sample in sample_list):
         if not all(is_paired(sample) for sample in sample_list):
@@ -812,7 +816,7 @@ def get_csaw_read_param(
     Return best parameters for csaw::readParam()
     """
     extra = "dedup = TRUE, minq = 30"
-    if str(wilcards.library) == "pe":
+    if str(wildcards.library) == "pe":
         extra += ", pe = 'both'"
     else:
         extra += ", pe = 'none'"
@@ -824,7 +828,7 @@ def get_csaw_read_param(
 
 
 def get_csaw_filter_input(
-    wilcards, design: pandas.DataFrame = design
+    wildcards, design: pandas.DataFrame = design
 ) -> Dict[str, str]:
     """
     Return the list of input files expected by csaw_filter.R
@@ -833,7 +837,7 @@ def get_csaw_filter_input(
         "counts": f"csaw/count/{wildcards.comparison_name}.tested.RDS",
     }
     input_list = get_sample_list_from_comparison_name(
-        wilcards.comparison_name, "input", design
+        wildcards.comparison_name, "input", design
     )
     if len(input_list) > 0:
         csaw_filter_input[
@@ -893,14 +897,14 @@ def get_macs2_params(
     else:
         extra += " --format BAM "
 
-        fragment_size = has_fragment_size(wilcards.sample, sample_is_paired=False)
+        fragment_size = has_fragment_size(wildcards.sample, sample_is_paired=False)
         if fragment_size:
             extra += f" --nomodel --extsize {fs} "
         else:
             raise ValueError(
                 "Single-ended reads should have a "
                 "`Fragment_size` associated in the design file."
-                f"{wilcards.sample} has none."
+                f"{wildcards.sample} has none."
             )
 
     return extra
@@ -919,7 +923,7 @@ chipseeker_plot_list = [
 
 
 def get_chipseeker_annotate_peak_from_ranges_input(
-    wilcards, protocol: str = protocol
+    wildcards, protocol: str = protocol
 ) -> Dict[str, Any]:
     """
     Return expected list of input files for chipseeker annotate
@@ -927,6 +931,22 @@ def get_chipseeker_annotate_peak_from_ranges_input(
     if protocol_is_medip(protocol):
         return {"ranges": "medips/edger/{comparison}.RDS"}
     return {"ranges": "csaw/results/{comparison_name}.RDS"}
+
+
+def get_edger_formula(wildcards, config: Dict[str, Any] = config) -> str:
+    """
+    Based on condition wildcard, return edgeR stats formula
+    """
+    if "differential_peak_coverage" not in config.keys():
+        raise KeyError("No differential coverage design was provided")
+
+    for comparison in config["differential_peak_coverage"]:
+        if comparison["model_name"] == wildcards.comparison_name:
+            return comparison["formula"]
+
+    raise ValueError(
+        "Could not find a statistical formula for: {wildcards.comparison_name}"
+    )
 
 
 #############################
@@ -1030,12 +1050,13 @@ def targets(
         comparison_list = get_comparison_names()
         if len(comparison_list) > 0:
             expected_targets["annotated_csaw_tsv"] = expand(
-                "data_output/Differential_Binding/{comparison_name}.tsv", comparison_list
+                "data_output/Differential_Binding/{comparison_name}.tsv",
+                comparison_name=comparison_list,
             )
 
             expected_targets["distance_to_tss"] = expand(
                 "data_output/Differential_Binding/{comparison_name}/{chipseeker_plot}.png",
-                comparison_list,
+                comparison_name=comparison_list,
                 chipseeker_plot=chipseeker_plot_list,
             )
 
