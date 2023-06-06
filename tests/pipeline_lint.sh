@@ -1,6 +1,6 @@
 set -e
 
-snakefmt ../workflow/rules/{{coverage,differential_peak_calling,indexing,mapping,mapping_qc,medips,multiqc,peak-calling,reference,trimming}/*.smk,*.smk}
+snakefmt ../workflow/rules/{{annotation,coverage,differential_binding,indexing,mapping,mapping_qc,medips,multiqc,peak-calling,reference,trimming}/*.smk,*.smk}
 black ../workflow/scripts/jobscripts/*.py
 
 export SNAKEMAKE_OUTPUT_CACHE="."

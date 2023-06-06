@@ -20,6 +20,7 @@ include: "rules/mapping/deeptools_shift.smk"
 include: "rules/mapping_qc/picard_collect_mutiple_metrics.smk"
 include: "rules/mapping_qc/samtools.smk"
 include: "rules/mapping/samtools_cram.smk"
+include: "rules/medips/bam_import.smk"
 # Peak-Calling
 include: "rules/peak-calling/macs2_callpeak.smk"
 # Coverage
@@ -28,8 +29,10 @@ include: "rules/coverage/deeptools_matrix.smk"
 include: "rules/coverage/deeptools_plot_heatmap.smk"
 include: "rules/mapping_qc/deeptools_fingerprint.smk"
 include: "rules/coverage/csaw_count.smk"
+include: "rules/coverage/medips_meth.smk"
 # Differential binding
 include: "rules/differential_binding/csaw_db.smk"
+include: "rules/differential_binding/medips_edger.smk"
 # QC aggregation
 include: "rules/multiqc/multiqc_mapping.smk"
 include: "rules/multiqc/multiqc_trimming.smk"
