@@ -24,7 +24,7 @@ rule sambamba_sort_bowtie2_aligned:
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 20 * 1024,
-        runtime=lambda wildcards, attempt: attempt * 45,
+        runtime=lambda wildcards, attempt: attempt * 60 * 2,
         tmpdir=tmp,
     log:
         "logs/sambamba/sort/{sample}.bowtie2cr.log",
