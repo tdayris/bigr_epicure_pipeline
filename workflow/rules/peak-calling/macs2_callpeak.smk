@@ -2,14 +2,9 @@ rule macs2_callpeak_broad:
     input:
         unpack(get_macs2_callpeak_input),
     output:
-        temp(
-            multiext(
-                "macs2/callpeak_broad/{sample}",
-                "_peaks.xls",
-                "_peaks.broadPeak",
-                "_peaks.gappedPeak",
-            )
-        ),
+        temp("macs2/callpeak_broad/{sample}_peaks.xls"),
+        temp(ensure("macs2/callpeak_broad/{sample}_peaks.broadPeak", non_empty=True)),
+        temp("macs2/callpeak_broad/{sample}_peaks.gappedPeak"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,
@@ -47,14 +42,9 @@ rule macs2_callpeak_narrow:
     input:
         unpack(get_macs2_callpeak_input),
     output:
-        temp(
-            multiext(
-                "macs2/callpeak_narrow/{sample}",
-                "_peaks.xls",
-                "_peaks.narrowPeak",
-                "_summits.bed",
-            )
-        ),
+        temp("macs2/callpeak_narrow/{sample}_peaks.xls"),
+        temp(ensure("macs2/callpeak_narrow/{sample}_peaks.narrowPeak", non_empty=True)),
+        temp("macs2/callpeak_narrow/{sample}_summits.bed"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,
