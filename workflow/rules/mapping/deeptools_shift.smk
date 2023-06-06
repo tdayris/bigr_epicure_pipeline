@@ -20,7 +20,7 @@ rule deeptools_alignment_sieve:
 
 rule sort_deeptools_alignment_sieve:
     input:
-        "deeptools/alignment_sieve/{sample}.bam"
+        "deeptools/alignment_sieve/{sample}.bam",
     output:
         temp("deeptools/sorted_sieve/{sample}.bam"),
     threads: config.get("max_threads", 20)
@@ -38,7 +38,7 @@ rule sort_deeptools_alignment_sieve:
 
 rule sambamba_index_deeptools_alignment_sieve:
     input:
-        "deeptools/sorted_sieve/{sample}.bam"
+        "deeptools/sorted_sieve/{sample}.bam",
     output:
         temp("deeptools/sorted_sieve/{sample}.bam.bai"),
     threads: config.get("max_threads", 20)

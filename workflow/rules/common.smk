@@ -649,9 +649,7 @@ def get_deeptools_bamcoverage_input(
     deeptools_bamcoverage_input = {"blacklist": blacklist_path}
     if protocol_is_atac(protocol):
         deeptools_bamcoverage_input["bam"] = "deeptools/sorted_sieve/{sample}.bam"
-        deeptools_bamcoverage_input[
-            "bai"
-        ] = "deeptools/sorted_sieve/{sample}.bam.bai"
+        deeptools_bamcoverage_input["bai"] = "deeptools/sorted_sieve/{sample}.bam.bai"
     else:
         deeptools_bamcoverage_input["bam"] = "sambamba/markdup/{sample}.bam"
         deeptools_bamcoverage_input["bai"] = "sambamba/markdup/{sample}.bam.bai"
@@ -666,9 +664,7 @@ def get_deeptools_plotfingerprint_input(
     Return the list of expected input files for deeptools plot fingerprint
     """
     bam_prefix = (
-        "deeptools/sorted_sieve"
-        if protocol_is_atac(protocol)
-        else "sambamba/markdup"
+        "deeptools/sorted_sieve" if protocol_is_atac(protocol) else "sambamba/markdup"
     )
 
     deeptools_plotfingerprint_input = {"bam_files": [], "bam_idx": []}
