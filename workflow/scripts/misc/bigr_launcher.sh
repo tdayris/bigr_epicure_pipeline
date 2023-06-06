@@ -62,7 +62,7 @@ fi
 
 # Update sequencing protocol
 sed --in-place \
-    's|protocol: atac-seq|protocol: ######|g' \
+    "s|protocol: atac-seq|protocol: ${PROTOCOL}|g" \
     "config/config.yaml"
 
 # Use BiGR Annotations
