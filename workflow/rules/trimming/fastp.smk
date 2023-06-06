@@ -17,7 +17,7 @@ rule fastp_single_ended:
         extra="",
     threads: 1
     wrapper:
-        "v1.29.0/bio/fastp"
+        "v1.31.1/bio/fastp"
 
 
 rule fastp_pair_ended:
@@ -45,4 +45,4 @@ rule fastp_pair_ended:
         extra="",
     threads: 2
     wrapper:
-        "v1.29.0/bio/fastp"
+        "v1.31.1/bio/fastp"
