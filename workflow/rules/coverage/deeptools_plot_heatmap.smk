@@ -8,7 +8,7 @@ rule deeptools_plot_heatmap:
             category="Results",
             labels={"type": "figure", "category": "Results"},
         ),
-        heatmap_matrix=temp("deeptools/heatmap_matrix/{command}.{peaktype}.tab")
+        heatmap_matrix=temp("deeptools/heatmap_matrix/{command}.{peaktype}.tab"),
     threads: 1
     resources:
         mem_mb=lambda wilcards, attempt: attempt * 1024 * 8,
