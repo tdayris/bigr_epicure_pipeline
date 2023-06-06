@@ -71,7 +71,6 @@ base::message(command)
 
 # Annotating
 annotation <- base::eval(base::parse(text = command))
-base::print(utils::head(annotation))
 base::message("Data annotated")
 
 
