@@ -929,7 +929,7 @@ def get_chipseeker_annotate_peak_from_ranges_input(
     Return expected list of input files for chipseeker annotate
     """
     if protocol_is_medip(protocol):
-        return {"ranges": "medips/edger/{comparison}.RDS"}
+        return {"ranges": "medips/edger/{comparison_name}.RDS"}
     return {"ranges": "csaw/results/{comparison_name}.RDS"}
 
 
