@@ -41,6 +41,7 @@ if ("organism" %in% base::names(x = snakemake@params)) {
         organism <- TxDb.Mmusculus.UCSC.mm10.knownGene
     }
 }
+seqlevelsStyle(txdb) <- "Ensembl"
 
 # Acquire promoter position
 promoter <- ChIPseeker::getPromoters(
