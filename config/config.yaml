@@ -123,8 +123,9 @@ macs2:
 differential_peak_coverage:
   # One item per comparison. For multiple comparisons, add a new item for each single comparison.
   - model_name: Condition  # Human readable unique comparison name
-    reference: Control  # Reference samples. WARNING: reference ≠ input. Reference = fold-change denominator.
-    tested: Treatment  # Tested samples, the fold-change numerator.
+    reference: WT  # Reference samples. WARNING: reference ≠ input. Reference = fold-change denominator.
+    tested: Mut  # Tested samples, the fold-change numerator.
+    formula: "~Condition"
   # - model_name: Factor
   #   reference: ReferenceFactorLevel
   #   tested: TestedFactorLevel
