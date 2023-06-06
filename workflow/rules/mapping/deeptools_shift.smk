@@ -8,7 +8,7 @@ rule deeptools_alignment_sieve:
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 2 * 1024,
-        runtime=lambda wildcards, attempt: attempt * 45,
+        runtime=lambda wildcards, attempt: attempt * 60 * 3,
         tmpdir=tmp,
     log:
         "logs/deeptools/alignmentsieve/{sample}.log",
