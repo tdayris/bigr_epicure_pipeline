@@ -1,6 +1,6 @@
 rule chipseeker_annotate_peak_from_ranges:
     input:
-        ranges="csaw/results/{comparison_name}.RDS"
+        unpack(get_chipseeker_annotate_peak_from_ranges_input),
     output:
         rds="chipseeker/annotation/{comparison_name}.RDS",
         tsv="data_output/Differential_Binding/{comparison_name}.tsv",

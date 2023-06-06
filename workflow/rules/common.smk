@@ -917,6 +917,14 @@ chipseeker_plot_list = [
     "Gene_Body_Coverage",
 ]
 
+def get_chipseeker_annotate_peak_from_ranges_input(wilcards, protocol: str = protocol) -> Dict[str, Any]:
+    """
+    Return expected list of input files for chipseeker annotate
+    """
+    if protocol_is_medip(protocol):
+        return {"ranges": "medips/edger/{comparison}.RDS"}
+    return {"ranges": "csaw/results/{comparison_name}.RDS"}
+
 #############################
 ### Wildcards constraints ###
 #############################
