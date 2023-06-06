@@ -22,9 +22,9 @@ base::library(
 )
 base::message("Libraries loaded")
 
-files <- base::sapply(
-    snakemake@input[["bed"]],
-    function(path) base::as.character(x = path)
+tagmatrix_list <- base::lapply(
+    snakemake@input[["tagmatrix_list"]],
+    function(tagmatrix) base::readRDS(file = base::as.character(x = tagmatrix))
 )
 base::message("File list acquired")
 
@@ -46,7 +46,7 @@ png(
 )
 
 ChIPseeker::plotPeakProf2(
-    files,
+    tagmatrix_list,
     upstream = rel(0.2), 
     downstream = rel(0.2),
     conf = 0.95, 
