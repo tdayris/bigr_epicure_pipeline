@@ -28,7 +28,6 @@ rule deeptools_estimate_gc_bias:
         "--blackListFileName {input.blacklist} "
         "--numberOfProcessors {threads} "
         "--biasPlot {output.plot} "
-        "--correctedFile {output.freq} "
         "{params.extra} "
         "> {log} 2>&1 "
 
