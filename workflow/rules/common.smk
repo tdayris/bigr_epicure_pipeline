@@ -292,13 +292,18 @@ def get_samples_per_condition(
     For a `wildcards.condition` return the list of samples id
     belonging to that condition
     """
-    if isinstance(wildcards, str):
-        return design[design.eq(wildcards).any(axis=1)].index.drop_duplicates().tolist()
-    return (
-        design[design.eq(wildcards.condition).any(axis=1)]
-        .index.drop_duplicates()
-        .tolist()
-    )
+    try:
+        return (
+            design[design.eq(wildcards.condition).any(axis=1)]
+            .index.drop_duplicates()
+            .tolist()
+        )
+    except AttributeError:
+        return (
+            design[design.eq(wildcards.comparison_name).any(axis=1)]
+            .index.drop_duplicates()
+            .tolist()
+        )
 
 
 def get_input_per_condition(wildcards, design: pandas.DataFrame = design) -> List[str]:
@@ -345,8 +350,12 @@ def get_sample_list_from_comparison_name(
     Return list of samples belonging to a given comparison
     """
     condition_dict = get_condition_from_comparison_name(comparison_name)
-    sample_list = get_samples_per_condition(condition_dict["ref"], design)
-    sample_list += get_samples_per_condition(condition_dict["test"], design)
+    sample_list = get_samples_per_condition(
+        snakemake.io.Wildcards(fromdict={"condition": condition_dict["ref"]}), design
+    )
+    sample_list += get_samples_per_condition(
+        snakemake.io.Wildcards(fromdict={"condition": condition_dict["test"]}), design
+    )
 
     if len(sample_list) == 0:
         raise ValueError(f"No sample found in comparison: {comparison_name}")
@@ -612,22 +621,19 @@ def get_multiqc_mapping_input(
     return multiqc_mapping_input
 
 
-def get_medips_import_sample_bam_input(wilcards, design: pandas.DataFrame = design) -> Dict[str, List[str]]:
+def get_medips_import_sample_bam_input(
+    wilcards, design: pandas.DataFrame = design
+) -> Dict[str, List[str]]:
     """
     Return expected lists of input for medips
     """
     samples = get_samples_per_condition(wilcards)
 
     return {
-        "bam": expand(
-            "sambamba/markdup/{sample}.bam",
-            sample=samples
-        ),
-        "bai": expand(
-            "sambamba/markdup/{sample}.bam.bai",
-            sample=samples
-        )
+        "bam": expand("sambamba/markdup/{sample}.bam", sample=samples),
+        "bai": expand("sambamba/markdup/{sample}.bam.bai", sample=samples),
     }
+
 
 ################
 ### Coverage ###
@@ -707,7 +713,7 @@ def get_medips_params_extra(
 
 
 def get_medips_meth_coverage_input(
-    wildcards: snakemake.utils.Wildcards,
+    wildcards: snakemake.io.Wildcards,
     design: pandas.DataFrame = design,
     config: Dict[str, Any] = config,
 ) -> Dict[str, Union[str, List[str]]]:
@@ -716,7 +722,7 @@ def get_medips_meth_coverage_input(
     """
     # Gathering comparison information
     comparisons = config.get("differential_peak_coverage")
-    if not comparison:
+    if not comparisons:
         raise ValueError(
             "No differential peak coverage information provided in "
             "configuration file. Please fill configuration file."
@@ -726,13 +732,13 @@ def get_medips_meth_coverage_input(
     reference = None
     tested = None
     for models in comparisons:
-        if models["model_name"] == wildcards.comparison:
+        if models["model_name"] == wildcards.comparison_name:
             reference = models["reference"]
             tested = models["tested"]
             break
     else:
         raise ValueError(
-            "Could not find a comparison " f"named: {wildcards.comparison}"
+            "Could not find a comparison " f"named: {wildcards.comparison_name}"
         )
 
     reference_samples = get_samples_per_condition(
@@ -746,7 +752,7 @@ def get_medips_meth_coverage_input(
     medips_meth_coverage_input = {
         "mset1": expand("sambamba/markdup/{sample}.bam", sample=tested_samples),
         "mset2": expand("sambamba/markdup/{sample}.bam", sample=reference_samples),
-        "cset": f"medips/coupling/{tested}.RDS",
+        "cset": f"medips/coupling/{wildcards.comparison_name}.RDS",
     }
 
     # Looking for input samples, if any
