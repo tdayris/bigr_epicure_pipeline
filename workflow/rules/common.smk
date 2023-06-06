@@ -612,6 +612,23 @@ def get_multiqc_mapping_input(
     return multiqc_mapping_input
 
 
+def get_medips_import_sample_bam_input(wilcards, design: pandas.DataFrame = design) -> Dict[str, List[str]]:
+    """
+    Return expected lists of input for medips
+    """
+    samples = get_samples_per_condition(wilcards)
+
+    return {
+        "bam": expand(
+            "sambamba/markdup/{sample}.bam",
+            sample=samples
+        ),
+        "bai": expand(
+            "sambamba/markdup/{sample}.bam.bai",
+            sample=samples
+        )
+    }
+
 ################
 ### Coverage ###
 ################
