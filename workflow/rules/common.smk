@@ -348,12 +348,15 @@ def get_sample_list_from_comparison_name(
     sample_list = get_samples_per_condition(condition_dict["ref"], design)
     sample_list += get_samples_per_condition(condition_dict["test"], design)
 
+    if len(sample_list) == 0:
+        raise ValueError(f"No sample found in comparison: {comparison_name}")
+
     if str(signal).lower() == "input":
         if any(has_input(sample) for sample in sample_list):
             sample_list = get_input_per_condition(condition_dict["ref"], design)
             sample_list += get_input_per_condition(condition_dict["test"], design)
-        else:
-            raise ValueError(
+        elif not protocol_is_atac(protocol):
+            raise Warning(
                 "No sample have corresponding input. "
                 "Filtering and normalisation cannot be done using Input files."
             )
