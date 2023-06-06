@@ -10,9 +10,9 @@ rule chipseeker_annotate_peak_from_ranges:
         runtime=lambda wildcards, attempt: attempt * 40,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/annotate/{comparison_name}.log"
+        "logs/chipseeker/annotate/{comparison_name}.log",
     params:
-        organism="hg38" if species == "homo_sapiens" else "mm10"
+        organism="hg38" if species == "homo_sapiens" else "mm10",
     conda:
         "../../envs/chipseeker.yaml"
     script:
@@ -21,7 +21,7 @@ rule chipseeker_annotate_peak_from_ranges:
 
 rule chipseeker_annotate_peak_from_bed:
     input:
-        bed="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed"
+        bed="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
     output:
         rds="chipseeker/annotation/{sample}.{peaktype}.RDS",
         tsv="data_output/Differential_Binding/{sample}.{peaktype}.tsv",
@@ -31,9 +31,9 @@ rule chipseeker_annotate_peak_from_bed:
         runtime=lambda wildcards, attempt: attempt * 40,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/annotate/{sample}.{peaktype}.log"
+        "logs/chipseeker/annotate/{sample}.{peaktype}.log",
     params:
-        organism="hg38" if species == "homo_sapiens" else "mm10"
+        organism="hg38" if species == "homo_sapiens" else "mm10",
     conda:
         "../../envs/chipseeker.yaml"
     script:

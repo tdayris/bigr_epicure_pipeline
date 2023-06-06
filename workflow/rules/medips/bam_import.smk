@@ -1,13 +1,6 @@
 rule medips_import_sample_bam:
     input:
-        bam=expand(
-            "sambamba/markdup/{sample}.bam",
-            sample=get_samples_per_condition(wildcards),
-        ),
-        bai=expand(
-            "sambamba/markdup/{sample}.bam.bai",
-            sample=get_samples_per_condition(wildcards),
-        ),
+        unpack(get_medips_import_sample_bam_input)
     output:
         rds=temp("medips/import/{condition}.RDS"),
     threads: 1

@@ -2,16 +2,16 @@ rule chipseeker_genome_cov_single_sample:
     input:
         ranges="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
     output:
-        png="data_output/Peak_Calling/{peaktype}/Genome_Coverage/{sample}.png"
+        png="data_output/Peak_Calling/{peaktype}/Genome_Coverage/{sample}.png",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/genomecov/{sample}.{peaktype}.log"
+        "logs/chipseeker/genomecov/{sample}.{peaktype}.log",
     params:
-        extra=""
+        extra="",
     conda:
         "../../envs/chipseeker.yaml"
     script:
@@ -22,16 +22,16 @@ rule chipseeker_plot_genome_cov_differential_binding:
     input:
         unpack(get_chipseeker_annotate_peak_from_ranges_input),
     output:
-        png="data_output/Differential_Binding/{comparison_name}/Genome_Coverage.png"
+        png="data_output/Differential_Binding/{comparison_name}/Genome_Coverage.png",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/genomecov/{comparison_name}.log"
+        "logs/chipseeker/genomecov/{comparison_name}.log",
     params:
-        extra=""
+        extra="",
     conda:
         "../../envs/chipseeker.yaml"
     script:
