@@ -1,3 +1,13 @@
+# 0.7.0 – Differential binding
+
+## Features
+
+* Enable csaw
+
+## Fix
+
+* Wildcard error fixed in Medipseq DB
+
 # 0.6.0 – Annotation
 
 ## Featues
