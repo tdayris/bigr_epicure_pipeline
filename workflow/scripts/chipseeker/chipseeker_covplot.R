@@ -16,8 +16,10 @@ base::message("Logging defined")
 base::library(package = "ChIPseeker", character.only = TRUE)
 base::message("Libraries loaded")
 
-ranges <- base::readRDS(
-    file = base::as.character(x = snakemake@input[["ranges"]])
+bed_file <- base::as.character(x = snakemake@input[["bed"]])
+ranges <- ChIPseeker::readPeakFile(
+  peakfile = bed_file,
+  as = "GRanges"
 )
 base::message("Ranges loaded")
 

@@ -1,6 +1,6 @@
 rule chipseeker_genome_cov_single_sample:
     input:
-        ranges="chipseeker/annotation/{sample}.{peaktype}.RDS",
+        ranges="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
     output:
         png="data_output/Peak_Calling/{peaktype}/Genome_Coverage/{sample}.png"
     threads: 1
@@ -20,7 +20,7 @@ rule chipseeker_genome_cov_single_sample:
 
 rule chipseeker_plot_genome_cov_differential_binding:
     input:
-        ranges="chipseeker/annotation/{comparison_name}.RDS",
+        unpack(get_chipseeker_annotate_peak_from_ranges_input),
     output:
         png="data_output/Differential_Binding/{comparison_name}/Genome_Coverage.png"
     threads: 1
