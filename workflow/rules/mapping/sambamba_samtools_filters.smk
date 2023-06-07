@@ -35,7 +35,7 @@ rule samtools_filter_canonical_chromosomes:
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "{sample}.log",
+        "logs/samtools/filter_canonical/{sample}.log",
     params:
         extra="",
         region=" ".join(canonical_chromosomes),
