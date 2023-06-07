@@ -462,6 +462,17 @@ def get_fastp_input(
     return fastp_input
 
 
+def get_fastp_params(wilcards: snakemake.io.Wildcards, protocol: str = protocol) -> str:
+    """
+    Return fastp parameters
+    """
+    extra = ""
+    if protocol_is_medip(protocol) or protocol_is_ogseq(protocol):
+        extra += " --disable_adapter_trimming --poly_g_min_len 25 "
+
+    return extra
+
+
 def get_fastp_output_html(design: pandas.DataFrame = design) -> List[str]:
     """
     Return the list of fastp reports
