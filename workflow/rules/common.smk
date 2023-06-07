@@ -836,7 +836,7 @@ def get_csaw_count_input(
 
     bam_prefix: str = "sambamba/markdup"
     if protocol_is_atac(protocol):
-        bam_prefix = "deeptools/alignment_sieve"
+        bam_prefix = "deeptools/sorted_sieve"
     elif protocol_is_ogseq(protocol):
         bam_prefix = "deeptools/corrected"
 
@@ -943,21 +943,19 @@ def get_macs2_callpeak_input(
     Return expected list of input files for Macs2 callpeak
     """
     macs2_callpeak_input = {}
+
+    bam_prefix: str = "sambamba/markdup"
     if protocol_is_atac(protocol):
-        macs2_callpeak_input[
-            "treatment"
-        ] = f"deeptools/alignment_sieve/{wildcards.sample}.bam"
-    else:
-        macs2_callpeak_input["treatment"] = f"sambamba/markdup/{wildcards.sample}.bam"
+        bam_prefix = "deeptools/sorted_sieve"
+    elif protocol_is_ogseq(protocol):
+        bam_prefix = "deeptools/corrected"
+
+
+    macs2_callpeak_input["treatment"] = f"{bam_prefix}/{wildcards.sample}.bam"
 
     input_id = has_input(sample=wildcards.sample, design=design)
     if (input_id is not None) and (input_id != ""):
-        if protocol_is_atac(wildcards.sample):
-            macs2_callpeak_input[
-                "control"
-            ] = f"deeptools/alignment_sieve/{input_id}.bam"
-        else:
-            macs2_callpeak_input["control"] = f"sambamba/markdup/{input_id}.bam"
+        macs2_callpeak_input["control"] = f"{bam_prefix}/{input_id}.bam"
 
     return macs2_callpeak_input
 
