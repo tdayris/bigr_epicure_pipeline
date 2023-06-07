@@ -950,7 +950,6 @@ def get_macs2_callpeak_input(
     elif protocol_is_ogseq(protocol):
         bam_prefix = "deeptools/corrected"
 
-
     macs2_callpeak_input["treatment"] = f"{bam_prefix}/{wildcards.sample}.bam"
 
     input_id = has_input(sample=wildcards.sample, design=design)
