@@ -56,6 +56,9 @@ include: "rules/indexing/fasta_to_twobit.smk"
 include: "rules/multiqc/multiqc_mapping.smk"
 include: "rules/multiqc/multiqc_trimming.smk"
 include: "rules/multiqc/multiqc_coverage.smk"
+# Motifs
+include: "rules/motif/homer_find_motifs_genome.smk"
+include: "rules/annotation/homer_annotate_peaks.smk"
 
 
 

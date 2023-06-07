@@ -10,6 +10,11 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 #########################
 ### Logging behaviour ###
 #########################
+if config == {}:
+
+    configfile: "config/config.yaml"
+
+
 logging.basicConfig(filename="epicure_pipeline.log", filemode="w", level=logging.DEBUG)
 
 
@@ -200,6 +205,17 @@ chipseeker_plot_list: List[str] = [
 ]
 
 deeptools_plot_type: List[str] = ["heatmap", "scatterplot"]
+
+peaktype_list: List[str] = []
+if config.get("macs2", {}).get("broad", False):
+    peaktype_list.append("broad")
+if config.get("macs2", {}).get("narrow", False):
+    peaktype_list.append("narrow")
+if len(peaktype_list) < 1:
+    raise ValueError(
+        "Please select peak-type in macs2, "
+        "many quality controls are based on peak-calling."
+    )
 
 
 ##########################
@@ -1145,6 +1161,11 @@ wildcard_constraints:
     plot_type=r"|".join(deeptools_plot_type),
 
 
+##############
+### Motifs ###
+##############
+
+
 ########################
 ### Main Target rule ###
 ########################
@@ -1237,6 +1258,10 @@ def targets(
             )
 
     if steps.get("motives", False):
-        raise NotImplementedError("Motives analysis not yet implemented")
+        expected_targets["homer_annotate"] = expand(
+            "data_output/Motifs/{peaktype}/{sample}_homer_annot.txt",
+            peaktype=peaktype_list,
+            sample=get_tested_sample_list(),
+        )
 
     return expected_targets

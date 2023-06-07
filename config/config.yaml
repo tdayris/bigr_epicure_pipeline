@@ -37,11 +37,11 @@ steps:
 
   # Perform fastq trimming + mapping + peak-calling + differential coverage analysis
   # Missing genome sequences/annotation/indexes will run installation process
-  diff_cov: false
+  diff_cov: true
 
   # Perform fastq trimming + mapping + peak-calling + motives analysis
   # Missing genome sequences/annotation/indexes will run installation process
-  motives: false
+  motives: true
 
 
 # Must be one of: `chip-seq`, `atac-seq`, `medip-seq`

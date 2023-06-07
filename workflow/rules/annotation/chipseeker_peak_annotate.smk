@@ -24,7 +24,7 @@ rule chipseeker_annotate_peak_from_bed:
         bed="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
     output:
         rds="chipseeker/annotation/{sample}.{peaktype}.RDS",
-        tsv="data_output/Differential_Binding/{sample}.{peaktype}.tsv",
+        tsv="data_output/Peak_Calling/{sample}.{peaktype}.tsv",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,

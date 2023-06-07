@@ -1,3 +1,7 @@
+# 0.8.0 – Motifs
+
+* Enable motif analysis with Homer
+
 # 0.7.0 – Differential binding
 
 ## Features
