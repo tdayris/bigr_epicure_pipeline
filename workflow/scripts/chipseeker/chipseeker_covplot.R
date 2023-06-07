@@ -17,10 +17,6 @@ base::library(package = "ChIPseeker", character.only = TRUE)
 base::message("Libraries loaded")
 
 bed_file <- base::as.character(x = snakemake@input[["bed"]])
-ranges <- ChIPseeker::readPeakFile(
-  peakfile = bed_file,
-  as = "GRanges"
-)
 base::message("Ranges loaded")
 
 # Build plot
@@ -32,7 +28,7 @@ png(
   type = "cairo"
 )
 
-ChIPseeker::covplot(ranges)
+ChIPseeker::covplot(bed_file)
 
 
 dev.off()
