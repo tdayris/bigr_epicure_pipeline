@@ -25,7 +25,7 @@ base::message("Ranges loaded")
 png(
   filename = snakemake@output[["png"]],
   width = 1024,
-  height = 768,
+  height = 384,
   units = "px",
   type = "cairo"
 )
