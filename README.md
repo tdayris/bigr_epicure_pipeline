@@ -258,8 +258,8 @@ Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.r
 
 # Roadmap
 
-* Coverage: Fingerprint, PCA, PBC
-* Peak-calling: Seacr, FRiP, FDR
+* Coverage: PBC
+* Peak-calling: Seacr, FDR
 * Peak-annotation: Homer, CentriMo
 * Differential Peak Calling: DiffBind
 * IGV: screen-shot, igv-reports

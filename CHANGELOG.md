@@ -3,6 +3,10 @@
 ## Features
 
 * Enable csaw
+* Ensble MEDIPS
+* deeptools Fingerprint
+* deeptools Correlation
+* deeptools PCA
 
 ## Fix
 

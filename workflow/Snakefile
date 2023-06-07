@@ -30,12 +30,17 @@ include: "rules/coverage/deeptools_plot_heatmap.smk"
 include: "rules/mapping_qc/deeptools_fingerprint.smk"
 include: "rules/coverage/csaw_count.smk"
 include: "rules/coverage/medips_meth.smk"
+# Coverage QC
+include: "rules/mapping_qc/deeptools_bampefragment_size.smk"
+include: "rules/coverage_qc/deeptools_plot_correlation.smk"
+include: "rules/coverage_qc/deeptools_plot_pca.smk"
+include: "rules/coverage_qc/deeptools_plot_profile.smk"
+# FRiP score
+include: "rules/peak-calling/bedtools_intersect.smk"
+include: "rules/peak-calling/manual_frip_score.smk"
 # Differential binding
 include: "rules/differential_binding/csaw_db.smk"
 include: "rules/differential_binding/medips_edger.smk"
-# QC aggregation
-include: "rules/multiqc/multiqc_mapping.smk"
-include: "rules/multiqc/multiqc_trimming.smk"
 # Annotation
 include: "rules/annotation/chipseeker_peak_annotate.smk"
 include: "rules/annotation/chipseeker_tagmatrix.smk"
@@ -47,6 +52,10 @@ include: "rules/annotation/chipseeker_genomecov.smk"
 # Oxidip
 include: "rules/mapping/deeptools_gc_bias.smk"
 include: "rules/indexing/fasta_to_twobit.smk"
+# QC aggregation
+include: "rules/multiqc/multiqc_mapping.smk"
+include: "rules/multiqc/multiqc_trimming.smk"
+include: "rules/multiqc/multiqc_coverage.smk"
 
 
 

@@ -21,6 +21,32 @@ rule deeptools_bamcoverage:
         "v1.31.1/bio/deeptools/bamcoverage"
 
 
+rule deeptools_multibigwig_summary:
+    input:
+        bw=expand("data_output/Coverage/{sample}.bw", sample=get_tested_sample_list()),
+        blacklist=blacklist_path,
+    output:
+        bw=temp("deeptools/multibigwig/summary.bw"),
+    threads: config.get("max_threads", 20)
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 12,
+        runtime=lambda wildcards, attempt: attempt * 60 * 3,
+        tmpdir=tmp,
+    log:
+        "logs/deeptools/multibigwig/summary.log",
+    params:
+        "",
+    conda:
+        "../../envs/deeptools.yaml"
+    shell:
+        "multiBigwigSummary bins {params} "
+        "--bwfiles {input.bw} "
+        "--outFileName {output.bw} "
+        "--blackListFileName {input.blacklist} "
+        "--numberOfProcessors {threads} "
+        "> {log} 2>&1 "
+
+
 rule deeptools_plotcoverage:
     input:
         bam=expand("sambamba/markdup/{sample}.bam", sample=design.index),

@@ -191,6 +191,16 @@ default_fastq_screen_genomes: List[str] = [
     "rRNA/",
 ]
 
+chipseeker_plot_list: List[str] = [
+    "UpsetVenn",
+    "Feature_Distribution",
+    "Distance_to_TSS",
+    "Genome_Coverage",
+    "Gene_Body_Coverage",
+]
+
+deeptools_plot_type: List[str] = ["heatmap", "scatterplot"]
+
 
 ##########################
 ### Protocol functions ###
@@ -283,6 +293,21 @@ def has_input(sample: str, design: pandas.DataFrame = design) -> Optional[str]:
 ############################################
 ### Differential Peak Coverage functions ###
 ############################################
+
+
+def get_paired_samples(design: pandas.DataFrame = design) -> Optional[List[str]]:
+    """
+    Return the list of paired sample, if there are any. Else return None.
+    """
+    result = []
+    for sample in design.index:
+        if is_paired(sample=sample, design=design):
+            result.append(sample)
+
+    if len(result) < 1:
+        return None
+
+    return result
 
 
 def get_samples_per_level(
@@ -462,7 +487,9 @@ def get_fastp_input(
     return fastp_input
 
 
-def get_fastp_params(wilcards: snakemake.io.Wildcards, protocol: str = protocol) -> str:
+def get_fastp_params(
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol
+) -> str:
     """
     Return fastp parameters
     """
@@ -625,7 +652,7 @@ def get_multiqc_mapping_input(
     Return the expected list of input files for multiqc right after mapping
     """
     multiqc_mapping_input: List[str] = get_multiqc_trimming_input(
-        wildcards, protocol, design
+        wildcards=wildcards, protocol=protocol, design=design
     )
 
     picard_files: List[str] = [
@@ -658,12 +685,12 @@ def get_multiqc_mapping_input(
 
 
 def get_medips_import_sample_bam_input(
-    wilcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
 ) -> Dict[str, List[str]]:
     """
     Return expected lists of input for medips
     """
-    samples: List[str] = get_samples_per_level(wildcards=wilcards, design=design)
+    samples: List[str] = get_samples_per_level(wildcards=wildcards, design=design)
 
     return {
         "bam": expand("sambamba/markdup/{sample}.bam", sample=samples),
@@ -674,6 +701,45 @@ def get_medips_import_sample_bam_input(
 ################
 ### Coverage ###
 ################
+
+
+def get_multiqc_coverage_input(
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    design: pandas.DataFrame = design,
+) -> List[str]:
+    """
+    Return expected list of input files for MultiQC after coverage analysis
+    """
+    multiqc_coverage_input: List[str] = get_multiqc_mapping_input(
+        wildcards=wildcards, protocol=protocol, design=design
+    )
+
+    # Add bampe if any sample is paired
+    paired_samples: Optional[List[str]] = get_paired_samples(design=design)
+    if paired_samples:
+        for sample in paired_samples:
+            multiqc_coverage_input.append(f"deeptools/bampe_fs/{sample}_metrics.txt")
+
+    # Add fingerprints
+    multiqc_coverage_input.append("deeptools/plot_fingerprint/raw_counts.tab")
+    multiqc_coverage_input.append("deeptools/plot_fingerprint/qc_metrics.txt")
+
+    # Add plot correlation
+    for plot_type in deeptools_plot_type:
+        multiqc_coverage_input.append(f"deeptools/plot_corr/{plot_type}.stats")
+
+    # Add plot pca
+    multiqc_coverage_input.append("deeptools/plot_pca.stats")
+
+    # Add plot profile
+    for peaktype in ["broad", "narrow"]:
+        for command in ["reference-point"]:
+            multiqc_coverage_input.append(
+                f"deeptools/plot_profile/{peaktype}/{command}.tab"
+            )
+
+    return multiqc_coverage_input
 
 
 def get_deeptools_bamcoverage_input(
@@ -989,18 +1055,31 @@ def get_macs2_params(
     return extra
 
 
+def get_bedtools_intersect_macs2_input(
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol
+):
+    """
+    Return expected input files for bedtools intersect after macs2 calling.
+    This is used to compute FRiP score.
+    """
+    bedtools_intersect_macs2_input: Dict[str, str] = {
+        "right": f"macs2/callpeak_{wildcards.peaktype}/{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed",
+    }
+
+    bam_prefix: str = "sambamba/markdup"
+    if protocol_is_atac(protocol):
+        bam_prefix = "deeptools/sorted_sieve"
+    elif protocol_is_ogseq(protocol):
+        bam_prefix = "deeptools/corrected"
+
+    bedtools_intersect_macs2_input["left"] = f"{bam_prefix}/{wildcards.sample}.bam"
+
+    return bedtools_intersect_macs2_input
+
+
 ############################
 ### Differential Binding ###
 ############################
-chipseeker_plot_list = [
-    "UpsetVenn",
-    "Feature_Distribution",
-    "Distance_to_TSS",
-    "Genome_Coverage",
-    "Gene_Body_Coverage",
-]
-
-
 def get_chipseeker_annotate_peak_from_ranges_input(
     wildcards: snakemake.io.Wildcards, protocol: str = protocol
 ) -> Dict[str, Any]:
@@ -1028,6 +1107,21 @@ def get_edger_formula(
     raise ValueError("Could not find a statistical formula for: {wildcards.model_name}")
 
 
+def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> str:
+    """
+    Based on plot-type (in wildcards) return correct parameters
+    """
+    deeptools_plot_correlation_params: str = (
+        "--plotFileFormat png " "--skipZeros " "--corMethod spearman "
+    )
+    if str(wildcards.plot_type) == "heatmap":
+        deeptools_plot_correlation_params += (
+            "--whatToPlot heatmap " "--colorMap RdYlBu " "--plotNumbers"
+        )
+
+    return deeptools_plot_correlation_params
+
+
 #############################
 ### Wildcards constraints ###
 #############################
@@ -1048,6 +1142,7 @@ wildcard_constraints:
     library=r"|".join(["se", "pe"]),
     chipseeker_plot=r"|".join(chipseeker_plot_list),
     model_name=r"|".join(get_model_names(config)),
+    plot_type=r"|".join(deeptools_plot_type),
 
 
 ########################
@@ -1124,6 +1219,8 @@ def targets(
             expected_targets["deeptools_heatmap"] = expand(
                 "data_output/Heatmaps/narrow/{command}.png", command=["reference-point"]
             )
+
+        expected_targets["multiqc_coverage_report"] = "data_output/QC/Coverage.QC.html"
 
     if steps.get("diff_cov", False):
         comparison_list: List[str] = get_model_names(config)
