@@ -24,7 +24,11 @@ base::library(
 )
 base::message("Libraries loaded")
 
-files <- base::as.character(x = snakemake@input[["bed"]])
+bed_path <- base::as.character(x = snakemake@input[["bed"]])
+ranges <- ChIPseeker::readPeak(bed_path)
+tag_matrix <- base::readRDS(
+    file = base::as.character(x = snakemake@input[["tagmatrix"]])
+)
 base::message("File list acquired")
 
 
@@ -45,7 +49,8 @@ png(
 )
 
 ChIPseeker::plotPeakProf2(
-    peak = files,
+    peak = ranges,
+    tagMatrix = tag_matrix,
     upstream = rel(0.2),
     downstream = rel(0.2),
     conf = 0.95,
