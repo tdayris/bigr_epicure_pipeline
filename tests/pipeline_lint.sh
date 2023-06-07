@@ -1,6 +1,9 @@
 set -e
 
-snakefmt ../workflow/rules/{{annotation,coverage,differential_binding,indexing,mapping,mapping_qc,medips,multiqc,peak-calling,reference,trimming}/*.smk,*.smk}
+find ../workflow -type f -name "*.smk" | while read SNAKEFILE; do
+    echo ${SNAKEFILE}
+    snakefmt ${SNAKEFILE}
+done
 black ../workflow/scripts/jobscripts/*.py
 
 export SNAKEMAKE_OUTPUT_CACHE="."
