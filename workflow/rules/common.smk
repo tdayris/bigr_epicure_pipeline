@@ -285,43 +285,45 @@ def has_input(sample: str, design: pandas.DataFrame = design) -> Optional[str]:
 ############################################
 
 
-def get_samples_per_condition(
-    wildcards, design: pandas.DataFrame = design
+def get_samples_per_level(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
 ) -> List[str]:
     """
-    For a `wildcards.condition` return the list of samples id
-    belonging to that condition
+    For a `wildcards.level` return the list of samples id
+    belonging to that level
     """
     try:
         return (
-            design[design.eq(wildcards.condition).any(axis=1)]
+            design[design.eq(wildcards.level).any(axis=1)]
             .index.drop_duplicates()
             .tolist()
         )
     except AttributeError:
         return (
-            design[design.eq(wildcards.comparison_name).any(axis=1)]
+            design[design.eq(wildcards.model_name).any(axis=1)]
             .index.drop_duplicates()
             .tolist()
         )
 
 
-def get_input_per_condition(wildcards, design: pandas.DataFrame = design) -> List[str]:
+def get_input_per_level(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> List[str]:
     """
-    For a `wildcards.condition` return the list of input id
-    corresponding to the samples belonging to that condition
+    For a `wildcards.level` return the list of input id
+    corresponding to the samples belonging to that level
     """
     input_samples: List[str] = []
-    for sample in get_samples_per_condition(wildcards, design):
-        input_id: str = has_input(sample)
+    for sample in get_samples_per_level(wildcards=wildcards, design=design):
+        input_id: str = has_input(sample=sample, design=design)
         if input_id:
             input_samples.append(input_id)
 
     return list(set(input_samples))
 
 
-def get_condition_from_comparison_name(
-    comparison_name: str, config: Dict[str, Any] = config
+def get_level_from_model_name(
+    model_name: str, config: Dict[str, Any] = config
 ) -> Dict[str, Optional[str]]:
     """
     Return a dictionary containing {ref: reference-level-name, test: tested-level-name}
@@ -329,13 +331,13 @@ def get_condition_from_comparison_name(
     """
     if "differential_peak_coverage" in config.keys():
         for idx, comparison in enumerate(config["differential_peak_coverage"]):
-            if comparison["model_name"] == comparison_name:
+            if comparison["model_name"] == model_name:
                 return {
                     "ref": comparison["reference"],
                     "test": comparison["tested"],
                 }
         raise KeyError(
-            f"{comparison_name} is not a comparison name available in "
+            f"{model_name} is not a comparison name available in "
             "configfile. Available names are: "
             f"{[c['model_name'] for c in config['differential_peak_coverage']]}"
         )
@@ -343,27 +345,42 @@ def get_condition_from_comparison_name(
         return {"ref": None, "test": None}
 
 
-def get_sample_list_from_comparison_name(
-    comparison_name: str, signal: str, design: pandas.DataFrame = design
+def get_sample_list_from_model_name(
+    model_name: str,
+    signal: str,
+    design: pandas.DataFrame = design,
+    config: Dict[str, Any] = config,
 ) -> List[str]:
     """
     Return list of samples belonging to a given comparison
     """
-    condition_dict = get_condition_from_comparison_name(comparison_name)
-    sample_list = get_samples_per_condition(
-        snakemake.io.Wildcards(fromdict={"condition": condition_dict["ref"]}), design
+    level_dict: Dict[str, Optional[str]] = get_level_from_model_name(
+        model_name=model_name, config=config
     )
-    sample_list += get_samples_per_condition(
-        snakemake.io.Wildcards(fromdict={"condition": condition_dict["test"]}), design
+    sample_list: List[str] = get_samples_per_level(
+        wildcards=snakemake.io.Wildcards(fromdict={"level": level_dict["ref"]}),
+        design=design,
+    )
+    sample_list += get_samples_per_level(
+        wildcards=snakemake.io.Wildcards(fromdict={"level": level_dict["test"]}),
+        design=design,
     )
 
     if len(sample_list) == 0:
-        raise ValueError(f"No sample found in comparison: {comparison_name}")
+        raise ValueError(f"No sample found in comparison: {model_name}")
 
     if str(signal).lower() == "input":
-        if any(has_input(sample) for sample in sample_list):
-            sample_list = get_input_per_condition(condition_dict["ref"], design)
-            sample_list += get_input_per_condition(condition_dict["test"], design)
+        if any(has_input(sample=sample, design=design) for sample in sample_list):
+            sample_list = get_input_per_level(
+                wildcards=snakemake.io.Wildcards(fromdict={"level": level_dict["ref"]}),
+                design=design,
+            )
+            sample_list += get_input_per_level(
+                wildcards=snakemake.io.Wildcards(
+                    fromdict={"level": level_dict["test"]}
+                ),
+                design=design,
+            )
         elif not protocol_is_atac(protocol):
             raise Warning(
                 "No sample have corresponding input. "
@@ -373,20 +390,20 @@ def get_sample_list_from_comparison_name(
     return sample_list
 
 
-def get_comparison_names(config: Dict[str, Any] = config) -> List[str]:
+def get_model_names(config: Dict[str, Any] = config) -> List[str]:
     """
     Return complete list of comparisons
     """
-    comparison_names = []
+    model_names: List[str] = []
     if "differential_peak_coverage" in config.keys():
         for comparison in config["differential_peak_coverage"]:
-            comparison_names.append(comparison["model_name"])
+            model_names.append(comparison["model_name"])
 
-    return comparison_names
+    return model_names
 
 
 def get_sample_genome(
-    wildcards,
+    wildcards: snakemake.io.Wildcards,
     design: pandas.DataFrame = design,
     species: str = species,
     build: str = build,
@@ -397,13 +414,13 @@ def get_sample_genome(
     {genome, build, release}
     """
     if "Species" in design.columns:
-        species = design["Species"].loc[wildcards.sample] or species
+        species: str = design["Species"].loc[wildcards.sample] or species
 
     if "Release" in design.columns:
-        release = design["Release"].loc[wildcards.sample] or release
+        release: Union[str, int] = design["Release"].loc[wildcards.sample] or release
 
     if "Build" in design.columns:
-        build = design["Build"].loc[wildcards.sample] or build
+        build: str = design["Build"].loc[wildcards.sample] or build
 
     return species, build, release
 
@@ -412,7 +429,7 @@ def get_tested_sample_list(design: pandas.DataFrame = design) -> List[str]:
     """
     Return list of non-input sample ids
     """
-    sample_list = design.index.tolist()
+    sample_list: List[str] = design.index.tolist()
     if "Input" in design.columns:
         input_list = [i for i in design.Input if i != ""]
         sample_list = list(set(sample_list) - set(input_list))
@@ -430,15 +447,15 @@ def get_tested_sample_list(design: pandas.DataFrame = design) -> List[str]:
 
 
 def get_fastp_input(
-    wildcards, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
 ) -> Dict[str, List[str]]:
     """
     Return the list of Fastp input files
     """
-    fastp_input = {
+    fastp_input: Dict[str, List[str]] = {
         "sample": [design["Upstream_file"].loc[wildcards.sample]],
     }
-    down = is_paired(wildcards.sample, design=design)
+    down: Optional[str] = is_paired(sample=wildcards.sample, design=design)
     if down:
         fastp_input["sample"].append(down)
 
@@ -449,9 +466,9 @@ def get_fastp_output_html(design: pandas.DataFrame = design) -> List[str]:
     """
     Return the list of fastp reports
     """
-    html_list = []
+    html_list: List[str] = []
     for sample in design.index:
-        down = is_paired(sample)
+        down = is_paired(sample=sample, design=design)
         if down:
             html_list.append(f"data_output/QC/fastp/{sample}.pe.html")
         else:
@@ -461,14 +478,16 @@ def get_fastp_output_html(design: pandas.DataFrame = design) -> List[str]:
 
 
 def get_multiqc_trimming_input(
-    wildcards, protocol: str = protocol, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    design: pandas.DataFrame = design,
 ) -> List[str]:
     """
     Return the expected list of input files for multiqc right after trimming
     """
-    multiqc_trimming_input = []
+    multiqc_trimming_input: List[str] = []
     for sample in design.index:
-        down = is_paired(sample)
+        down: Optional[str] = is_paired(sample=sample, design=design)
         if down:
             multiqc_trimming_input.append(f"data_output/QC/fastp/{sample}.pe.html")
 
@@ -494,15 +513,15 @@ def get_multiqc_trimming_input(
 
 
 def get_bowtie2_align_input(
-    wildcards,
+    wildcards: snakemake.io.Wildcards,
     design: pandas.DataFrame = design,
     bowtie2_index: str = bowtie2_index_path,
 ) -> Dict[str, List[str]]:
     """
     Return the list of bowtie2 align input
     """
-    bowtie2_align_input = {"idx": bowtie2_index_path}
-    down = is_paired(wildcards.sample, design=design)
+    bowtie2_align_input: Dict[str, List[str]] = {"idx": bowtie2_index_path}
+    down: Optional[str] = is_paired(sample=wildcards.sample, design=design)
     if down:
         bowtie2_align_input["sample"] = expand(
             "fastp/trimmed/pe/{sample}.{stream}.fastq",
@@ -518,7 +537,7 @@ def get_bowtie2_align_input(
 
 
 def get_fastq_screen_input(
-    wildcards,
+    wildcards: snakemake.io.Wildcards,
     config: Dict[str, Any] = config,
     design: pandas.DataFrame = design,
     default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes,
@@ -529,10 +548,10 @@ def get_fastq_screen_input(
     First file in the input file list MUST be the fastq file of interest.
     Second file in the input file list MUST be the configuration file.
     """
-    fastq_screen_input = []
+    fastq_screen_input: List[str] = []
 
     # Let the fastq file be the first file in the input file list
-    down = is_paired(wildcards.sample, design=design)
+    down: Optional[str] = is_paired(sample=wildcards.sample, design=design)
     if down:
         fastq_screen_input.append(
             f"fastp/trimmed/pe/{wildcards.sample}.{wildcards.stream}.fastq"
@@ -556,7 +575,9 @@ def get_fastq_screen_input(
     return fastq_screen_input
 
 
-def get_samtools_stats_input(wildcards, protocol: str = protocol) -> Dict[str, str]:
+def get_samtools_stats_input(
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol
+) -> Dict[str, str]:
     """
     Return expected input files for Samtools stats
     """
@@ -585,14 +606,18 @@ def get_samtools_stats_input(wildcards, protocol: str = protocol) -> Dict[str, s
 
 
 def get_multiqc_mapping_input(
-    wildcards, protocol: str = protocol, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    design: pandas.DataFrame = design,
 ) -> List[str]:
     """
     Return the expected list of input files for multiqc right after mapping
     """
-    multiqc_mapping_input = get_multiqc_trimming_input(wildcards, protocol, design)
+    multiqc_mapping_input: List[str] = get_multiqc_trimming_input(
+        wildcards, protocol, design
+    )
 
-    picard_files = [
+    picard_files: List[str] = [
         ".alignment_summary_metrics",
         ".insert_size_metrics",
         ".insert_size_histogram.pdf",
@@ -622,12 +647,12 @@ def get_multiqc_mapping_input(
 
 
 def get_medips_import_sample_bam_input(
-    wilcards, design: pandas.DataFrame = design
+    wilcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
 ) -> Dict[str, List[str]]:
     """
     Return expected lists of input for medips
     """
-    samples = get_samples_per_condition(wilcards)
+    samples: List[str] = get_samples_per_level(wildcards=wilcards, design=design)
 
     return {
         "bam": expand("sambamba/markdup/{sample}.bam", sample=samples),
@@ -641,12 +666,14 @@ def get_medips_import_sample_bam_input(
 
 
 def get_deeptools_bamcoverage_input(
-    wildcards, protocol: str = protocol, blacklist_path: str = blacklist_path
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    blacklist_path: str = blacklist_path,
 ) -> Dict[str, str]:
     """
     Return the expected list of DeepTools input file list
     """
-    deeptools_bamcoverage_input = {"blacklist": blacklist_path}
+    deeptools_bamcoverage_input: Dict[str, str] = {"blacklist": blacklist_path}
     if protocol_is_atac(protocol):
         deeptools_bamcoverage_input["bam"] = "deeptools/sorted_sieve/{sample}.bam"
         deeptools_bamcoverage_input["bai"] = "deeptools/sorted_sieve/{sample}.bam.bai"
@@ -658,16 +685,21 @@ def get_deeptools_bamcoverage_input(
 
 
 def get_deeptools_plotfingerprint_input(
-    wildcards, protocol: str = protocol, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    design: pandas.DataFrame = design,
 ) -> Dict[str, List[str]]:
     """
     Return the list of expected input files for deeptools plot fingerprint
     """
-    bam_prefix = (
+    bam_prefix: str = (
         "deeptools/sorted_sieve" if protocol_is_atac(protocol) else "sambamba/markdup"
     )
 
-    deeptools_plotfingerprint_input = {"bam_files": [], "bam_idx": []}
+    deeptools_plotfingerprint_input: Dict[str, List[str]] = {
+        "bam_files": [],
+        "bam_idx": [],
+    }
     for sample in design.index:
         deeptools_plotfingerprint_input["bam_files"].append(
             f"{bam_prefix}/{sample}.bam"
@@ -681,13 +713,15 @@ def get_deeptools_plotfingerprint_input(
 
 
 def get_medips_params_extra(
-    wildcards, design: pandas.DataFrame = design, build: str = build
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    build: str = build,
 ) -> List[str]:
     """
     Return expected optional parameters for MEDIPS::MEDIPS.createSet(...)
     """
-    medips_params_extra = []
-    medips_base = config.get("medips", {}).get("medips_createset_extra", "")
+    medips_params_extra: List[str] = []
+    medips_base: str = config.get("medips", {}).get("medips_createset_extra", "")
 
     if build.lower() == "grch38":
         medips_base += ", BSgenome = BSgenome.Hsapiens.UCSC.hg38"
@@ -696,9 +730,11 @@ def get_medips_params_extra(
     else:
         raise NotImplementedError(f"{build} genome not implemented for MeDIP-Seq")
 
-    for sample in get_samples_per_condition(wildcards, design):
-        down = is_paired(wildcards.sample)
-        fragment_size = has_fragment_size(wildcards.sample, sample_is_paired=bool(down))
+    for sample in get_samples_per_level(wildcards=wildcards, design=design):
+        down: Optional[str] = is_paired(sample=wildcards.sample, design=design)
+        fragment_size = has_fragment_size(
+            sample=wildcards.sample, design=design, sample_is_paired=bool(down)
+        )
         if down:
             medips_params_extra.append(f"{medips_base}, paired = TRUE")
         elif fragment_size:
@@ -717,7 +753,9 @@ def get_medips_meth_coverage_input(
     Return list of input expected by rule medips_meth_coverage
     """
     # Gathering comparison information
-    comparisons = config.get("differential_peak_coverage")
+    comparisons: Optional[List[Dict[str, str]]] = config.get(
+        "differential_peak_coverage"
+    )
     if not comparisons:
         raise ValueError(
             "No differential peak coverage information provided in "
@@ -725,45 +763,45 @@ def get_medips_meth_coverage_input(
         )
 
     # Gathering reference/tested samples
-    reference = None
-    tested = None
+    reference: Optional[str] = None
+    tested: Optional[str] = None
     for models in comparisons:
-        if models["model_name"] == wildcards.comparison_name:
+        if models["model_name"] == wildcards.model_name:
             reference = models["reference"]
             tested = models["tested"]
             break
     else:
         raise ValueError(
-            "Could not find a comparison " f"named: {wildcards.comparison_name}"
+            "Could not find a comparison " f"named: {wildcards.model_name}"
         )
 
-    reference_samples = get_samples_per_condition(
-        snakemake.io.Wildcards(fromdict={"condition": reference})
+    reference_samples: List[str] = get_samples_per_level(
+        wildcards=snakemake.io.Wildcards(fromdict={"level": reference}), design=design
     )
-    tested_samples = get_samples_per_condition(
-        snakemake.io.Wildcards(fromdict={"condition": tested})
+    tested_samples: List[str] = get_samples_per_level(
+        wildcards=snakemake.io.Wildcards(fromdict={"level": tested}), design=design
     )
 
     # Building output dictionary
-    medips_meth_coverage_input = {
+    medips_meth_coverage_input: Dict[str, Union[List[str], str]] = {
         "mset1": expand("sambamba/markdup/{sample}.bam", sample=tested_samples),
         "mset2": expand("sambamba/markdup/{sample}.bam", sample=reference_samples),
-        "cset": f"medips/coupling/{wildcards.comparison_name}.RDS",
+        "cset": f"medips/coupling/{wildcards.model_name}.RDS",
     }
 
     # Looking for input samples, if any
-    # ... in reference condition,
-    reference_input_samples = get_input_per_condition(
-        snakemake.io.Wildcards(fromdict={"condition": reference})
+    # ... in reference level,
+    reference_input_samples: List[str] = get_input_per_level(
+        wildcards=snakemake.io.Wildcards(fromdict={"level": reference}), design=design
     )
     if len(reference_input_samples) > 0:
         medips_meth_coverage_input["iset1"] = expand(
             "sambamba/markdup/{sample}.bam", sample=reference_input_samples
         )
 
-    # ... and in tested condition.
-    tested_input_samples = get_input_per_condition(
-        snakemake.io.Wildcards(fromdict={"condition": tested})
+    # ... and in tested level.
+    tested_input_samples: List[str] = get_input_per_level(
+        wildcards=snakemake.io.Wildcards(fromdict={"level": tested}), design=design
     )
     if len(tested_input_samples) > 0:
         medips_meth_coverage_input["iset1"] = expand(
@@ -774,23 +812,25 @@ def get_medips_meth_coverage_input(
 
 
 def get_csaw_count_input(
-    wildcards, design: pandas.DataFrame = design, protocol: str = protocol
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    protocol: str = protocol,
 ) -> Dict[str, Union[str, List[str]]]:
     """
     Return expected list of input files for csaw-count
     """
-    sample_list = get_sample_list_from_comparison_name(
-        wildcards.comparison_name, wildcards.signal, design
+    sample_list: List[str] = get_sample_list_from_model_name(
+        model_name=wildcards.model_name, signal=wildcards.signal, design=design
     )
 
-    bam_prefix = "sambamba/markdup"
+    bam_prefix: str = "sambamba/markdup"
     if protocol_is_atac(protocol):
         bam_prefix = "deeptools/alignment_sieve"
     elif protocol_is_ogseq(protocol):
         bam_prefix = "deeptools/corrected"
 
-    library = "se"
-    if all(is_paired(sample) for sample in sample_list):
+    library: str = "se"
+    if all(is_paired(sample=sample, design=design) for sample in sample_list):
         library = "pe"
 
     return {
@@ -801,30 +841,35 @@ def get_csaw_count_input(
 
 
 def get_csaw_count_params(
-    wildcards, design: pandas.DataFrame = design, protocol: str = protocol
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    protocol: str = protocol,
 ) -> str:
     """
     Return best parameters considering IO files list
     """
-    extra = "width = 100, filter = 10"
+    extra: str = "width = 100, filter = 10"
     if str(wildcards.signal) == "binned":
         extra += ", bin = TRUE"
 
     if protocol_is_atac(protocol):
         extra += ", shift = 4"
 
-    sample_list = get_sample_list_from_comparison_name(
-        wildcards.comparison_name, wildcards.signal, design
+    sample_list: List[str] = get_sample_list_from_model_name(
+        model_name=wildcards.model_name, signal=wildcards.signal, design=design
     )
-    if any(is_paired(sample) for sample in sample_list):
-        if not all(is_paired(sample) for sample in sample_list):
+    if any(is_paired(sample=sample, design=design) for sample in sample_list):
+        if not all(is_paired(sample=sample, design=design) for sample in sample_list):
             raise ValueError(
                 "Analysis of mixed Single-end / Pair-end "
                 "libraries are not yet available"
             )
     else:
-        fragment_lengths = ", ".join(
-            [has_fragment_size(sample) for sample in sample_list]
+        fragment_lengths: str = ", ".join(
+            [
+                has_fragment_size(sample=sample, design=design, sample_is_paired=False)
+                for sample in sample_list
+            ]
         )
         extra += f", ext=c({fragment_lengths})"
 
@@ -832,12 +877,14 @@ def get_csaw_count_params(
 
 
 def get_csaw_read_param(
-    wildcards, design: pandas.DataFrame = design, protocol: str = protocol
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    protocol: str = protocol,
 ) -> str:
     """
     Return best parameters for csaw::readParam()
     """
-    extra = "dedup = TRUE, minq = 30"
+    extra: str = "dedup = TRUE, minq = 30"
     if str(wildcards.library) == "pe":
         extra += ", pe = 'both'"
     else:
@@ -850,25 +897,23 @@ def get_csaw_read_param(
 
 
 def get_csaw_filter_input(
-    wildcards, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
 ) -> Dict[str, str]:
     """
     Return the list of input files expected by csaw_filter.R
     """
-    csaw_filter_input = {
-        "counts": f"csaw/count/{wildcards.comparison_name}.tested.RDS",
+    csaw_filter_input: Dict[str, str] = {
+        "counts": f"csaw/count/{wildcards.model_name}.tested.RDS",
     }
-    input_list = get_sample_list_from_comparison_name(
-        wildcards.comparison_name, "input", design
+    input_list: List[str] = get_sample_list_from_model_name(
+        model_name=wildcards.model_name, signal="input", design=design
     )
     if len(input_list) > 0:
         csaw_filter_input[
             "input_counts"
-        ] = f"csaw/count/{wildcards.comparison_name}.input.RDS"
+        ] = f"csaw/count/{wildcards.model_name}.input.RDS"
     else:
-        csaw_filter_input[
-            "binned"
-        ] = f"csaw/count/{wildcards.comparison_name}.binned.RDS"
+        csaw_filter_input["binned"] = f"csaw/count/{wildcards.model_name}.binned.RDS"
 
     return csaw_filter_input
 
@@ -879,7 +924,9 @@ def get_csaw_filter_input(
 
 
 def get_macs2_callpeak_input(
-    wildcards, design: pandas.DataFrame = design, protocol: str = "chip-seq"
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    protocol: str = "chip-seq",
 ) -> Dict[str, str]:
     """
     Return expected list of input files for Macs2 callpeak
@@ -892,7 +939,7 @@ def get_macs2_callpeak_input(
     else:
         macs2_callpeak_input["treatment"] = f"sambamba/markdup/{wildcards.sample}.bam"
 
-    input_id = has_input(wildcards.sample, design=design)
+    input_id = has_input(sample=wildcards.sample, design=design)
     if (input_id is not None) and (input_id != ""):
         if protocol_is_atac(wildcards.sample):
             macs2_callpeak_input[
@@ -905,7 +952,7 @@ def get_macs2_callpeak_input(
 
 
 def get_macs2_params(
-    wildcards,
+    wildcards: snakemake.io.Wildcards,
     effective_genome_size: int = effective_genome_size,
     design: pandas.DataFrame = design,
 ) -> str:
@@ -913,13 +960,15 @@ def get_macs2_params(
     Return expected parameters for Macs2 callpeak
     """
     extra = f" --gsize {effective_genome_size} "
-    down = is_paired(wildcards.sample, design=design)
+    down = is_paired(sample=wildcards.sample, design=design)
     if down:
         extra += " --format BAMPE "
     else:
         extra += " --format BAM "
 
-        fragment_size = has_fragment_size(wildcards.sample, sample_is_paired=False)
+        fragment_size = has_fragment_size(
+            sample=wildcards.sample, design=design, sample_is_paired=False
+        )
         if fragment_size:
             extra += f" --nomodel --extsize {fs} "
         else:
@@ -945,30 +994,30 @@ chipseeker_plot_list = [
 
 
 def get_chipseeker_annotate_peak_from_ranges_input(
-    wildcards, protocol: str = protocol
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol
 ) -> Dict[str, Any]:
     """
     Return expected list of input files for chipseeker annotate
     """
     if protocol_is_medip(protocol):
-        return {"ranges": "medips/edger/{comparison_name}.RDS"}
-    return {"ranges": "csaw/results/{comparison_name}.RDS"}
+        return {"ranges": "medips/edger/{model_name}.RDS"}
+    return {"ranges": "csaw/results/{model_name}.RDS"}
 
 
-def get_edger_formula(wildcards, config: Dict[str, Any] = config) -> str:
+def get_edger_formula(
+    wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config
+) -> str:
     """
-    Based on condition wildcard, return edgeR stats formula
+    Based on level wildcard, return edgeR stats formula
     """
     if "differential_peak_coverage" not in config.keys():
         raise KeyError("No differential coverage design was provided")
 
     for comparison in config["differential_peak_coverage"]:
-        if comparison["model_name"] == wildcards.comparison_name:
+        if comparison["model_name"] == wildcards.model_name:
             return comparison["formula"]
 
-    raise ValueError(
-        "Could not find a statistical formula for: {wildcards.comparison_name}"
-    )
+    raise ValueError("Could not find a statistical formula for: {wildcards.model_name}")
 
 
 #############################
@@ -990,7 +1039,7 @@ wildcard_constraints:
     signal=r"|".join(["tested", "input", "binned"]),
     library=r"|".join(["se", "pe"]),
     chipseeker_plot=r"|".join(chipseeker_plot_list),
-    comparison_name=r"|".join(get_comparison_names()),
+    model_name=r"|".join(get_model_names(config)),
 
 
 ########################
@@ -1036,18 +1085,18 @@ def targets(
 
     if steps.get("coverage", False):
         expected_targets["bam_coverage"] = expand(
-            "data_output/Coverage/{sample}.bw", sample=get_tested_sample_list()
+            "data_output/Coverage/{sample}.bw", sample=get_tested_sample_list(design=design)
         )
 
     if steps.get("calling", False):
         if config.get("macs2", {}).get("broad", False):
             expected_targets["macs2_broad"] = expand(
                 "data_output/Peak_Calling/broad/{sample}_peaks.xls",
-                sample=get_tested_sample_list(),
+                sample=get_tested_sample_list(design=design),
             )
             expected_targets["dit_tss_broad"] = expand(
                 "data_output/Peak_Calling/broad/{chipseeker_plot}/{sample}.png",
-                sample=get_tested_sample_list(),
+                sample=get_tested_sample_list(design=design),
                 chipseeker_plot=chipseeker_plot_list,
             )
             expected_targets["deeptools_heatmap"] = expand(
@@ -1057,11 +1106,11 @@ def targets(
         if config.get("macs2", {}).get("narrow", False):
             expected_targets["macs2_narrow"] = expand(
                 "data_output/Peak_Calling/narrow/{sample}_peaks.xls",
-                sample=get_tested_sample_list(),
+                sample=get_tested_sample_list(design=design),
             )
             expected_targets["dit_tss_narrow"] = expand(
                 "data_output/Peak_Calling/narrow/{chipseeker_plot}/{sample}.png",
-                sample=get_tested_sample_list(),
+                sample=get_tested_sample_list(design=design),
                 chipseeker_plot=chipseeker_plot_list,
             )
             expected_targets["deeptools_heatmap"] = expand(
@@ -1069,16 +1118,16 @@ def targets(
             )
 
     if steps.get("diff_cov", False):
-        comparison_list = get_comparison_names()
+        comparison_list: List[str] = get_model_names(config)
         if len(comparison_list) > 0:
             expected_targets["annotated_csaw_tsv"] = expand(
-                "data_output/Differential_Binding/{comparison_name}.tsv",
-                comparison_name=comparison_list,
+                "data_output/Differential_Binding/{model_name}.tsv",
+                model_name=comparison_list,
             )
 
             expected_targets["distance_to_tss"] = expand(
-                "data_output/Differential_Binding/{comparison_name}/{chipseeker_plot}.png",
-                comparison_name=comparison_list,
+                "data_output/Differential_Binding/{model_name}/{chipseeker_plot}.png",
+                model_name=comparison_list,
                 chipseeker_plot=chipseeker_plot_list,
             )
 

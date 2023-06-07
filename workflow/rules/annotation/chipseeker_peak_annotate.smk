@@ -2,15 +2,15 @@ rule chipseeker_annotate_peak_from_ranges:
     input:
         unpack(get_chipseeker_annotate_peak_from_ranges_input),
     output:
-        rds="chipseeker/annotation/{comparison_name}.RDS",
-        tsv="data_output/Differential_Binding/{comparison_name}.tsv",
+        rds="chipseeker/annotation/{model_name}.RDS",
+        tsv="data_output/Differential_Binding/{model_name}.tsv",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
         runtime=lambda wildcards, attempt: attempt * 40,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/annotate/{comparison_name}.log",
+        "logs/chipseeker/annotate/{model_name}.log",
     params:
         organism="hg38" if species == "homo_sapiens" else "mm10",
     conda:

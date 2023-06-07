@@ -20,16 +20,16 @@ rule chipseeker_genebody_cov_single_sample:
 
 rule chipseeker_genebody_cov_differential_binding:
     input:
-        ranges="chipseeker/annotation/{comparison_name}.RDS",
+        ranges="chipseeker/annotation/{model_name}.RDS",
     output:
-        png="data_output/Differential_Binding/{comparison_name}/Gene_Body_Coverage.png",
+        png="data_output/Differential_Binding/{model_name}/Gene_Body_Coverage.png",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/genebody_cov/{comparison_name}.log",
+        "logs/chipseeker/genebody_cov/{model_name}.log",
     params:
         extra="",
     conda:

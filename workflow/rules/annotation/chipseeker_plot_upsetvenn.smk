@@ -20,16 +20,16 @@ rule chipseeker_plot_upsetvenn_single_sample:
 
 rule chipseeker_plot_upsetvenn_differential_binding:
     input:
-        ranges="chipseeker/annotation/{comparison_name}.RDS",
+        ranges="chipseeker/annotation/{model_name}.RDS",
     output:
-        png="data_output/Differential_Binding/{comparison_name}/UpsetVenn.png",
+        png="data_output/Differential_Binding/{model_name}/UpsetVenn.png",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/upsetvenn/{comparison_name}.log",
+        "logs/chipseeker/upsetvenn/{model_name}.log",
     params:
         extra="",
     conda:

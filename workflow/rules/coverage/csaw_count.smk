@@ -20,14 +20,14 @@ rule csaw_window_count:
     input:
         unpack(get_csaw_count_input),
     output:
-        rds=temp("csaw/count/{comparison_name}.{signal}.RDS"),
+        rds=temp("csaw/count/{model_name}.{signal}.RDS"),
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/csaw/windowcount/{comparison_name}.{signal}.log",
+        "logs/csaw/windowcount/{model_name}.{signal}.log",
     params:
         extra=lambda wildcards: get_csaw_count_params(wildcards),
     conda:
@@ -40,14 +40,14 @@ rule csaw_count_filter:
     input:
         unpack(get_csaw_filter_input),
     output:
-        rds=temp("csaw/filtered/{comparison_name}.RDS"),
+        rds=temp("csaw/filtered/{model_name}.RDS"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/csaw/filter/{comparison_name}.log",
+        "logs/csaw/filter/{model_name}.log",
     params:
         filter_method=lambda wildcards, input: "input_controls"
         if "input_counts" in input.keys()

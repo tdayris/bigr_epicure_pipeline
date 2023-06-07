@@ -22,14 +22,14 @@ rule chipseeker_plot_genome_cov_differential_binding:
     input:
         unpack(get_chipseeker_annotate_peak_from_ranges_input),
     output:
-        png="data_output/Differential_Binding/{comparison_name}/Genome_Coverage.png",
+        png="data_output/Differential_Binding/{model_name}/Genome_Coverage.png",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/genomecov/{comparison_name}.log",
+        "logs/chipseeker/genomecov/{model_name}.log",
     params:
         extra="",
     conda:

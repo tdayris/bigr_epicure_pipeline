@@ -1,15 +1,15 @@
 rule chipseeker_tagmatrix_from_ranges:
     input:
-        ranges="csaw/results/{comparison_name}.RDS",
+        ranges="csaw/results/{model_name}.RDS",
     output:
-        rds="chipseeker/tagmatrix/{comparison_name}.RDS",
+        rds="chipseeker/tagmatrix/{model_name}.RDS",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
         runtime=lambda wildcards, attempt: attempt * 40,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/tagmatrix/{comparison_name}.log",
+        "logs/chipseeker/tagmatrix/{model_name}.log",
     params:
         organism="hg38" if species == "homo_sapiens" else "mm10",
     conda:

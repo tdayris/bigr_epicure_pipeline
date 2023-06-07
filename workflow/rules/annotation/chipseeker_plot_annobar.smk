@@ -20,16 +20,16 @@ rule chipseeker_plot_annobar_single_sample:
 
 rule chipseeker_plot_annobar_differential_binding:
     input:
-        ranges="chipseeker/annotation/{comparison_name}.RDS",
+        ranges="chipseeker/annotation/{model_name}.RDS",
     output:
-        png="data_output/Differential_Binding/{comparison_name}/Feature_Distribution.png",
+        png="data_output/Differential_Binding/{model_name}/Feature_Distribution.png",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
-        "logs/chipseeker/annobar/{comparison_name}.log",
+        "logs/chipseeker/annobar/{model_name}.log",
     params:
         extra="",
     conda:
