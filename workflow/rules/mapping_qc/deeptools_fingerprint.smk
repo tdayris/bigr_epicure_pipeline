@@ -15,8 +15,8 @@ rule deeptools_plot_fingerprint:
         qc_metrics=temp("deeptools/plot_fingerprint/qc_metrics.txt"),
     threads: config.get("max_threads", 20)
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 4 * 1024,
-        runtime=lambda wildcards, attempt: attempt * 45,
+        mem_mb=lambda wildcards, attempt: attempt * 8 * 1024,
+        runtime=lambda wildcards, attempt: attempt * 60 * 2,
         tmpdir=tmp,
     log:
         "logs/deeptools/plot_fingerprint.log",
