@@ -78,8 +78,8 @@ rule manual_frip_score_compute:
     log:
         "logs/compute/{peaktype}.log",
     params:
-        'BEGIN{FS="\t"} {print $1 FS $2 FS $4 FS $2 / $4}',
+        script=workflow.source_path("../../scripts/frip/compute_frip.awk"),
     conda:
         "../../envs/bash.yaml"
     shell:
-        "awk {params} {input} > {output} 2> {log}"
+        "awk --file {params.script} {input} > {output} 2> {log}"
