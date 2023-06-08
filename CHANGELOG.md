@@ -1,6 +1,7 @@
 # 0.8.0 – Motifs
 
 * Enable motif analysis with Homer
+* Fixes signle-end designs
 
 # 0.7.0 – Differential binding
 
