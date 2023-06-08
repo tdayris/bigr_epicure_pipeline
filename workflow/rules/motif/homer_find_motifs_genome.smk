@@ -25,6 +25,6 @@ rule homer_find_motif_genome:
         "findMotifsGenome.pl "
         "{input.peak} "
         "{params.genome} "
-        "{params.size} "
         "{params.output_directory} "
+        "-size {params.size} "
         "> {log} 2>&1 "
