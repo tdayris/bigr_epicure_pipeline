@@ -516,9 +516,13 @@ def get_fastp_params(
     """
     Return fastp parameters
     """
-    extra = ""
+    extra: str = f"--report_title 'Fastp report for sample {wildcards.sample}' "
+    user_defined: str = config.get("trimming", {}).get("fastp_extra")
+    if user_defined:
+        extra += user_defined
+
     if protocol_is_medip(protocol) or protocol_is_ogseq(protocol):
-        extra += " --disable_adapter_trimming --poly_g_min_len 25 "
+        extra += " --poly_g_min_len 25 "
 
     return extra
 
