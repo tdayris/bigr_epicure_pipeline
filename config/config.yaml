@@ -132,3 +132,11 @@ differential_peak_coverage:
   # - model_name: OtherFactor
   #   reference: ReferenceOtherFactorLevel
   #   tested: TestedOtherFactorLevel
+
+# The following options involves trimming (fastp)
+trimming:
+  # Contaminent, vector, adapter. Comment to ignore.
+  # adapters: --adapter_sequence GATCGGAAGAGCACACGTCTGAACTCCAGTCA
+
+  # Fastp trimming options. Comment to ignore.
+  # fastp_extra: none
