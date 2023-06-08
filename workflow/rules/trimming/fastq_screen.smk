@@ -23,8 +23,8 @@ rule fastq_screen_single:
     input:
         unpack(get_fastq_screen_input),
     output:
-        png=temp("data_output/{sample}.png"),
-        txt=temp("fastq_screen/{sample}.txt"),
+        png=temp("data_output/{sample}.fastq_screen.png"),
+        txt=temp("fastq_screen/{sample}.fastq_screen.txt"),
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 12,

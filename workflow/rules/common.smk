@@ -2,6 +2,7 @@ import logging
 import os
 import pandas
 import snakemake
+import warnings
 
 from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -290,10 +291,16 @@ def has_fragment_size(
     """
     if "Fragment_size" in design.keys():
         fragment_size: Union[str, int] = design["Fragment_size"].loc[sample]
-        if (fragment_size is not None) and (fragment_size != ""):
+        if (
+            (fragment_size is not None)
+            and (fragment_size != "")
+            and (not pandas.isna(fragment_size))
+        ):
             return fragment_size
         elif not sample_is_paired:
-            raise Warning(f"Single-ended sample `{sample}` has no fragment size")
+            warnings.warn(
+                f"Single-ended sample `{sample}` has no fragment size: {fragment_size}"
+            )
 
 
 def has_input(sample: str, design: pandas.DataFrame = design) -> Optional[str]:
@@ -552,7 +559,7 @@ def get_multiqc_trimming_input(
             multiqc_trimming_input.append(f"fastp/report/pe/{sample}.fastp.json")
 
         else:
-            multiqc_trimming_input.append(f"data_output/qc/fastp/{sample}.se.html")
+            multiqc_trimming_input.append(f"data_output/QC/fastp/{sample}.se.html")
 
             multiqc_trimming_input.append(f"fastq_screen/{sample}.fastq_screen.txt")
 
@@ -959,10 +966,15 @@ def get_csaw_count_params(
             )
     else:
         fragment_lengths: str = ", ".join(
-            [
-                has_fragment_size(sample=sample, design=design, sample_is_paired=False)
-                for sample in sample_list
-            ]
+            map(
+                str,
+                [
+                    has_fragment_size(
+                        sample=sample, design=design, sample_is_paired=False
+                    )
+                    for sample in sample_list
+                ],
+            )
         )
         extra += f", ext=c({fragment_lengths})"
 
@@ -1060,7 +1072,7 @@ def get_macs2_params(
             sample=wildcards.sample, design=design, sample_is_paired=False
         )
         if fragment_size:
-            extra += f" --nomodel --extsize {fs} "
+            extra += f" --extsize {fragment_size} "
         else:
             raise ValueError(
                 "Single-ended reads should have a "
