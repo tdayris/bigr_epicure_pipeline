@@ -2,7 +2,12 @@ rule chipseeker_plot_annobar_single_sample:
     input:
         ranges="chipseeker/annotation/{sample}.{peaktype}.RDS",
     output:
-        png="data_output/Peak_Calling/{peaktype}/Feature_Distribution/{sample}.png",
+        png=report(
+            "data_output/Peak_Calling/{peaktype}/Feature_Distribution/{sample}.png",
+            caption="../../report/annotation/genome_annot_single_sample.rst",
+            category="Annotation",
+            labels={"type": "png", "category": "Annotation"},
+        )
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,

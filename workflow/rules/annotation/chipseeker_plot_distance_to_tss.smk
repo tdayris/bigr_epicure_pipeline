@@ -2,7 +2,12 @@ rule chipseeker_plot_distance_to_tss_single_sample:
     input:
         ranges="chipseeker/annotation/{sample}.{peaktype}.RDS",
     output:
-        png="data_output/Peak_Calling/{peaktype}/Distance_to_TSS/{sample}.png",
+        png=report(
+            "data_output/Peak_Calling/{peaktype}/Distance_to_TSS/{sample}.png",
+            caption="../../report/annotation/dist_tss_single_sample.rst",
+            category="Annotation",
+            labels={"type": "png", "category": "Annotation"},
+        )
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
