@@ -16,7 +16,19 @@ base::message("Logging defined")
 base::library(package = "ChIPseeker", character.only = TRUE)
 base::message("Libraries loaded")
 
-bed_file <- base::as.character(x = snakemake@input[["bed"]])
+peak <- base::list(
+  ChIPseeker::readPeakFile(
+    peakfile = base::as.character(x = snakemake@input[["bed"]]),
+    as = "GRanges"
+  )
+)
+sname <- NULL
+if ("sample" %in% base::names(x = snakemake@wildcards)) {
+  sname <- c(base::as.character(x = snakemake@wildcards[["sample"]]))
+} else if ("model_name" %in% base::names(x = snakemake@wildcards)) {
+  sname <- c(base::as.character(x = snakemake@wildcards[["model_name"]]))
+}
+base::names(x = peak) <- sname
 base::message("Ranges loaded")
 
 # Build plot
@@ -28,7 +40,7 @@ png(
   type = "cairo"
 )
 
-ChIPseeker::covplot(bed_file, weightCol = "V5")
+ChIPseeker::covplot(peak = peak, weightCol = "V5")
 
 
 dev.off()
