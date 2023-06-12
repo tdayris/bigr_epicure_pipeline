@@ -594,7 +594,9 @@ def get_bowtie2_align_input(
             sample=[wildcards.sample],
         )
     else:
-        bowtie2_align_input["sample"] = [f"fastp/trimmed/se/{wildcards.sample}.fastq"]
+        bowtie2_align_input["sample"] = expand(
+            "fastp/trimmed/se/{sample}.fastq", sample=wildcards.sample
+        )
 
     return bowtie2_align_input
 
