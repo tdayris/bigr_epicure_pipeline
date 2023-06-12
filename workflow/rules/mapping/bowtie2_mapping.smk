@@ -13,7 +13,7 @@ rule bowtie2_align:
     params:
         extra="--very-sensitive",
     wrapper:
-        "v1.31.1/bio/bowtie2/align"
+        "v1.32.1/bio/bowtie2/align"
 
 
 rule sambamba_sort_bowtie2_aligned:
