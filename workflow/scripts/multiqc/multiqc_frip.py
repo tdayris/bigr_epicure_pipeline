@@ -31,4 +31,5 @@ with open(snakemake.input["frip_tsv"], "r") as frip_stream:
         chomp = line[:-1].split("\t")
         results["custom_data"]["data"][chomp[0]] = chomp[-1]
 
-with open(snakemake.output[""])
+with open(snakemake.output["mqc"], 'w')  as mqc_out:
+    yaml.dump(data=results, stream=mqc_out, default_flow_style=False)
