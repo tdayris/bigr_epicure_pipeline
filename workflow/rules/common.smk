@@ -517,9 +517,9 @@ def get_fastp_params(
     Return fastp parameters
     """
     extra: str = f"--report_title 'Fastp report for sample {wildcards.sample}' "
-    user_defined: str = config.get("trimming", {}).get("fastp_extra")
+    user_defined: Optional[str] = config.get("trimming", {})
     if user_defined:
-        extra += user_defined
+        extra += user_defined.get("fastp_extra")
 
     if protocol_is_medip(protocol) or protocol_is_ogseq(protocol):
         extra += " --poly_g_min_len 25 "
@@ -1020,7 +1020,9 @@ def get_csaw_filter_input(
             "input_counts"
         ] = f"csaw/count/{wildcards.model_name}.input.RDS"
     else:
-        csaw_filter_input["binned"] = f"csaw/count/{wildcards.model_name}.binned.RDS"
+        csaw_filter_input["binned"] = str(
+            f"csaw/count/{wildcards.model_name}.binned.RDS"
+        )
 
     return csaw_filter_input
 
@@ -1093,7 +1095,10 @@ def get_bedtools_intersect_macs2_input(
     This is used to compute FRiP score.
     """
     bedtools_intersect_macs2_input: Dict[str, str] = {
-        "right": f"macs2/callpeak_{wildcards.peaktype}/{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed",
+        "right": str(
+            f"macs2/callpeak_{wildcards.peaktype}/"
+            f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
+        ),
     }
 
     bam_prefix: str = "sambamba/markdup"
