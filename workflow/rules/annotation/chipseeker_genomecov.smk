@@ -1,6 +1,6 @@
 rule chipseeker_genome_cov_single_sample:
     input:
-        ranges="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
+        bed="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
     output:
         png="data_output/Peak_Calling/{peaktype}/Genome_Coverage/{sample}.png",
     threads: 1

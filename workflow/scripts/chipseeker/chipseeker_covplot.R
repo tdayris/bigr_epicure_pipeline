@@ -16,13 +16,23 @@ base::message("Logging defined")
 base::library(package = "ChIPseeker", character.only = TRUE)
 base::message("Libraries loaded")
 
-peak <- base::list(
-  ChIPseeker::readPeakFile(
-    peakfile = base::as.character(x = snakemake@input[["bed"]]),
-    as = "GRanges",
-    header = FALSE
+peak <- NULL
+if ("bed" %in% base::names(x = snakemake@input)) {
+  peak <- base::list(
+    ChIPseeker::readPeakFile(
+      peakfile = base::as.character(x = snakemake@input[["bed"]]),
+      as = "GRanges",
+      header = FALSE
+    )
   )
-)
+} else {
+  peak <- base::list(
+    base::readRDS(
+      file = base::as.character(x = snakemake@input[["ranges"]]),
+    )
+  )
+}
+
 sname <- NULL
 if ("sample" %in% base::names(x = snakemake@wildcards)) {
   sname <- c(base::as.character(x = snakemake@wildcards[["sample"]]))
