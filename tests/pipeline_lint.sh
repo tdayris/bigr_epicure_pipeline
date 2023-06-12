@@ -4,7 +4,7 @@ find ../workflow -type f -name "*.smk" | while read SNAKEFILE; do
     echo ${SNAKEFILE}
     snakefmt ${SNAKEFILE}
 done
-black ../workflow/scripts/jobscripts/*.py
+black ../workflow/scripts/*/*.py
 
 export SNAKEMAKE_OUTPUT_CACHE="."
 
