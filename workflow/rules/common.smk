@@ -732,7 +732,7 @@ def get_deeptools_estimate_gc_bias_params(
     Return the best parameters for the provided sample to deeptools computeGCBias
     """
     extra: str = " --plotFileFormat png "
-    if is_paired(wildcards.sample):
+    if not is_paired(wildcards.sample):
         fs: Union[str, int] = has_fragment_size(wildcards.sample)
         extra += f" --fragmentLength {fs} "
 
