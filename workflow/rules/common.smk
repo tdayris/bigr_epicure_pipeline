@@ -664,6 +664,12 @@ def get_samtools_stats_input(
             "bai": f"deeptools/sorted_sieve/{wildcards.sample}.bam.bai",
         }
 
+    if protocol_is_cutnrun(protocol) or protocol_is_cutntag(protocol):
+        return {
+            "bam": f"samtools/view/{wildcards.sample}.bam",
+            "bai": f"samtools/view/{wildcards.sample}.bam.bai",
+        }
+
     return {
         "bam": f"sambamba/markdup/{wildcards.sample}.bam",
         "bai": f"sambamba/markdup/{wildcards.sample}.bam.bai",
@@ -1250,7 +1256,7 @@ def targets(
     if steps.get("calling", False):
         if config.get("macs2", {}).get("broad", False):
             expected_targets["macs2_broad"] = expand(
-                "data_output/Peak_Calling/broad/{sample}_peaks.xls",
+                "data_output/Peak_Calling/broad/Macs2/{sample}_peaks.xls",
                 sample=get_tested_sample_list(design=design),
             )
             expected_targets["dit_tss_broad"] = expand(
@@ -1264,7 +1270,7 @@ def targets(
 
         if config.get("macs2", {}).get("narrow", False):
             expected_targets["macs2_narrow"] = expand(
-                "data_output/Peak_Calling/narrow/{sample}_peaks.xls",
+                "data_output/Peak_Calling/narrow/Macs2/{sample}_peaks.xls",
                 sample=get_tested_sample_list(design=design),
             )
             expected_targets["dit_tss_narrow"] = expand(

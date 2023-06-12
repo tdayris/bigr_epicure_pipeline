@@ -22,7 +22,7 @@ rule macs2_save_broad:
     input:
         "macs2/callpeak_broad/{sample}_peaks.xls",
     output:
-        "data_output/Peak_Calling/broad/{sample}_peaks.xls",
+        "data_output/Peak_Calling/broad/Macs2/{sample}_peaks.xls",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
@@ -62,7 +62,7 @@ rule macs2_save_narrow:
     input:
         "macs2/callpeak_narrow/{sample}_peaks.xls",
     output:
-        "data_output/Peak_Calling/narrow/{sample}_peaks.xls",
+        "data_output/Peak_Calling/narrow/Macs2/{sample}_peaks.xls",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
