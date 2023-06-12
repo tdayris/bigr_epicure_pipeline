@@ -3,7 +3,7 @@
 # __email__ = "thibault.dayris@gustaveroussy.fr"
 # __license__ = "MIT"
 
-# This script plots distance to TSS using CHiPSeeker
+# This script plots genomic annotation using CHiPSeeker
 
 # Sink the stderr and stdout to the snakemake log file
 # https://stackoverflow.com/a/48173272
