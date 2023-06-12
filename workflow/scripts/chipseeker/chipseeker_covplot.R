@@ -28,7 +28,7 @@ if ("bed" %in% base::names(x = snakemake@input)) {
 } else {
   peak <- base::list(
     base::readRDS(
-      file = base::as.character(x = snakemake@input[["ranges"]]),
+      file = base::as.character(x = snakemake@input[["ranges"]])
     )
   )
 }
