@@ -36,3 +36,27 @@ rule chipseeker_plot_annobar_differential_binding:
         "../../envs/chipseeker.yaml"
     script:
         "../../scripts/chipseeker/chipseeker_plot_annobar.R"
+
+
+rule chipseeker_plot_annobar_single_sample_list:
+    input:
+        ranges=expand(
+            "chipseeker/annotation/{sample}.{peaktype}.RDS",
+            sample=get_tested_sample_list(),
+            allow_missing=True,
+        ),
+    output:
+        png="data_output/Peak_Calling/{peaktype}/GenomicAnnotations.png",
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
+        runtime=lambda wildcards, attempt: attempt * 20,
+        tmpdir=tmp,
+    log:
+        "logs/chipseeker/annobar/all.{peaktype}.log",
+    params:
+        extra="",
+    conda:
+        "../../envs/chipseeker.yaml"
+    script:
+        "../../scripts/chipseeker/chipseeker_plot_annobar_lsit.R"
