@@ -17,12 +17,16 @@ base::library(package = "csaw", character.only = TRUE)
 base::message("Libraries loaded")
 
 
-counts <- base::readRDS(file = base::as.character(x = snakemake@input[["counts"]]))
+counts <- base::readRDS(
+    file = base::as.character(x = snakemake@input[["counts"]])
+)
 
 
 filter_method <- "average_log_cpm"
 if ("filter_method" %in% base::names(x = snakemake@params)) {
-    filter_method <- base::as.character(x = snakemake@params[["filter_method"]])
+    filter_method <- base::as.character(
+        x = snakemake@params[["filter_method"]]
+    )
 }
 base::message("Input data loaded")
 
@@ -81,7 +85,7 @@ if (filter_method == "average_log_cpm") {
     base::message("Filtering based on local enrichment")
 
     neighbor <- base::readRDS(
-        file = base::snakemake@input[["neighbor"]]
+        file = base::as.character(x = snakemake@input[["neighbor"]])
     )
 
     filter_stat <- csaw::filterWindowsLocal(
@@ -115,7 +119,7 @@ if (filter_method == "average_log_cpm") {
     base::message("Filtering based on negative controls (aka Input)")
 
     input_counts <- base::readRDS(
-        file = base::snakemake@input[["input_counts"]]
+        file = base::as.character(x = snakemake@input[["input_counts"]])
     )
 
     scale_info <- csaw::scaleControlFilter(
@@ -144,5 +148,5 @@ base::saveRDS(
 
 # Proper syntax to close the connection for the log file
 # but could be optional for Snakemake wrapper
-base::sink(type = "message");
-base::sink();
+base::sink(type = "message")
+base::sink()
