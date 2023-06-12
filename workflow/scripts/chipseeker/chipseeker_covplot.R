@@ -19,7 +19,8 @@ base::message("Libraries loaded")
 peak <- base::list(
   ChIPseeker::readPeakFile(
     peakfile = base::as.character(x = snakemake@input[["bed"]]),
-    as = "GRanges"
+    as = "GRanges",
+    header = FALSE
   )
 )
 sname <- NULL
