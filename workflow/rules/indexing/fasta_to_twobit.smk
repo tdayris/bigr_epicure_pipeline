@@ -12,7 +12,5 @@ rule fasta_to_two_bit:
         "logs/ucsc/fatotwobit.log",
     params:
         extra="",
-    conda:
-        "../../envs/fato2bit.yaml"
-    shell:
-        "faToTwoBit {params.extra} {input} {output} > {log} 2>&1"
+    wrapper:
+        "v1.32.1/bio/ucsc/faToTwoBit"
