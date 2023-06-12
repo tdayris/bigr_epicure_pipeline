@@ -53,6 +53,8 @@ ChIPseeker::plotPeakProf2(
     tagMatrix = tag_matrix,
     upstream = rel(0.2),
     downstream = rel(0.2),
+    weightCol = "V5",
+    ignore_strand = TRUE,
     conf = 0.95,
     by = "gene",
     type = "body",

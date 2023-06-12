@@ -28,7 +28,7 @@ png(
   type = "cairo"
 )
 
-ChIPseeker::covplot(bed_file)
+ChIPseeker::covplot(bed_file, weightCol = "V5")
 
 
 dev.off()
