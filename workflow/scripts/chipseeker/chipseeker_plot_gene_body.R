@@ -24,10 +24,17 @@ base::library(
 )
 base::message("Libraries loaded")
 
-bed_path <- base::as.character(x = snakemake@input[["bed"]])
-ranges <- ChIPseeker::readPeakFile(
-    peakfile = bed_path, as = "GRanges", header = FALSE
-)
+ranges <- NULL
+if ("bed" %in% base::names(x = snakemake@input)) {
+    bed_path <- base::as.character(x = snakemake@input[["bed"]])
+    ranges <- ChIPseeker::readPeakFile(
+        peakfile = bed_path, as = "GRanges", header = FALSE
+    )
+} else if ("ranges" %in% base::names(x = snakemake@input)) {
+    ranges <- base::readRDS(
+        file = base::as.character(x = snakemake@input[["ranges"]])
+    )
+}
 tag_matrix <- base::readRDS(
     file = base::as.character(x = snakemake@input[["tagmatrix"]])
 )
