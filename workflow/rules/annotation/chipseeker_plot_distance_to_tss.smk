@@ -7,7 +7,7 @@ rule chipseeker_plot_distance_to_tss_single_sample:
             caption="../../report/annotation/dist_tss_single_sample.rst",
             category="Annotation",
             labels={"type": "png", "category": "Annotation"},
-        )
+        ),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
