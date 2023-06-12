@@ -15,7 +15,7 @@ rule deeptools_estimate_gc_bias:
     log:
         "logs/deeptools/compute_gc_bias/{sample}.log",
     params:
-        extra="--plotFileFormat png ",
+        extra=lambda wildcards: get_deeptools_estimate_gc_bias_params(wildcards),
         genome_size=effective_genome_size,
     conda:
         "../../envs/deeptools.yaml"

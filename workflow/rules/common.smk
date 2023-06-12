@@ -725,6 +725,18 @@ def get_medips_import_sample_bam_input(
     }
 
 
+def get_deeptools_estimate_gc_bias_params(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> str:
+    """
+    Return the best parameters for the provided sample to deeptools computeGCBias
+    """
+    extra: str = " --plotFileFormat png "
+    if is_paired(wildcards.sample):
+        fs: Union[str, int] = has_fragment_size(wildcards.sample):
+        extra += f" --fragmentLength {fs} "
+
+    return extra
+
+
 ################
 ### Coverage ###
 ################
