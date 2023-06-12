@@ -15,4 +15,4 @@ rule get_genome:
         "logs/reference/sequence/{species}.{build}.{release}.log",
     cache: "omit-software"
     wrapper:
-        "v1.31.1/bio/reference/ensembl-sequence"
+        "v1.32.1/bio/reference/ensembl-sequence"

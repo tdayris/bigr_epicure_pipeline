@@ -16,7 +16,7 @@ rule fastp_single_ended:
         adapters="",
         extra=lambda wildcards: get_fastp_params(wildcards),
     wrapper:
-        "v1.31.1/bio/fastp"
+        "v1.32.1/bio/fastp"
 
 
 rule fastp_pair_ended:
@@ -43,4 +43,4 @@ rule fastp_pair_ended:
         adapters="",
         extra=lambda wildcards: get_fastp_params(wildcards),
     wrapper:
-        "v1.31.1/bio/fastp"
+        "v1.32.1/bio/fastp"

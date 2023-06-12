@@ -19,4 +19,4 @@ rule deeptools_plot_heatmap:
     params:
         extra="--plotFileFormat 'png'",
     wrapper:
-        "v1.31.1/bio/deeptools/plotheatmap"
+        "v1.32.1/bio/deeptools/plotheatmap"

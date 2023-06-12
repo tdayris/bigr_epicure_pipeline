@@ -22,4 +22,4 @@ rule deeptools_compute_matrix:
         command="{command}",
         extra="--skipZeros --binSize 50",
     wrapper:
-        "v1.31.1/bio/deeptools/computematrix"
+        "v1.32.1/bio/deeptools/computematrix"

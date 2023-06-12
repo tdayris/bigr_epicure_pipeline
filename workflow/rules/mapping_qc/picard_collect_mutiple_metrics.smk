@@ -29,4 +29,4 @@ rule picard_collect_multiple_metrics:
     params:
         extra="--VALIDATION_STRINGENCY LENIENT --METRIC_ACCUMULATION_LEVEL null --METRIC_ACCUMULATION_LEVEL SAMPLE",
     wrapper:
-        "v1.31.1/bio/picard/collectmultiplemetrics"
+        "v1.32.1/bio/picard/collectmultiplemetrics"

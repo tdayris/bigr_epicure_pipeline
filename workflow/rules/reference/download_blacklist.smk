@@ -97,4 +97,4 @@ rule bedtools_merge_blacklist:
     params:
         extra="-d 5",
     wrapper:
-        "v1.31.1/bio/bedtools/merge"
+        "v1.32.1/bio/bedtools/merge"

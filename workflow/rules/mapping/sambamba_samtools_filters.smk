@@ -19,7 +19,7 @@ rule sambamba_quality_filter:
             "--format 'bam'"
         ),
     wrapper:
-        "v1.31.1/bio/sambamba/view"
+        "v1.32.1/bio/sambamba/view"
 
 
 rule samtools_filter_canonical_chromosomes:
@@ -40,4 +40,4 @@ rule samtools_filter_canonical_chromosomes:
         extra="",
         region=" ".join(canonical_chromosomes),
     wrapper:
-        "v1.31.1/bio/samtools/view"
+        "v1.32.1/bio/samtools/view"

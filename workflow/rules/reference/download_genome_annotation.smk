@@ -15,4 +15,4 @@ rule download_genome_annotation:
         "logs/reference/annotation/{species}.{build}.{release}.log",
     cache: "omit-software"
     wrapper:
-        "v1.31.1/bio/reference/ensembl-annotation"
+        "v1.32.1/bio/reference/ensembl-annotation"

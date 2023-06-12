@@ -13,4 +13,4 @@ rule bedtools_intersect_macs2:
     params:
         extra=" -wa ",
     wrapper:
-        "v1.31.1/bio/bedtools/intersect"
+        "v1.32.1/bio/bedtools/intersect"

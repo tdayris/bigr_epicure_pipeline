@@ -13,7 +13,7 @@ rule samtools_index:
     params:
         extra="",
     wrapper:
-        "v1.31.1/bio/samtools/faidx"
+        "v1.32.1/bio/samtools/faidx"
 
 
 rule picard_create_sequence_dict:
@@ -31,7 +31,7 @@ rule picard_create_sequence_dict:
     params:
         extra="",
     wrapper:
-        "v1.31.1/bio/picard/createsequencedictionary"
+        "v1.32.1/bio/picard/createsequencedictionary"
 
 
 rule sambamba_bam_index:
@@ -49,4 +49,4 @@ rule sambamba_bam_index:
     params:
         extra="",
     wrapper:
-        "v1.31.1/bio/sambamba/index"
+        "v1.32.1/bio/sambamba/index"

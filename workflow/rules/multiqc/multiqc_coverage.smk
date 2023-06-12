@@ -20,4 +20,4 @@ rule multiqc_coverage:
     log:
         "logs/multiqc/coverage.log",
     wrapper:
-        "v1.31.1/bio/multiqc"
+        "v1.32.1/bio/multiqc"

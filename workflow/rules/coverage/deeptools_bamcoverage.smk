@@ -18,7 +18,7 @@ rule deeptools_bamcoverage:
     log:
         "logs/deeptools/coverage/{sample}.log",
     wrapper:
-        "v1.31.1/bio/deeptools/bamcoverage"
+        "v1.32.1/bio/deeptools/bamcoverage"
 
 
 rule deeptools_multibigwig_summary:
@@ -72,4 +72,4 @@ rule deeptools_plotcoverage:
     params:
         extra="--skipZeros --centerReads --ignoreDuplicates --minMappingQuality 10",
     wrapper:
-        "v1.31.1/bio/deeptools/plotcoverage"
+        "v1.32.1/bio/deeptools/plotcoverage"

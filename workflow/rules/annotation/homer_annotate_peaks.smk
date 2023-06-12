@@ -28,4 +28,4 @@ rule homer_annotatepeaks:
     log:
         "logs/homer/annotate/{sample}.{peaktype}.log",
     wrapper:
-        "v1.31.1/bio/homer/annotatePeaks"
+        "v1.32.1/bio/homer/annotatePeaks"

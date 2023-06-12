@@ -16,7 +16,7 @@ rule fastq_screen_paired:
         subset=100000,
         aligner="bowtie2",
     wrapper:
-        "v1.31.1/bio/fastq_screen"
+        "v1.32.1/bio/fastq_screen"
 
 
 rule fastq_screen_single:
@@ -37,4 +37,4 @@ rule fastq_screen_single:
         subset=100000,
         aligner="bowtie2",
     wrapper:
-        "v1.31.1/bio/fastq_screen"
+        "v1.32.1/bio/fastq_screen"

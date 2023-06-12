@@ -14,4 +14,4 @@ rule deeptools_plot_profile:
     params:
         "",
     wrapper:
-        "v1.31.1/bio/deeptools/plotprofile"
+        "v1.32.1/bio/deeptools/plotprofile"
