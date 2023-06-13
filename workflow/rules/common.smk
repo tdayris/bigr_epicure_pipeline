@@ -294,7 +294,7 @@ if macs2_params.get("narrow", False):
 
 seacr_mode_list: List[str] = []
 seacr_params = config.get("seacr", {})
-if (seacr_params is None) and (not protocol_is_cutnrun(protocol)):
+if (seacr_params is None) and (not (protocol_is_cutnrun(protocol) or protocol_is_cutntag(protocol))):
     seacr_params = {}
 if seacr_params.get("relaxed", False):
     seacr_mode_list.append("relaxed")
@@ -696,7 +696,7 @@ def get_fastq_screen_input(
         fastq_screen_input.append(f"fastp/trimmed/se/{wildcards.sample}.fastq")
 
     # Let the config file be the second input
-    fq_conf = config.get("reference", {}).get(
+    fq_conf: str = config.get("reference", {}).get(
         "fastq_screen_config", "../../../config/fastq_screen.conf"
     )
     fastq_screen_input.append(fq_conf)
@@ -718,7 +718,7 @@ def get_samtools_stats_input(
     Return expected input files for Samtools stats
     """
 
-    bam_prefix = get_bam_prefix(wildcards, protocol)
+    bam_prefix: str = get_bam_prefix(wildcards, protocol)
 
     return {
         "bam": f"{bam_prefix}/{wildcards.sample}.bam",
@@ -879,7 +879,10 @@ def get_deeptools_bamcoverage_params(
     """
     Return best parameters for deeptools bamcoverage for a given protocol
     """
-    extra = " --normalizeUsing RPKM --binSize 5 --skipNonCoveredRegions --ignoreForNormalization chrX chrM chrY"
+    extra = (
+        " --normalizeUsing RPKM --binSize 5 "
+        "--skipNonCoveredRegions --ignoreForNormalization chrX chrM chrY"
+    )
     if not (protocol_is_cutnrun(protocol) or protocol_is_cutntag(protocol)):
         extra += " --ignoreDuplicates "
 
@@ -1095,7 +1098,7 @@ def get_csaw_count_params(
     if any(is_paired(sample=sample, design=design) for sample in sample_list):
         if not all(is_paired(sample=sample, design=design) for sample in sample_list):
             raise ValueError(
-                "Analysis of mixed Single-end / Pair-end " "libraries are not yet available"
+                "Analysis of mixed Single-end / Pair-end libraries are not yet available"
             )
     else:
         fragment_lengths: str = ", ".join(
@@ -1151,7 +1154,7 @@ def get_csaw_filter_input(
     if len(input_list) > 0:
         csaw_filter_input["input_counts"] = f"csaw/count/{wildcards.model_name}.input.RDS"
     else:
-        csaw_filter_input["binned"] = str(f"csaw/count/{wildcards.model_name}.binned.RDS")
+        csaw_filter_input["binned"] = f"csaw/count/{wildcards.model_name}.binned.RDS"
 
     return csaw_filter_input
 
@@ -1334,7 +1337,7 @@ def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> 
         "--plotFileFormat png --skipZeros --corMethod spearman "
     )
     if str(wildcards.plot_type) == "heatmap":
-        deeptools_plot_correlation_params += (
+        deeptools_plot_correlation_params += str(
             "--whatToPlot heatmap --colorMap RdYlBu --plotNumbers"
         )
 
