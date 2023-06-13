@@ -1,0 +1,97 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+properties:
+
+  max_threads:
+    type: number
+
+  steps:
+    type: object
+    properties:
+      install:
+        type: boolean
+      download_fastq_screen_indexes:
+        type: boolean
+      trimming:
+        type: boolean
+      mapping:
+        type: boolean
+      coverage:
+        type: boolean
+      calling:
+        type: boolean
+      diff_cov:
+        type: boolean
+      motives:
+        type: boolean
+  
+  protocol:
+    type: string
+
+  design:
+    type: string
+
+  reference:
+    type: object
+    properties:
+      species:
+        type: string
+      build:
+        type: string
+      release:
+        type: string
+
+      genome_fasta:
+        type: string
+      genome_gtf:
+        type: string
+      bowtie2_index:
+        type: string
+      blacklist:
+        type: string
+      fastq_screen_config:
+        type: string
+      two_bits:
+        type: string
+
+  macs2:
+    type: object
+    properties:
+      broad:
+        type: boolean
+      narrow:
+        type: boolean
+
+  seacr:
+    type: object
+    properties:
+      stringent:
+        type: boolean
+      relaxed:
+        type: boolean
+  
+  differential_peak_coverage:
+    type: array
+    items:
+      type: object
+      properties:
+        model_name:
+          type: string
+        reference:
+          type: string
+        tested:
+          type: string
+        formula:
+          type: string
+
+  trimming:
+    type: object
+    properties:
+      adapters:
+        type: string
+      fastp_extra:
+        type: string

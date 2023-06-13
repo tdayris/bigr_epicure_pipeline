@@ -84,7 +84,7 @@ reference:
   build: GRCh38
 
   # Ensembl organism release. eg: `109`.
-  release: 109
+  release: "109"
 
   # Path to genome sequence file (FASTA formatted, NOT gzipped)
   # A missing sequence file will be downloaded and indexed.
@@ -143,7 +143,7 @@ differential_peak_coverage:
   #   tested: TestedOtherFactorLevel
 
 # The following options involves trimming (fastp)
-trimming:
+# trimming:
   # Contaminent, vector, adapter. Comment to ignore.
   # adapters: --adapter_sequence GATCGGAAGAGCACACGTCTGAACTCCAGTCA
 

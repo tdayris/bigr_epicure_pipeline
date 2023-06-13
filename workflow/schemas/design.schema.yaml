@@ -1,0 +1,18 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+description: An entry in the design file (or Sample sheet)
+properties:
+  Sample_id:
+    type: string
+  Upstream_file:
+    type: string
+  Downstream_file:
+    type: string
+  Input:
+    type: string
+  Fragment_size:
+    type: number
+
+  required:
+    - Sample_id
+    - Upstream_file
