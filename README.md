@@ -184,6 +184,8 @@ _note: The following steps may not be perform in that exact order._
 
 ## ChIP-Seq
 
+![Chip-Seq rulegraph](docs/rulegraphs/chip-seq.rulegraph.png)
+
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/bowtie2/align.html#software-dependencies). 
 
 Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/sambamba/view.html#software-dependencies). Initial filters keep only mapped reads, and reads with a mapped mate. Mapping qualities must be equal or above 30, or are filtered out. Only canonical chromosomes are kept at this step. Deduplication removes duplicated reads and their mates.
@@ -199,6 +201,8 @@ _De novo_ motif discovery was made with [Homer](http://homer.ucsd.edu/homer/ngs/
 Additional quality controls were made using [FastqScreen](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastq_screen.html) version [0.15.3](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastq_screen.html#software-dependencies).
 
 ## Atac-Seq
+
+![Atac-Seq rulegraph](docs/rulegraphs/atac-seq.rulegraph.png)
 
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/bowtie2/align.html#software-dependencies). 
 
@@ -216,6 +220,8 @@ Additional quality controls were made using [FastqScreen](https://snakemake-wrap
 
 ## Cut&Tag
 
+![Cut&Tag rulegraph](docs/rulegraphs/cutntag.rulegraph.png)
+
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/bowtie2/align.html#software-dependencies). 
 
 Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/sambamba/view.html#software-dependencies). Initial filters keep only mapped reads, and reads with a mapped mate. Mapping qualities must be equal or above 30, or are filtered out. Only canonical chromosomes are kept at this step. Deduplication removes duplicated reads and their mates. Duplicated reads are kept, as described in [Meers & all, 2019](Meers, Michael P., Dan Tenenbaum, and Steven Henikoff.
@@ -231,6 +237,8 @@ _De novo_ motif discovery was made with [Homer](http://homer.ucsd.edu/homer/ngs/
 Additional quality controls were made using [FastqScreen](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastq_screen.html) version [0.15.3](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastq_screen.html#software-dependencies).
 
 ## Cut&Run
+
+![Cut&Run rulegraph](docs/rulegraphs/cutnrun.rulegraph.png)
 
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/bowtie2/align.html#software-dependencies). 
 
@@ -248,6 +256,8 @@ Additional quality controls were made using [FastqScreen](https://snakemake-wrap
 
 ## MeDIP-Seq
 
+![MeDIP-Seq rulegraph](docs/rulegraphs/medip-seq.rulegraph.png)
+
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/bowtie2/align.html#software-dependencies). 
 
 Mapped reads are filtered, deduplicated and archived using [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/sambamba/view.html#software-dependencies). Initial filters keep only mapped reads, and reads with a mapped mate. Mapping qualities must be equal or above 30, or are filtered out. Only canonical chromosomes are kept at this step. Deduplication removes duplicated reads and their mates.
@@ -263,6 +273,8 @@ _De novo_ motif discovery was made with [Homer](http://homer.ucsd.edu/homer/ngs/
 Additional quality controls were made using [FastqScreen](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastq_screen.html) version [0.15.3](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastq_screen.html#software-dependencies).
 
 ## OG-Seq / OxiDIP-Seq
+
+![OxiDIP-Seq rulegraph](docs/rulegraphs/oxidip-seq.rulegraph.png)
 
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/fastp.html#software-dependencies). Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v1.32.1/wrappers/bowtie2/align.html#software-dependencies). 
 
