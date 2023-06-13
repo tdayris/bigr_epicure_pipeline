@@ -7,8 +7,8 @@ rule deeptools_compute_matrix:
         matrix_bed=temp("deeptools/matrix_files/{command}/{peaktype}.matrix.bed"),
     threads: config.get("max_threads", 20)
     resources:
-        mem_mb=lambda wilcards, attempt: attempt * 1024 * 8,
-        runtime=lambda wildcards, attempt: attempt * 45,
+        mem_mb=lambda wilcards, attempt: attempt * 1024 * 20,
+        runtime=lambda wildcards, attempt: attempt * 6,
         tmpdir=tmp,
     log:
         "logs/deeptools/computematrix/{command}.{peaktype}.log",
