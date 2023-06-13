@@ -1,0 +1,1 @@
+See material and methods on `the official pipeline web-page <https://github.com/tdayris/bigr_epicure_pipeline>`_

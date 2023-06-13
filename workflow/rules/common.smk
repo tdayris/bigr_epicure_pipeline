@@ -4,7 +4,7 @@ import pandas
 import snakemake
 import warnings
 
-from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
+from snakemake.utils import validate
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 
@@ -17,6 +17,7 @@ if config == {}:
 
 
 logging.basicConfig(filename="epicure_pipeline.log", filemode="w", level=logging.DEBUG)
+validate(config, schema="../schemas/config.schema.yaml")
 
 
 ########################
@@ -30,14 +31,20 @@ design: pandas.DataFrame = pandas.read_csv(
     header=0,
     index_col=0,
 )
+validate(design, schema="../schemas/design.schema.yaml")
+
+
+report: "../report/workflow.rst"
+
+
+# this container defines the underlying OS for each job when using the workflow
+# with --use-conda --use-singularity
+container: "docker://continuumio/miniconda3"
 
 
 ########################
 ### Global variables ###
 ########################
-
-# FTP handler for possible downloads
-HTTPS = HTTPRemoteProvider()
 
 
 # This let all temporary file end-up in the same directory
@@ -373,9 +380,7 @@ def get_samples_per_level(
     """
     try:
         return (
-            design[design.eq(wildcards.level).any(axis=1)]
-            .index.drop_duplicates()
-            .tolist()
+            design[design.eq(wildcards.level).any(axis=1)].index.drop_duplicates().tolist()
         )
     except AttributeError:
         return (
@@ -455,9 +460,7 @@ def get_sample_list_from_model_name(
                 design=design,
             )
             sample_list += get_input_per_level(
-                wildcards=snakemake.io.Wildcards(
-                    fromdict={"level": level_dict["test"]}
-                ),
+                wildcards=snakemake.io.Wildcards(fromdict={"level": level_dict["test"]}),
                 design=design,
             )
         elif not protocol_is_atac(protocol):
@@ -541,9 +544,7 @@ def get_fastp_input(
     return fastp_input
 
 
-def get_fastp_params(
-    wildcards: snakemake.io.Wildcards, protocol: str = protocol
-) -> str:
+def get_fastp_params(wildcards: snakemake.io.Wildcards, protocol: str = protocol) -> str:
     """
     Return fastp parameters
     """
@@ -887,13 +888,9 @@ def get_deeptools_plotfingerprint_input(
         "bam_idx": [],
     }
     for sample in design.index:
-        deeptools_plotfingerprint_input["bam_files"].append(
-            f"{bam_prefix}/{sample}.bam"
-        )
+        deeptools_plotfingerprint_input["bam_files"].append(f"{bam_prefix}/{sample}.bam")
 
-        deeptools_plotfingerprint_input["bam_idx"].append(
-            f"{bam_prefix}/{sample}.bam.bai"
-        )
+        deeptools_plotfingerprint_input["bam_idx"].append(f"{bam_prefix}/{sample}.bam.bai")
 
     return deeptools_plotfingerprint_input
 
@@ -987,9 +984,7 @@ def get_medips_meth_coverage_input(
     Return list of input expected by rule medips_meth_coverage
     """
     # Gathering comparison information
-    comparisons: Optional[List[Dict[str, str]]] = config.get(
-        "differential_peak_coverage"
-    )
+    comparisons: Optional[List[Dict[str, str]]] = config.get("differential_peak_coverage")
     if not comparisons:
         raise ValueError(
             "No differential peak coverage information provided in "
@@ -1005,9 +1000,7 @@ def get_medips_meth_coverage_input(
             tested = models["tested"]
             break
     else:
-        raise ValueError(
-            "Could not find a comparison " f"named: {wildcards.model_name}"
-        )
+        raise ValueError("Could not find a comparison " f"named: {wildcards.model_name}")
 
     reference_samples: List[str] = get_samples_per_level(
         wildcards=snakemake.io.Wildcards(fromdict={"level": reference}), design=design
@@ -1099,17 +1092,14 @@ def get_csaw_count_params(
     if any(is_paired(sample=sample, design=design) for sample in sample_list):
         if not all(is_paired(sample=sample, design=design) for sample in sample_list):
             raise ValueError(
-                "Analysis of mixed Single-end / Pair-end "
-                "libraries are not yet available"
+                "Analysis of mixed Single-end / Pair-end " "libraries are not yet available"
             )
     else:
         fragment_lengths: str = ", ".join(
             map(
                 str,
                 [
-                    has_fragment_size(
-                        sample=sample, design=design, sample_is_paired=False
-                    )
+                    has_fragment_size(sample=sample, design=design, sample_is_paired=False)
                     for sample in sample_list
                 ],
             )
@@ -1156,13 +1146,9 @@ def get_csaw_filter_input(
         model_name=wildcards.model_name, signal="input", design=design
     )
     if len(input_list) > 0:
-        csaw_filter_input[
-            "input_counts"
-        ] = f"csaw/count/{wildcards.model_name}.input.RDS"
+        csaw_filter_input["input_counts"] = f"csaw/count/{wildcards.model_name}.input.RDS"
     else:
-        csaw_filter_input["binned"] = str(
-            f"csaw/count/{wildcards.model_name}.binned.RDS"
-        )
+        csaw_filter_input["binned"] = str(f"csaw/count/{wildcards.model_name}.binned.RDS")
 
     return csaw_filter_input
 
@@ -1306,9 +1292,7 @@ def get_seacr_callpeak_params(
     else:
         seacr_callpeak_params += " 0.01 "
 
-    seacr_callpeak_params += (
-        f" norm {wildcards.seacr_mode} seacr/raw/{wildcards.sample}"
-    )
+    seacr_callpeak_params += f" norm {wildcards.seacr_mode} seacr/raw/{wildcards.sample}"
 
     return seacr_callpeak_params
 
