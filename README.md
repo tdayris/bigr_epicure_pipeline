@@ -313,7 +313,7 @@ Additional quality controls were made using [FastqScreen](https://snakemake-wrap
 # Roadmap
 
 * Coverage: PBC
-* Peak-calling: Seacr, FDR
+* Peak-calling: FDR
 * Peak-annotation: CentriMo
 * Differential Peak Calling: DiffBind
 * IGV: screen-shot, igv-reports
