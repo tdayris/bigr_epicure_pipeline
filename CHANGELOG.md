@@ -1,4 +1,18 @@
+# 0.9.0 – Cut&Run, Cut&Tag
+
+## Features
+
+* Enable SEACR
+* Deal with deduplication in Cut&Tag/Cut&Run
+* Enable schema validation for both config and design file
+
+## Fix
+
+* DeepTools bins have been reduced from 50 to 5.
+
 # 0.8.0 – Motifs
+
+## Features
 
 * Enable motif analysis with Homer
 * Fixes signle-end designs
