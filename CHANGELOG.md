@@ -5,8 +5,9 @@
 * Enable SEACR
 * Deal with deduplication in Cut&Tag/Cut&Run
 * Enable schema validation for both config and design file
+* Rulegrpahs available in readme
 
-## Fix
+## Changes
 
 * DeepTools bins have been reduced from 50 to 5.
 
