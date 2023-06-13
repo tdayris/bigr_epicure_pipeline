@@ -519,6 +519,45 @@ def get_tested_sample_list(design: pandas.DataFrame = design) -> List[str]:
     return sample_list
 
 
+def get_bam_prefix(wildcards: snakemake.io.Wildcards, protocol: str = protocol) -> str:
+    """
+    Return the best refined file after all corrections
+    """
+    bam_prefix: str = "sambamba/markdup"
+    # Atac-seq samples should be shifted
+    if protocol_is_atac(protocol):
+        bam_prefix = "deeptools/sorted_sieve"
+    # OxiDIP-seq requires GC correction and filters
+    elif protocol_is_ogseq(protocol):
+        bam_prefix = "deeptools/corrected"
+    # For raw-bam quality control
+    elif "step" in wildcards:
+        if str(wildcards.step) == "raw":
+            bam_prefix = "bowtie2/align"
+
+    return bam_prefix
+
+
+def get_peak_file(
+    wildcards: snakemake.io.Wildcards,
+    peaktype_list: List[str] = peaktype_list,
+    seacr_mode_list: List[str] = seacr_mode_list,
+) -> str:
+    """
+    Return the correct bed file after peak-calling, given a peak-calling mode
+    """
+    if str(wildcards.peaktype) in seacr_mode_list:
+        return "seacr/{peaktype}/{sample}.bed"
+
+    if str(wildcards.peaktype) in peaktype_list:
+        return "macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed"
+
+    raise ValueError(
+        f"Wildcards.peaktype should be in {peaktype_list} "
+        f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
+    )
+
+
 ###################
 ### IO function ###
 ###################
@@ -679,16 +718,7 @@ def get_samtools_stats_input(
     Return expected input files for Samtools stats
     """
 
-    bam_prefix: str = "sambamba/markdup"
-    # Atac-seq samples should be shifted
-    if protocol_is_atac(protocol):
-        bam_prefix = "deeptools/sorted_sieve"
-    # OxiDIP-seq requires GC correction and filters
-    elif protocol_is_ogseq(protocol):
-        bam_prefix = "deeptools/corrected"
-    # For raw-bam quality control
-    elif str(wildcards.step) == "raw":
-        bam_prefix = "bowtie2/align"
+    bam_prefix = get_bam_prefix(wildcards, protocol)
 
     return {
         "bam": f"{bam_prefix}/{wildcards.sample}.bam",
@@ -834,13 +864,7 @@ def get_deeptools_bamcoverage_input(
     """
     Return the expected list of DeepTools input file list
     """
-    bam_prefix: str = "sambamba/markdup"
-    # Atac-seq samples should be shifted
-    if protocol_is_atac(protocol):
-        bam_prefix = "deeptools/sorted_sieve"
-    # OxiDIP-seq requires GC correction and filters
-    elif protocol_is_ogseq(protocol):
-        bam_prefix = "deeptools/corrected"
+    bam_prefix = get_bam_prefix(wildcards, protocol)
 
     return {
         "blacklist": blacklist_path,
@@ -879,9 +903,7 @@ def get_deeptools_plotfingerprint_input(
     """
     Return the list of expected input files for deeptools plot fingerprint
     """
-    bam_prefix: str = (
-        "deeptools/sorted_sieve" if protocol_is_atac(protocol) else "sambamba/markdup"
-    )
+    bam_prefix = get_bam_prefix(wildcards, protocol)
 
     deeptools_plotfingerprint_input: Dict[str, List[str]] = {
         "bam_files": [],
@@ -920,25 +942,12 @@ def get_deeptools_compute_matrix_input(
             sample=get_tested_sample_list(design=design),
         ),
         "blacklist": blacklist_path,
+        "bed": expand(
+            get_peak_file(wildcards, peaktype_list, seacr_mode_list),
+            sample=get_tested_sample_list(design=design),
+            peaktype=[wildcards.peaktype],
+        ),
     }
-
-    if str(wildcards.peaktype) in peaktype_list:
-        deeptools_compute_matrix_input["bed"] = expand(
-            "macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
-            sample=get_tested_sample_list(design=design),
-            peaktype=[wildcards.peaktype],
-        )
-    elif str(wildcards.peaktype) in seacr_mode_list:
-        deeptools_compute_matrix_input["bed"] = expand(
-            "seacr/{peaktype}/{sample}.bed",
-            sample=get_tested_sample_list(design=design),
-            peaktype=[wildcards.peaktype],
-        )
-    else:
-        raise ValueError(
-            f"Wildcards.peaktype should be in {peaktype_list} "
-            f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
-        )
 
     return deeptools_compute_matrix_input
 
@@ -1050,13 +1059,7 @@ def get_csaw_count_input(
         model_name=wildcards.model_name, signal=wildcards.signal, design=design
     )
 
-    bam_prefix: str = "sambamba/markdup"
-    # Atac-seq samples should be shifted
-    if protocol_is_atac(protocol):
-        bam_prefix = "deeptools/sorted_sieve"
-    # OxiDIP-seq requires GC correction and filters
-    elif protocol_is_ogseq(protocol):
-        bam_prefix = "deeptools/corrected"
+    bam_prefix = get_bam_prefix(wildcards, protocol)
 
     # Handle both single-ended and pair-ended sequencing libraries
     library: str = "se"
@@ -1168,13 +1171,7 @@ def get_macs2_callpeak_input(
     """
     macs2_callpeak_input = {}
 
-    bam_prefix: str = "sambamba/markdup"
-    # Atac-seq samples should be shifted
-    if protocol_is_atac(protocol):
-        bam_prefix = "deeptools/sorted_sieve"
-    # OxiDIP-seq requires GC correction and filters
-    elif protocol_is_ogseq(protocol):
-        bam_prefix = "deeptools/corrected"
+    bam_prefix = get_bam_prefix(wildcards, protocol)
 
     macs2_callpeak_input["treatment"] = f"{bam_prefix}/{wildcards.sample}.bam"
 
@@ -1228,35 +1225,13 @@ def get_bedtools_intersect_macs2_input(
     Return expected input files for bedtools intersect after macs2 calling.
     This is used to compute FRiP score.
     """
-    bedtools_intersect_macs2_input: Dict[str, str] = {}
+    peak_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
+    bam_prefix = get_bam_prefix(wildcards, protocol)
 
-    if str(wildcards.peaktype) in seacr_mode_list:
-        bedtools_intersect_macs2_input["right"] = str(
-            f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"
-        )
-
-    if str(wildcards.peaktype) in peaktype_list:
-        bedtools_intersect_macs2_input["right"] = str(
-            f"macs2/callpeak_{wildcards.peaktype}/"
-            f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
-        )
-
-    raise ValueError(
-        f"Wildcards.peaktype should be in {peaktype_list} "
-        f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
-    )
-
-    bam_prefix: str = "sambamba/markdup"
-    # Atac-seq samples should be shifted
-    if protocol_is_atac(protocol):
-        bam_prefix = "deeptools/sorted_sieve"
-    # OxiDIP-seq requires GC correction and filters
-    elif protocol_is_ogseq(protocol):
-        bam_prefix = "deeptools/corrected"
-
-    bedtools_intersect_macs2_input["left"] = f"{bam_prefix}/{wildcards.sample}.bam"
-
-    return bedtools_intersect_macs2_input
+    return {
+        "right": peak_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample),
+        "left": f"{bam_prefix}/{wildcards.sample}.bam",
+    }
 
 
 def get_seacr_callpeak_input(
@@ -1305,21 +1280,8 @@ def get_chipseeker_annotate_peak_single_sample_input(
     """
     Return expected input file list for chipseeker, with correct peak-caller
     """
-    if str(wildcards.peaktype) in seacr_mode_list:
-        return {"bed": f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"}
-
-    if str(wildcards.peaktype) in peaktype_list:
-        return {
-            "bed": str(
-                f"macs2/callpeak_{wildcards.peaktype}/"
-                f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
-            )
-        }
-
-    raise ValueError(
-        f"Wildcards.peaktype should be in {peaktype_list} "
-        f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
-    )
+    bed_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
+    return {"bed": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)}
 
 
 ############################
@@ -1344,21 +1306,8 @@ def get_chipseeker_genome_cov_single_sample_input(
     """
     Return expected list of input files for chipseeker genome coverage
     """
-    if str(wildcards.peaktype) in peaktype_list:
-        return {
-            "bed": str(
-                f"macs2/callpeak_{wildcards.peaktype}/"
-                f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
-            )
-        }
-
-    if str(wildcards.peaktype) in seacr_mode_list:
-        return {"bed": f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"}
-
-    raise ValueError(
-        f"Wildcards.peaktype should be in {peaktype_list} "
-        f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
-    )
+    bed_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
+    return {"bed": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)}
 
 
 def get_edger_formula(
@@ -1405,21 +1354,8 @@ def get_homer_find_motif_input(
     """
     Return correct input file for homer, given peaktype wildcard
     """
-    if str(wildcards.peaktype) in peaktype_list:
-        return {
-            "peak": str(
-                f"macs2/callpeak_{wildcards.peaktype}/"
-                f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
-            )
-        }
-
-    if str(wildcards.peaktype) in seacr_mode_list:
-        return {"peak": f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"}
-
-    raise ValueError(
-        f"Wildcards.peaktype should be in {peaktype_list} "
-        f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
-    )
+    bed_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
+    return {"peak": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)}
 
 
 def get_homer_annotatepeaks_input(
@@ -1430,29 +1366,16 @@ def get_homer_annotatepeaks_input(
     """
     Return correct list of annotation input files for Homer
     """
-    homer_annotatepeaks_input: Dict[str, str] = {
+    bed_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
+    bed_file = bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)
+
+    return {
         "genome": genome_fasta_path,
         "gtf": genome_annotation_path,
         "wig": "data_output/Coverage/{sample}.bw",
         "motif_files": "homer/motif/{peaktype}/{sample}/homerMotifs.motifs",
+        "peak": bed_file,
     }
-
-    if str(wildcards.peaktype) in peaktype_list:
-        homer_annotatepeaks_input["peak"] = str(
-            f"macs2/callpeak_{wildcards.peaktype}/"
-            f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
-        )
-    elif str(wildcards.peaktype) in seacr_mode_list:
-        homer_annotatepeaks_input["peak"] = str(
-            f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"
-        )
-    else:
-        raise ValueError(
-            f"Wildcards.peaktype should be in {peaktype_list} "
-            f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
-        )
-
-    return homer_annotatepeaks_input
 
 
 #############################
