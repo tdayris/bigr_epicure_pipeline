@@ -1,6 +1,6 @@
 rule homer_find_motif_genome:
     input:
-        peak="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
+        unpack(get_homer_find_motif_input),
     output:
         motif="homer/motif/{peaktype}/{sample}/homerMotifs.motifs",
         all_motif="homer/motif/{peaktype}/{sample}/homerMotifs.all.motifs",

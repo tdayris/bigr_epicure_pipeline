@@ -14,7 +14,7 @@ rule deeptools_bamcoverage:
         tmpdir=tmp,
     params:
         effective_genome_size=effective_genome_size,
-        extra=" --normalizeUsing RPKM --binSize 50",
+        extra=" --normalizeUsing RPKM --binSize 5 --skipNonCoveredRegions",
     log:
         "logs/deeptools/coverage/{sample}.log",
     wrapper:

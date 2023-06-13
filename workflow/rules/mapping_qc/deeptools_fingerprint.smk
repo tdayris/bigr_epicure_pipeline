@@ -21,6 +21,6 @@ rule deeptools_plot_fingerprint:
     log:
         "logs/deeptools/plot_fingerprint.log",
     params:
-        " --skipZeros ",
+        lambda wildcards: get_deeptools_fingerprint_params(wildcards),
     wrapper:
         "v1.32.1/bio/deeptools/plotfingerprint"

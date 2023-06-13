@@ -23,6 +23,7 @@ include: "rules/mapping/samtools_cram.smk"
 include: "rules/medips/bam_import.smk"
 # Peak-Calling
 include: "rules/peak-calling/macs2_callpeak.smk"
+include: "rules/peak-calling/seacr_callpeak.smk"
 # Coverage
 include: "rules/coverage/deeptools_bamcoverage.smk"
 include: "rules/coverage/deeptools_matrix.smk"

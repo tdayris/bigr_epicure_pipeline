@@ -78,19 +78,19 @@ rule macs2_save_narrow:
         "rsync {params} {input} {output} > {log} 2>&1"
 
 
-# peaktype = {narrow, broad, gapped}
+# macs2_mode = {narrow, broad, gapped}
 rule macs2_peaks_to_bed:
     input:
-        peak="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak",
+        peak="macs2/callpeak_{macs2_mode}/{sample}_peaks.{macs2_mode}Peak",
     output:
-        bed=temp("macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed"),
+        bed=temp("macs2/callpeak_{macs2_mode}/{sample}_peaks.{macs2_mode}Peak.bed"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
-        "logs/macs2/peak2bed/{sample}.{peaktype}.log",
+        "logs/macs2/peak2bed/{sample}.{macs2_mode}.log",
     params:
         script=workflow.source_path("../../scripts/formatter/macs2_to_bed6.awk"),
     conda:

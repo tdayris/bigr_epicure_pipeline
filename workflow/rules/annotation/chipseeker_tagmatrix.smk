@@ -20,7 +20,7 @@ rule chipseeker_tagmatrix_from_ranges:
 
 rule chipseeker_tagmatrix_from_bed:
     input:
-        bed="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
+        unpack(get_chipseeker_genome_cov_single_sample_input),
     output:
         rds="chipseeker/tagmatrix/{sample}.{peaktype}.RDS",
     threads: 1

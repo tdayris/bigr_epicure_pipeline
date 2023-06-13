@@ -27,7 +27,7 @@ rule sambamba_markdup:
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     params:
-        extra="--remove-duplicates --overflow-list-size 600000",
+        extra=lambda wildcards: get_sambamba_markdup_params(wildcards),
     log:
         "logs/sambamba/markdup/{sample}.log",
     wrapper:

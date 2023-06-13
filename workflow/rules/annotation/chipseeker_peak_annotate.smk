@@ -21,7 +21,7 @@ rule chipseeker_annotate_peak_from_ranges:
 
 rule chipseeker_annotate_peak_from_bed:
     input:
-        bed="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
+        unpack(get_chipseeker_annotate_peak_single_sample_input),
     output:
         rds="chipseeker/annotation/{sample}.{peaktype}.RDS",
         tsv=report(

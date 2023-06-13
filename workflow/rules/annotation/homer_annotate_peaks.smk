@@ -1,10 +1,6 @@
 rule homer_annotatepeaks:
     input:
-        peaks="macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
-        genome=genome_fasta_path,
-        motif_files="homer/motif/{peaktype}/{sample}/homerMotifs.motifs",
-        gtf=genome_annotation_path,
-        wig="data_output/Coverage/{sample}.bw",
+        unpack(get_homer_annotatepeaks_input),
     output:
         annotations="data_output/Motifs/{peaktype}/{sample}_homer_annot.txt",
         matrix=multiext(

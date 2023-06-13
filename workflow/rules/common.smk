@@ -54,6 +54,75 @@ canonical_chromosomes += [f"chr{chrom}" for chrom in canonical_chromosomes]
 # Protocol. It can be either : `chip-seq`, `atac-seq`, `cut&run`, `cut&tag`, or `medip-seq`
 protocol: str = config.get("protocol", "chip-seq").lower().replace(" ", "")
 
+
+##########################
+### Protocol functions ###
+##########################
+
+
+def protocol_is_atac(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is Atac-seq
+    """
+    return protocol.startswith("atac")
+
+
+def protocol_is_medip(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is MeDIP-seq
+    """
+    return protocol.startswith("medip")
+
+
+def protocol_is_chip(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is ChIP-seq
+    """
+    return protocol.startswith("chip")
+
+
+def protocol_is_cutntag(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is Cut & Tag
+    """
+    return protocol == "cut&tag"
+
+
+def protocol_is_cutnrun(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is Cut & Run
+    """
+    return protocol == "cut&run"
+
+
+def protocol_is_ogseq(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is 8-OxoG-seq
+    """
+    return ("og" in protocol) or ("ox" in protocol)
+
+
+def protocol_is_mnaseseq(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is MNase-seq
+    """
+    return protocol.startswith("mn")
+
+
+def protocol_is_riboseq(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is Ribo-seq
+    """
+    return protocol.startswith("ribo")
+
+
+def protocol_is_groseq(protocol: str = protocol) -> bool:
+    """
+    Return `True` if protocol is Ribo-seq
+    """
+    return protocol.startswith("gro")
+
+
 ################################
 ### Paths to reference files ###
 ################################
@@ -208,62 +277,24 @@ chipseeker_plot_list: List[str] = [
 deeptools_plot_type: List[str] = ["heatmap", "scatterplot"]
 
 peaktype_list: List[str] = []
-if config.get("macs2", {}).get("broad", False):
+macs2_params = config.get("macs2", {})
+if macs2_params is None:
+    macs2_params = {}
+if macs2_params.get("broad", False):
     peaktype_list.append("broad")
-if config.get("macs2", {}).get("narrow", False):
+if macs2_params.get("narrow", False):
     peaktype_list.append("narrow")
-if len(peaktype_list) < 1:
-    raise ValueError(
-        "Please select peak-type in macs2, "
-        "many quality controls are based on peak-calling."
-    )
 
+seacr_mode_list: List[str] = []
+seacr_params = config.get("seacr", {})
+if (seacr_params is None) and (not protocol_is_cutnrun(protocol)):
+    seacr_params = {}
+if seacr_params.get("relaxed", False):
+    seacr_mode_list.append("relaxed")
+if seacr_params.get("stringent", False):
+    seacr_mode_list.append("stringent")
 
-##########################
-### Protocol functions ###
-##########################
-
-
-def protocol_is_atac(protocol: str = protocol) -> bool:
-    """
-    Return `True` if protocol is Atac-seq
-    """
-    return protocol.startswith("atac")
-
-
-def protocol_is_medip(protocol: str = protocol) -> bool:
-    """
-    Return `True` if protocol is MeDIP-seq
-    """
-    return protocol.startswith("medip")
-
-
-def protocol_is_chip(protocol: str = protocol) -> bool:
-    """
-    Return `True` if protocol is ChIP-seq
-    """
-    return protocol.startswith("chip")
-
-
-def protocol_is_cutntag(protocol: str = protocol) -> bool:
-    """
-    Return `True` if protocol is Cut & Tag
-    """
-    return protocol == "cut&tag"
-
-
-def protocol_is_cutnrun(protocol: str = protocol) -> bool:
-    """
-    Return `True` if protocol is Cut & Run
-    """
-    return protocol == "cut&run"
-
-
-def protocol_is_ogseq(protocol: str = protocol) -> bool:
-    """
-    Return `True` if protocol is 8-OxoG-seq
-    """
-    return ("og" in protocol) or ("ox" in protocol)
+peak_type_and_mode_list: List[str] = peaktype_list + seacr_mode_list
 
 
 #############################################
@@ -646,34 +677,37 @@ def get_samtools_stats_input(
     """
     Return expected input files for Samtools stats
     """
-    if str(wildcards.step) == "raw":
-        return {
-            "bam": f"bowtie2/align/{wildcards.sample}.bam",
-            "bai": f"bowtie2/align/{wildcards.sample}.bam.bai",
-        }
 
-    if protocol_is_ogseq(protocol):
-        return {
-            "bam": f"deeptools/corrected/{wildcards.sample}.bam",
-            "bai": f"deeptools/corrected/{wildcards.sample}.bam.bai",
-        }
-
+    bam_prefix: str = "sambamba/markdup"
+    # Atac-seq samples should be shifted
     if protocol_is_atac(protocol):
-        return {
-            "bam": f"deeptools/sorted_sieve/{wildcards.sample}.bam",
-            "bai": f"deeptools/sorted_sieve/{wildcards.sample}.bam.bai",
-        }
-
-    if protocol_is_cutnrun(protocol) or protocol_is_cutntag(protocol):
-        return {
-            "bam": f"samtools/view/{wildcards.sample}.bam",
-            "bai": f"samtools/view/{wildcards.sample}.bam.bai",
-        }
+        bam_prefix = "deeptools/sorted_sieve"
+    # OxiDIP-seq requires GC correction and filters
+    elif protocol_is_ogseq(protocol):
+        bam_prefix = "deeptools/corrected"
+    # For raw-bam quality control
+    elif str(wildcards.step) == "raw":
+        bam_prefix = "bowtie2/align"
 
     return {
-        "bam": f"sambamba/markdup/{wildcards.sample}.bam",
-        "bai": f"sambamba/markdup/{wildcards.sample}.bam.bai",
+        "bam": f"{bam_prefix}/{wildcards.sample}.bam",
+        "bai": f"{bam_prefix}/{wildcards.sample}.bam.bai",
     }
+
+
+def get_sambamba_markdup_params(
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol
+) -> str:
+    """
+    Return best sambamba markdup params for a given protocol
+    """
+    extra = " --overflow-list-size 600000 "
+
+    # Duplicates should not be removed in Cut&Tag sequencings
+    if not protocol_is_cutntag(protocol):
+        extra += " --remove-duplicates "
+
+    return extra
 
 
 def get_multiqc_mapping_input(
@@ -738,6 +772,8 @@ def get_deeptools_estimate_gc_bias_params(
     Return the best parameters for the provided sample to deeptools computeGCBias
     """
     extra: str = " --plotFileFormat png "
+
+    # Single-ended samples requires fragment size (fs)
     if not is_paired(wildcards.sample):
         fs: Union[str, int] = has_fragment_size(wildcards.sample)
         extra += f" --fragmentLength {fs} "
@@ -797,15 +833,41 @@ def get_deeptools_bamcoverage_input(
     """
     Return the expected list of DeepTools input file list
     """
-    deeptools_bamcoverage_input: Dict[str, str] = {"blacklist": blacklist_path}
+    bam_prefix: str = "sambamba/markdup"
+    # Atac-seq samples should be shifted
     if protocol_is_atac(protocol):
-        deeptools_bamcoverage_input["bam"] = "deeptools/sorted_sieve/{sample}.bam"
-        deeptools_bamcoverage_input["bai"] = "deeptools/sorted_sieve/{sample}.bam.bai"
-    else:
-        deeptools_bamcoverage_input["bam"] = "sambamba/markdup/{sample}.bam"
-        deeptools_bamcoverage_input["bai"] = "sambamba/markdup/{sample}.bam.bai"
+        bam_prefix = "deeptools/sorted_sieve"
+    # OxiDIP-seq requires GC correction and filters
+    elif protocol_is_ogseq(protocol):
+        bam_prefix = "deeptools/corrected"
 
-    return deeptools_bamcoverage_input
+    return {
+        "blacklist": blacklist_path,
+        "bam": f"{bam_prefix}/{wildcards.sample}.bam",
+        "bam": f"{bam_prefix}/{wildcards.sample}.bam.bai",
+    }
+
+
+def get_deeptools_bamcoverage_params(
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol
+) -> str:
+    """
+    Return best parameters for deeptools bamcoverage for a given protocol
+    """
+    extra = " --normalizeUsing RPKM --binSize 5 --skipNonCoveredRegions --ignoreForNormalization chrX chrM chrY"
+    if not (protocol_is_cutnrun(protocol) or protocol_is_cutntag(protocol)):
+        extra += " --ignoreDuplicates "
+
+    if protocol_is_mnaseseq(protocol):
+        extra += " --MNase "
+
+    elif protocol_is_riboseq(protocol):
+        extra += " --Offset 12 "
+
+    elif protocol_is_groseq(protocol):
+        extra += " --Offset 15 "
+
+    return extra
 
 
 def get_deeptools_plotfingerprint_input(
@@ -834,6 +896,54 @@ def get_deeptools_plotfingerprint_input(
         )
 
     return deeptools_plotfingerprint_input
+
+
+def get_deeptools_fingerprint_params(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> str:
+    """
+    Return the best parameters for deeptools fingerprint
+    """
+    labels: str = " ".join(design.index.tolist())
+    return f" --skipZeros --chromosomesToSkip chrX chrY chrM --labels {labels}"
+
+
+def get_deeptools_compute_matrix_input(
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    peaktype_list: List[str] = peaktype_list,
+    seacr_mode_list: List[str] = seacr_mode_list,
+) -> str:
+    """
+    Return the expected list of input files for deeptools compute matrix
+    """
+    deeptools_compute_matrix_input = {
+        "bigwig": expand(
+            "data_output/Coverage/{sample}.bw",
+            sample=get_tested_sample_list(design=design),
+        ),
+        "blacklist": blacklist_path,
+    }
+
+    if str(wildcards.peaktype) in peaktype_list:
+        deeptools_compute_matrix_input["bed"] = expand(
+            "macs2/callpeak_{peaktype}/{sample}_peaks.{peaktype}Peak.bed",
+            sample=get_tested_sample_list(design=design),
+            peaktype=[wildcards.peaktype],
+        )
+    elif str(wildcards.peaktype) in seacr_mode_list:
+        deeptools_compute_matrix_input["bed"] = expand(
+            "seacr/{peaktype}/{sample}.bed",
+            sample=get_tested_sample_list(design=design),
+            peaktype=[wildcards.peaktype],
+        )
+    else:
+        raise ValueError(
+            f"Wildcards.peaktype should be in {peaktype_list} "
+            f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
+        )
+
+    return deeptools_compute_matrix_input
 
 
 def get_medips_params_extra(
@@ -948,11 +1058,14 @@ def get_csaw_count_input(
     )
 
     bam_prefix: str = "sambamba/markdup"
+    # Atac-seq samples should be shifted
     if protocol_is_atac(protocol):
         bam_prefix = "deeptools/sorted_sieve"
+    # OxiDIP-seq requires GC correction and filters
     elif protocol_is_ogseq(protocol):
         bam_prefix = "deeptools/corrected"
 
+    # Handle both single-ended and pair-ended sequencing libraries
     library: str = "se"
     if all(is_paired(sample=sample, design=design) for sample in sample_list):
         library = "pe"
@@ -976,6 +1089,7 @@ def get_csaw_count_params(
     if str(wildcards.signal) == "binned":
         extra += ", bin = TRUE"
 
+    # Atac-seq reads should be shifted to account for transposase size
     if protocol_is_atac(protocol):
         extra += ", shift = 4"
 
@@ -1014,11 +1128,15 @@ def get_csaw_read_param(
     Return best parameters for csaw::readParam()
     """
     extra: str = "dedup = TRUE, minq = 30"
+
     if str(wildcards.library) == "pe":
+        # Pair-ended case
         extra += ", pe = 'both'"
     else:
+        # Single-ended case
         extra += ", pe = 'none'"
 
+    # Strand filtering for Medip-seq
     if protocol_is_medip(protocol):
         extra += ", forward=logical(0)"
 
@@ -1065,13 +1183,16 @@ def get_macs2_callpeak_input(
     macs2_callpeak_input = {}
 
     bam_prefix: str = "sambamba/markdup"
+    # Atac-seq samples should be shifted
     if protocol_is_atac(protocol):
         bam_prefix = "deeptools/sorted_sieve"
+    # OxiDIP-seq requires GC correction and filters
     elif protocol_is_ogseq(protocol):
         bam_prefix = "deeptools/corrected"
 
     macs2_callpeak_input["treatment"] = f"{bam_prefix}/{wildcards.sample}.bam"
 
+    # Use input files if available
     input_id = has_input(sample=wildcards.sample, design=design)
     if (input_id is not None) and (input_id != ""):
         macs2_callpeak_input["control"] = f"{bam_prefix}/{input_id}.bam"
@@ -1090,8 +1211,10 @@ def get_macs2_params(
     extra = f" --gsize {effective_genome_size} "
     down = is_paired(sample=wildcards.sample, design=design)
     if down:
+        # Case pair-ended library
         extra += " --format BAMPE "
     else:
+        # Case single-ended library, then a fragment size is required
         extra += " --format BAM "
 
         fragment_size = has_fragment_size(
@@ -1110,28 +1233,109 @@ def get_macs2_params(
 
 
 def get_bedtools_intersect_macs2_input(
-    wildcards: snakemake.io.Wildcards, protocol: str = protocol
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    peaktype_list: List[str] = peaktype_list,
+    seacr_mode_list: List[str] = seacr_mode_list,
 ):
     """
     Return expected input files for bedtools intersect after macs2 calling.
     This is used to compute FRiP score.
     """
-    bedtools_intersect_macs2_input: Dict[str, str] = {
-        "right": str(
+    bedtools_intersect_macs2_input: Dict[str, str] = {}
+
+    if str(wildcards.peaktype) in seacr_mode_list:
+        bedtools_intersect_macs2_input["right"] = str(
+            f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"
+        )
+
+    if str(wildcards.peaktype) in peaktype_list:
+        bedtools_intersect_macs2_input["right"] = str(
             f"macs2/callpeak_{wildcards.peaktype}/"
             f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
-        ),
-    }
+        )
+
+    raise ValueError(
+        f"Wildcards.peaktype should be in {peaktype_list} "
+        f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
+    )
 
     bam_prefix: str = "sambamba/markdup"
+    # Atac-seq samples should be shifted
     if protocol_is_atac(protocol):
         bam_prefix = "deeptools/sorted_sieve"
+    # OxiDIP-seq requires GC correction and filters
     elif protocol_is_ogseq(protocol):
         bam_prefix = "deeptools/corrected"
 
     bedtools_intersect_macs2_input["left"] = f"{bam_prefix}/{wildcards.sample}.bam"
 
     return bedtools_intersect_macs2_input
+
+
+def get_seacr_callpeak_input(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> Dict[str, str]:
+    """
+    Return expected input files for SEACR shell interface
+    """
+    seacr_callpeak_input: Dict[str, str] = {
+        "exp_bg": f"bedtools/genomecov/{wildcards.sample}.bg"
+    }
+
+    # If input are available, then use it
+    input_signal = has_input(wildcards.sample)
+    if input_signal:
+        seacr_callpeak_input["input_bg"] = f"bedtools/genomecov/{input_signal}.bg"
+
+    return seacr_callpeak_input
+
+
+def get_seacr_callpeak_params(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> str:
+    """
+    Return best parameters for SEACR shell interface
+    """
+    seacr_callpeak_params = ""
+    input_signal = has_input(wildcards.sample)
+
+    # If input are available, then use it
+    if input_signal:
+        seacr_callpeak_params += f" bedtools/genomecov/{input_signal}.bg "
+    else:
+        seacr_callpeak_params += " 0.01 "
+
+    seacr_callpeak_params += (
+        f" norm {wildcards.seacr_mode} seacr/raw/{wildcards.sample}"
+    )
+
+    return seacr_callpeak_params
+
+
+def get_chipseeker_annotate_peak_single_sample_input(
+    wildcards: snakemake.io.Wildcards,
+    peaktype_list: List[str] = peaktype_list,
+    seacr_mode_list: List[str] = seacr_mode_list,
+) -> Dict[str, str]:
+    """
+    Return expected input file list for chipseeker, with correct peak-caller
+    """
+    if str(wildcards.peaktype) in seacr_mode_list:
+        return {"bed": f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"}
+
+    if str(wildcards.peaktype) in peaktype_list:
+        return {
+            "bed": str(
+                f"macs2/callpeak_{wildcards.peaktype}/"
+                f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
+            )
+        }
+
+    raise ValueError(
+        f"Wildcards.peaktype should be in {peaktype_list} "
+        f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
+    )
 
 
 ############################
@@ -1146,6 +1350,31 @@ def get_chipseeker_annotate_peak_from_ranges_input(
     if protocol_is_medip(protocol):
         return {"ranges": "medips/edger/{model_name}.RDS"}
     return {"ranges": "csaw/results/{model_name}.RDS"}
+
+
+def get_chipseeker_genome_cov_single_sample_input(
+    wildcards: snakemake.io.Wildcards,
+    peaktype_list: List[str] = peaktype_list,
+    seacr_mode_list: List[str] = seacr_mode_list,
+) -> Dict[str, str]:
+    """
+    Return expected list of input files for chipseeker genome coverage
+    """
+    if str(wildcards.peaktype) in peaktype_list:
+        return {
+            "bed": str(
+                f"macs2/callpeak_{wildcards.peaktype}/"
+                f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
+            )
+        }
+
+    if str(wildcards.peaktype) in seacr_mode_list:
+        return {"bed": f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"}
+
+    raise ValueError(
+        f"Wildcards.peaktype should be in {peaktype_list} "
+        f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
+    )
 
 
 def get_edger_formula(
@@ -1179,6 +1408,69 @@ def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> 
     return deeptools_plot_correlation_params
 
 
+##############
+### Motifs ###
+##############
+
+
+def get_homer_find_motif_input(
+    wildcards: snakemake.io.Wildcards,
+    peaktype_list: List[str] = peaktype_list,
+    seacr_mode_list: List[str] = seacr_mode_list,
+) -> Dict[str, str]:
+    """
+    Return correct input file for homer, given peaktype wildcard
+    """
+    if str(wildcards.peaktype) in peaktype_list:
+        return {
+            "peak": str(
+                f"macs2/callpeak_{wildcards.peaktype}/"
+                f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
+            )
+        }
+
+    if str(wildcards.peaktype) in seacr_mode_list:
+        return {"peak": f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"}
+
+    raise ValueError(
+        f"Wildcards.peaktype should be in {peaktype_list} "
+        f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
+    )
+
+
+def get_homer_annotatepeaks_input(
+    wildcards: snakemake.io.Wildcards,
+    peaktype_list: List[str] = peaktype_list,
+    seacr_mode_list: List[str] = seacr_mode_list,
+) -> Dict[str, str]:
+    """
+    Return correct list of annotation input files for Homer
+    """
+    homer_annotatepeaks_input: Dict[str, str] = {
+        "genome": genome_fasta_path,
+        "gtf": genome_annotation_path,
+        "wig": "data_output/Coverage/{sample}.bw",
+        "motif_files": "homer/motif/{peaktype}/{sample}/homerMotifs.motifs",
+    }
+
+    if str(wildcards.peaktype) in peaktype_list:
+        homer_annotatepeaks_input["peak"] = str(
+            f"macs2/callpeak_{wildcards.peaktype}/"
+            f"{wildcards.sample}_peaks.{wildcards.peaktype}Peak.bed"
+        )
+    elif str(wildcards.peaktype) in seacr_mode_list:
+        homer_annotatepeaks_input["peak"] = str(
+            f"seacr/{wildcards.peaktype}/{wildcards.sample}.bed"
+        )
+    else:
+        raise ValueError(
+            f"Wildcards.peaktype should be in {peaktype_list} "
+            f"or in {seacr_mode_list}. Got: `{wildcards.peaktype}`"
+        )
+
+    return homer_annotatepeaks_input
+
+
 #############################
 ### Wildcards constraints ###
 #############################
@@ -1190,7 +1482,6 @@ wildcard_constraints:
     release=str(release),
     build=str(build),
     species=str(species),
-    peaktype=r"|".join(["narrow", "broad", "gapped"]),
     step=r"|".join([".raw", ""]),
     command=r"|".join(["scale-region", "reference-point"]),
     tool=r"|".join(["bowtie2", "sambamba", "deeptools"]),
@@ -1200,11 +1491,9 @@ wildcard_constraints:
     chipseeker_plot=r"|".join(chipseeker_plot_list),
     model_name=r"|".join(get_model_names(config)),
     plot_type=r"|".join(deeptools_plot_type),
-
-
-##############
-### Motifs ###
-##############
+    peaktype=r"|".join(peaktype_list + ["gapped"] + seacr_mode_list),
+    seacr_mode=r"|".join(seacr_mode_list),
+    macs2_mode=r"|".join(peaktype_list + ["gapped"]),
 
 
 ########################
@@ -1220,6 +1509,8 @@ def targets(
     genome_annotation_path: str = genome_annotation_path,
     bowtie2_index_path: str = bowtie2_index_path,
     default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes,
+    macs2_params: Dict[str, Any] = macs2_params,
+    peak_type_and_mode_list: List[str] = peak_type_and_mode_list,
 ):
     """
     Return the list of expected output files, depending on the
@@ -1254,32 +1545,24 @@ def targets(
         )
 
     if steps.get("calling", False):
-        if config.get("macs2", {}).get("broad", False):
+        if macs2_params.get("broad", False) or macs2_params.get("narrow", False):
             expected_targets["macs2_broad"] = expand(
-                "data_output/Peak_Calling/broad/Macs2/{sample}_peaks.xls",
+                "data_output/Peak_Calling/{peaktype}/Macs2/{sample}_peaks.xls",
                 sample=get_tested_sample_list(design=design),
-            )
-            expected_targets["dit_tss_broad"] = expand(
-                "data_output/Peak_Calling/broad/{chipseeker_plot}/{sample}.png",
-                sample=get_tested_sample_list(design=design),
-                chipseeker_plot=chipseeker_plot_list,
-            )
-            expected_targets["deeptools_heatmap"] = expand(
-                "data_output/Heatmaps/broad/{command}.png", command=["reference-point"]
+                peaktype=peaktype_list,
             )
 
-        if config.get("macs2", {}).get("narrow", False):
-            expected_targets["macs2_narrow"] = expand(
-                "data_output/Peak_Calling/narrow/Macs2/{sample}_peaks.xls",
-                sample=get_tested_sample_list(design=design),
-            )
-            expected_targets["dit_tss_narrow"] = expand(
-                "data_output/Peak_Calling/narrow/{chipseeker_plot}/{sample}.png",
+        if len(peak_type_and_mode_list) > 0:
+            expected_targets["dit_tss_broad"] = expand(
+                "data_output/Peak_Calling/{peaktype}/{chipseeker_plot}/{sample}.png",
                 sample=get_tested_sample_list(design=design),
                 chipseeker_plot=chipseeker_plot_list,
+                peaktype=peak_type_and_mode_list,
             )
             expected_targets["deeptools_heatmap"] = expand(
-                "data_output/Heatmaps/narrow/{command}.png", command=["reference-point"]
+                "data_output/Heatmaps/{peaktype}/{command}.png",
+                command=["reference-point"],
+                peaktype=peak_type_and_mode_list,
             )
 
         expected_targets["multiqc_coverage_report"] = "data_output/QC/Coverage.QC.html"
@@ -1301,7 +1584,7 @@ def targets(
     if steps.get("motives", False):
         expected_targets["homer_annotate"] = expand(
             "data_output/Motifs/{peaktype}/{sample}_homer_annot.txt",
-            peaktype=peaktype_list,
+            peaktype=peak_type_and_mode_list,
             sample=get_tested_sample_list(),
         )
 
