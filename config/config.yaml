@@ -5,7 +5,7 @@ steps:
   # Perform genome download and indexation steps
   # Automatically turned `true` if mapping is performed
   # Automatically turned `true` if download_fastq_screen_indexes is `true`
-  install: true
+  install: false
 
   # Download (true) or not (false) pre-built fastq screen indexes
   # Set to `false` if you want to use your own indexes
@@ -60,7 +60,7 @@ steps:
 #
 # * `og-seq`:
 #
-protocol: cut&run
+protocol: 'cutnrun'
 
 # Path to the design file. It must be a TSV-formatted text file
 # with the following columns (case matters, order does not matter):

@@ -92,14 +92,14 @@ def protocol_is_cutntag(protocol: str = protocol) -> bool:
     """
     Return `True` if protocol is Cut & Tag
     """
-    return protocol == "cut&tag"
+    return protocol in ("cut&tag", "cutntag")
 
 
 def protocol_is_cutnrun(protocol: str = protocol) -> bool:
     """
     Return `True` if protocol is Cut & Run
     """
-    return protocol == "cut&run"
+    return protocol in ("cut&run", "cutnrun")
 
 
 def protocol_is_ogseq(protocol: str = protocol) -> bool:
@@ -294,7 +294,9 @@ if macs2_params.get("narrow", False):
 
 seacr_mode_list: List[str] = []
 seacr_params = config.get("seacr", {})
-if (seacr_params is None) and (not (protocol_is_cutnrun(protocol) or protocol_is_cutntag(protocol))):
+if (seacr_params is None) and (
+    not (protocol_is_cutnrun(protocol) or protocol_is_cutntag(protocol))
+):
     seacr_params = {}
 if seacr_params.get("relaxed", False):
     seacr_mode_list.append("relaxed")
