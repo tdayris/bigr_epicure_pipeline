@@ -60,7 +60,7 @@ steps:
 #
 # * `og-seq`:
 #
-protocol: atac-seq
+protocol: cut&run
 
 # Path to the design file. It must be a TSV-formatted text file
 # with the following columns (case matters, order does not matter):
@@ -113,11 +113,20 @@ reference:
 
 # Macs2 peak caller parameters
 macs2:
-  # Perform broad peak calling using Macs2 (chip-seq)
+  # Perform broad peak calling using Macs2
   broad: true
 
-  # Perform narrow peak calling using Macs2 (chip-seq)
+  # Perform narrow peak calling using Macs2
   narrow: true
+
+
+# Seacr peak caller for Cut&Run parameters
+seacr:
+  # Perform stringent peak calling using Seacr
+  stringent: true
+
+  # Perform relaxed peak calling using Seacr
+  relaxed: true
 
 # Options to define differential peak coverage
 differential_peak_coverage:
