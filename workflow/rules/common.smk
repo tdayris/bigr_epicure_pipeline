@@ -1331,11 +1331,11 @@ def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> 
     Based on plot-type (in wildcards) return correct parameters
     """
     deeptools_plot_correlation_params: str = (
-        "--plotFileFormat png " "--skipZeros " "--corMethod spearman "
+        "--plotFileFormat png --skipZeros --corMethod spearman "
     )
     if str(wildcards.plot_type) == "heatmap":
         deeptools_plot_correlation_params += (
-            "--whatToPlot heatmap " "--colorMap RdYlBu " "--plotNumbers"
+            "--whatToPlot heatmap --colorMap RdYlBu --plotNumbers"
         )
 
     return deeptools_plot_correlation_params
