@@ -28,7 +28,6 @@ exp_design <- utils::read.table(
     file = base::as.character(x = snakemake@input[["design"]]),
     sep = "\t",
     header = TRUE,
-    row.names = FALSE,
     stringsAsFactors = FALSE
 )
 design <- stats::model.matrix(
