@@ -11,7 +11,7 @@ rule deeptools_plot_heatmap:
         heatmap_matrix=temp("deeptools/heatmap_matrix/{command}.{peaktype}.tab"),
     threads: 1
     resources:
-        mem_mb=lambda wilcards, attempt: attempt * 1024 * 20,
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 20,
         runtime=lambda wildcards, attempt: attempt * 6,
         tmpdir=tmp,
     log:
