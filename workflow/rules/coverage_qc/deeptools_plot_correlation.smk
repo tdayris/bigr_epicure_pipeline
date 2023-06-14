@@ -16,7 +16,7 @@ rule deeptools_plot_correlation:
     conda:
         "../../envs/deeptools.yaml"
     shell:
-        "plotPCA --corData {input.bw} "
+        "plotCorrelation --corData {input.bw} "
         "--plotFile {output.png} "
         "--outFileCorMatrix {output.stats} "
-        "> {log} 2>&1 "
+        "{params.extra} > {log} 2>&1 "

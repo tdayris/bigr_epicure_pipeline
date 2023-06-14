@@ -923,13 +923,37 @@ def get_deeptools_plotfingerprint_input(
 
 
 def get_deeptools_fingerprint_params(
-    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    protocol: str = protocol,
 ) -> str:
     """
     Return the best parameters for deeptools fingerprint
     """
     labels: str = " ".join(design.index.tolist())
-    return f" --skipZeros --chromosomesToSkip chrX chrY chrM --labels {labels}"
+    extra = f" --skipZeros --labels {labels} --plotFileFormat png "
+    if not (protocol_is_cutntag(protocol) or protocol_is_cutnrun(protocol)):
+        extra += " --ignoreDuplicates "
+
+    return extra
+
+
+def get_deeptools_bampefragmentsize_params(
+    wildcards, design: pandas.DataFrame = design
+) -> str:
+    """
+    Return the best parameters for deeptools bampe fragment size
+    """
+    labels: str = " ".join(design.index.tolist())
+    return f" --plotFileFormat png --samplesLabel {labels} "
+
+
+def get_deeptools_plotpca_params(wildcards, design: pandas.DataFrame = design) -> str:
+    """
+    Return the best parameters for deeptools plot PCA
+    """
+    labels: str = " ".join(design.index.tolist())
+    return f" --plotFileFormat png --labels {labels} --PCs '1 2'"
 
 
 def get_deeptools_compute_matrix_input(
@@ -955,6 +979,48 @@ def get_deeptools_compute_matrix_input(
     }
 
     return deeptools_compute_matrix_input
+
+
+def get_deeptools_compute_matrix_params(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> str:
+    """
+    Return best parameters for deeptools compute matrix
+    """
+    labels: str = " ".join(get_tested_sample_list(design))
+    extra: str = f" --skipZeros --missingDataAsZero --samplesLabel {labels} --binSize 50 "
+    if str(wildcards.command) == "reference-point":
+        extra += " --referencePoint TSS "
+    else:
+        extra += " --startLabel TSS "
+
+    return extra
+
+
+def get_deeptools_multibigwigsummary_params(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> str:
+    """
+    Return best parameters for deeptools multiBigwigSummary
+    """
+    labels: str = " ".join(get_tested_sample_list(design))
+    return f" --labels {labels} --chromosomesToSkip chrX chrY chrM"
+
+
+def get_deeptools_plotcoverage_params(
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    protocol: str = protocol,
+) -> str:
+    """
+    Return best parameters for deeptools plot coverage
+    """
+    labels: str = " ".join(get_tested_sample_list(design))
+    extra: str = f"--labels {labels} --skipZeros --minMappingQuality 30"
+    if not (protocol_is_cutnrun(protocol) or protocol_is_cutntag(protocol)):
+        extra += " --ignoreDuplicates "
+
+    return extra
 
 
 def get_medips_params_extra(
@@ -1335,8 +1401,9 @@ def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> 
     """
     Based on plot-type (in wildcards) return correct parameters
     """
+    labels: str = " ".join(design.index.tolist())
     deeptools_plot_correlation_params: str = (
-        "--plotFileFormat png --skipZeros --corMethod spearman "
+        f"--plotFileFormat png --skipZeros --corMethod spearman --labels {labels}"
     )
     if str(wildcards.plot_type) == "heatmap":
         deeptools_plot_correlation_params += str(

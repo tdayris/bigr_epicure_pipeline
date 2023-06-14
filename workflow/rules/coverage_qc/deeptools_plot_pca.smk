@@ -12,11 +12,11 @@ rule deeptools_plot_pca:
     log:
         "logs/deeptools/plot_pca/summary.log",
     params:
-        "--plotFileFormat png ",
+        extra=lambda wildcards: get_deeptools_plotpca_params(wildcards),
     conda:
         "../../envs/deeptools.yaml"
     shell:
-        "plotPCA {params} --corData {input.bw} "
+        "plotPCA {params.extra} --corData {input.bw} "
         "--plotFile {output.png} "
         "--outFileNameData {output.stats} "
         "> {log} 2>&1 "

@@ -35,11 +35,11 @@ rule deeptools_multibigwig_summary:
     log:
         "logs/deeptools/multibigwig/summary.log",
     params:
-        "",
+        extra=lambda wildcards: get_deeptools_multibigwigsummary_params(wildcards),
     conda:
         "../../envs/deeptools.yaml"
     shell:
-        "multiBigwigSummary bins {params} "
+        "multiBigwigSummary bins {params.extra} "
         "--bwfiles {input.bw} "
         "--outFileName {output.bw} "
         "--blackListFileName {input.blacklist} "
@@ -70,6 +70,6 @@ rule deeptools_plotcoverage:
     log:
         "logs/deeptools/plotcoverage.log",
     params:
-        extra="--skipZeros --centerReads --ignoreDuplicates --minMappingQuality 10",
+        extra=lambda wildcards: get_deeptools_plotcoverage_params(wildcards),
     wrapper:
         "v1.32.1/bio/deeptools/plotcoverage"

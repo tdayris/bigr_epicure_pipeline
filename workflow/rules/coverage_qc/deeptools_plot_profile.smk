@@ -12,6 +12,6 @@ rule deeptools_plot_profile:
     log:
         "logs/deeptools/plot_pca/summary/{peaktype}.{command}.log",
     params:
-        "",
+        lambda wildcards: get_deeptools_bampefragmentsize_params(wildcards),
     wrapper:
         "v1.32.1/bio/deeptools/plotprofile"

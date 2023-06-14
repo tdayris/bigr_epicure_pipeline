@@ -16,12 +16,12 @@ rule deeptools_bampe_fragment_size:
     log:
         "logs/deeptools/bampe_fs/{sample}.log",
     params:
-        " --plotFileFormat png --table ",
+        extra=lambda wildcards: get_deeptools_bampefragmentsize_params(wildcards),
     conda:
         "../../envs/deeptools.yaml"
     shell:
         "bamPEFragmentSize "
-        "{params} "
+        "{params.extra} "
         "--bamfiles {input.bam} "
         "--histogram {output.hist} "
         "--numberOfProcessors {threads} "
