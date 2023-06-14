@@ -1404,12 +1404,15 @@ def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> 
     """
     labels: str = " ".join(design.index.tolist())
     deeptools_plot_correlation_params: str = (
-        f"--plotFileFormat png --skipZeros --corMethod spearman --labels {labels}"
+        f"--plotFileFormat png --skipZeros --corMethod spearman --labels {labels} "
     )
     if str(wildcards.plot_type) == "heatmap":
         deeptools_plot_correlation_params += str(
             "--whatToPlot heatmap --colorMap RdYlBu --plotNumbers"
         )
+    else:
+        deeptools_plot_correlation_params += " --whatToPlot scatterplot"
+
 
     return deeptools_plot_correlation_params
 
