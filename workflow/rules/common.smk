@@ -1413,7 +1413,6 @@ def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> 
     else:
         deeptools_plot_correlation_params += " --whatToPlot scatterplot"
 
-
     return deeptools_plot_correlation_params
 
 
