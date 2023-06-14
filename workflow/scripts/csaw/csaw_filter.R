@@ -134,7 +134,7 @@ if (filter_method == "average_log_cpm") {
         scale.info = scale_info
     )
 
-    keep <- filter.stat$filter > log2(3)
+    keep <- filter_stat$filter > log2(3)
     counts <- counts[keep, ]
 } else {
     base::stop("Unknown filter method")
