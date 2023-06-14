@@ -25,8 +25,9 @@ validate(config, schema="../schemas/config.schema.yaml")
 ########################
 
 
+design_path: str = config.get("designs", "config/design.tsv")
 design: pandas.DataFrame = pandas.read_csv(
-    config.get("designs", "config/design.tsv"),
+    filepath_or_buffer=design_path,
     sep="\t",
     header=0,
     index_col=0,

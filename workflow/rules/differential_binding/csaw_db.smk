@@ -20,9 +20,10 @@ rule csaw_count_normalize:
         "../../scripts/csaw/csaw_normalize.R"
 
 
-rule csaw_count_edger:
+rule csaw_edger:
     input:
         counts="csaw/normalized/{model_name}.RDS",
+        design=design_path,
     output:
         csaw=temp("csaw/results/{model_name}.RDS"),
         edger=temp("csaw/edger/{model_name}.RDS"),
@@ -35,7 +36,6 @@ rule csaw_count_edger:
         "logs/csaw/edger/{model_name}.log",
     params:
         extra="",
-        design=design.copy(),
         formula=lambda wildcards: get_edger_formula(wildcards),
     conda:
         "../../envs/csaw.yaml"

@@ -25,7 +25,7 @@ y <- csaw::asDGEList(object = counts)
 base::message("Normalized-filtered counts loaded")
 
 exp_design <- utils::read.table(
-    file = base::as.character(x = snakemake@params[["design"]]),
+    file = base::as.character(x = snakemake@input[["design"]]),
     sep = "\t",
     header = TRUE,
     row.names = FALSE,
