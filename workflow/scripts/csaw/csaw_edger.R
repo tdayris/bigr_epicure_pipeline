@@ -31,7 +31,7 @@ exp_design <- utils::read.table(
     stringsAsFactors = FALSE
 )
 design <- stats::model.matrix(
-    object = stats::as.formula(x = snakemake@params[["formula"]]),
+    object = stats::as.formula(snakemake@params[["formula"]]),
     data = exp_design
 )
 base::message("Model matrix built")
