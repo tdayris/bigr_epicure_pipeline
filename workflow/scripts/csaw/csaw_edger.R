@@ -36,9 +36,17 @@ design <- stats::model.matrix(
 )
 base::message("Model matrix built")
 
+prior_n <- edgeR::getPriorN(
+    y = y,
+    design = design,
+    prior.df = 20
+)
+base::message("Prior N estimated with 20 dof")
+
 dispersion <- edgeR::estimateDisp(
     y = y,
-    design = design
+    design = design,
+    prior.n = prior_n
 )
 base::message("Dispersion estimated")
 
