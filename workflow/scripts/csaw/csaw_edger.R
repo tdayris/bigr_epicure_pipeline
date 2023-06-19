@@ -43,16 +43,16 @@ prior.n <- edgeR::getPriorN(
 )
 base::message("Prior N estimated with 20 dof")
 
-dispersion <- edgeR::estimateDisp(
+y <- edgeR::estimateDisp(
     y = y,
     design = design,
     prior.n = prior.n,
-    
+
 )
 base::message("Dispersion estimated")
 
 fit <- edgeR::glmQLFit(
-    y = dispersion,
+    y = y,
     design = design,
     robust = TRUE
 )
