@@ -1225,7 +1225,7 @@ def get_csaw_filter_input(
     if len(input_list) > 0:
         csaw_filter_input["input_counts"] = f"csaw/count/{wildcards.model_name}.input.RDS"
         csaw_filter_input[
-            "input_counts"
+            "input_binned"
         ] = f"csaw/count/{wildcards.model_name}.input_binned.RDS"
         csaw_filter_input["binned"] = f"csaw/count/{wildcards.model_name}.binned.RDS"
     else:

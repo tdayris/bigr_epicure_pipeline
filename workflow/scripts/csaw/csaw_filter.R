@@ -121,12 +121,15 @@ if (filter_method == "average_log_cpm") {
     input_counts <- base::readRDS(
         file = base::as.character(x = snakemake@input[["input_counts"]])
     )
+    base::message("Input counts loaded")
     counts_binned <- base::readRDS(
         file = base::as.character(x = snakemake@input[["binned"]])
     )
+    base::message("Tested (binned) counts loaded")
     input_binned <- base::readRDS(
         file = base::as.character(x = snakemake@input[["input_binned"]])
-    ) 
+    )
+    base::message("Input (binned) counts loaded")
 
     scale_info <- csaw::scaleControlFilter(
         data = counts_binned,
