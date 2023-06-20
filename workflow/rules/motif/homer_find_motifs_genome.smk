@@ -28,10 +28,10 @@ rule homer_find_motif_genome:
         known="homer/motif/{peaktype}/{sample}/knownResults.txt",
         seq="homer/motif/{peaktype}/{sample}/seq.autonorm.tsv",
         html="data_output/Motifs/{peaktype}/{sample}/homerResults.html",
-    threads: 1
+    threads: 20
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
-        runtime=lambda wildcards, attempt: attempt * 60 * 2,
+        runtime=lambda wildcards, attempt: attempt * 60 * 5,
         tmpdir=tmp,
     log:
         "logs/homer/find_motif_genome/{sample}.{peaktype}.log",
@@ -39,6 +39,7 @@ rule homer_find_motif_genome:
         genome="hg38" if build == "GRCh38" else "mm10",
         size=200,
         output_directory="data_output/Motifs/{peaktype}/{sample}",
+        extra=" -homer2 "
     conda:
         "../../envs/homer.yaml"
     shell:
@@ -47,4 +48,6 @@ rule homer_find_motif_genome:
         "{params.genome} "
         "{params.output_directory} "
         "-size {params.size} "
+        "{params.extra} "
+        "-p {threads} "
         "> {log} 2>&1 "
