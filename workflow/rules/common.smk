@@ -1479,7 +1479,7 @@ def get_homer_annotatepeaks_params(
     """
     Return best parameters for Homer annotate peaks
     """
-    extra: str = ""
+    extra: str = " -homer2 "
     fs: str = has_fragment_size(
         sample=wildcards.sample, design=design, sample_is_paired=False
     )
