@@ -142,10 +142,16 @@ differential_peak_coverage:
   #   reference: ReferenceOtherFactorLevel
   #   tested: TestedOtherFactorLevel
 
-# The following options involves trimming (fastp)
+# The following options involve trimming (fastp)
 # trimming:
   # Contaminent, vector, adapter. Comment to ignore.
   # adapters: --adapter_sequence GATCGGAAGAGCACACGTCTGAACTCCAGTCA
 
   # Fastp trimming options. Comment to ignore.
   # fastp_extra: none
+
+
+# The following options involve mapping and post-mapping corrections
+# mapping:
+#   deeptools:
+#     alignment_sieve_extra: --shift -200 -200

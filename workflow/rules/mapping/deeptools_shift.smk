@@ -13,7 +13,7 @@ rule deeptools_alignment_sieve:
     log:
         "logs/deeptools/alignmentsieve/{sample}.log",
     params:
-        extra=" --ATACshift ",
+        extra=lambda wildcards: get_deeptools_alignment_sieve_params(wildcards),
     wrapper:
         "master/bio/deeptools/alignmentsieve"
 

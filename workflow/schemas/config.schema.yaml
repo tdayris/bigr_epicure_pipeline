@@ -95,3 +95,13 @@ properties:
         type: string
       fastp_extra:
         type: string
+
+
+  mapping:
+    type: object
+    protperties:
+      deeptools:
+        type: object
+        properties:
+          alignment_sieve_extra:
+            type: string

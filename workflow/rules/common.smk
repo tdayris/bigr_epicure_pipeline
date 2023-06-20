@@ -815,6 +815,21 @@ def get_deeptools_estimate_gc_bias_params(
     return extra
 
 
+def get_deeptools_alignment_sieve_params(
+    wildcards, protocol: str = protocol, config: Dict[str, Any] = config
+) -> str:
+    """
+    Return best parameters for deeptools alignment sieve
+    """
+    extra: str = (
+        config.get("mapping", {}).get("deeptools", {}).get("alignment_sieve_extra", "")
+    )
+    if extra == "" and protocol_is_atac(protocol):
+        extra = " --ATACshift "
+
+    return extra
+
+
 ################
 ### Coverage ###
 ################
