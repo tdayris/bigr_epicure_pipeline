@@ -1457,6 +1457,32 @@ def get_homer_find_motif_input(
     return {"peak": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)}
 
 
+def get_homer_annotatepeaks_params(
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+) -> str:
+    """
+    Return best parameters for Homer annotate peaks
+    """
+    extra: str = ""
+    fs: str = has_fragment_size(wildcards.sample)
+    if fs:
+        extra += f" -fragLength {fs} "
+
+    if protocol_is_ogseq(protocol):
+        extra += " -CpG "
+
+    return extra
+
+
+def get_peak_file_list(wildcards: snakemake.io.Wildcards):
+    return [
+        get_peak_file(wildcards).format(
+            peaktype=wildcards.peaktype, sample=wildcards.sample
+        )
+    ]
+
+
 def get_homer_annotatepeaks_input(
     wildcards: snakemake.io.Wildcards,
     peaktype_list: List[str] = peaktype_list,
@@ -1465,15 +1491,12 @@ def get_homer_annotatepeaks_input(
     """
     Return correct list of annotation input files for Homer
     """
-    bed_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
-    bed_file = bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)
-
     return {
         "genome": genome_fasta_path,
         "gtf": genome_annotation_path,
-        "wig": "data_output/Coverage/{sample}.bw",
-        "motif_files": "homer/motif/{peaktype}/{sample}/homerMotifs.motifs",
-        "peak": bed_file,
+        "wig": f"data_output/Coverage/{wildcards.sample}.bw",
+        "motif_files": f"homer/motif/{wildcards.peaktype}/{wildcards.sample}/homerMotifs.motifs",
+        "peak": f"homer/peaks/{wildcards.sample}.{wildcards.peaktype}.bed",
     }
 
 

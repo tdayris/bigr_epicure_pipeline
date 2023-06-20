@@ -13,6 +13,7 @@ rule homer_annotatepeaks:
         mfasta="data_output/Motifs/{peaktype}/{sample}_motif.fasta",
         mbed="data_output/Motifs/{peaktype}/{sample}_motif.bed",
         mlogic="data_output/Motifs/{peaktype}/{sample}_motif.logic",
+        go=directory("data_output/Motifs/{peaktype}/{sample}_GO"),
     threads: 2
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 8,
@@ -20,7 +21,7 @@ rule homer_annotatepeaks:
         tmpdir=tmp,
     params:
         mode="tss hg38" if build == "GRCh38" else "tss mm10",
-        extra="-CpG",
+        extra=lambda wildcards: get_homer_annotatepeaks_params(wildcards),
         genome="hg38" if build == "GRCh38" else "mm10",
     log:
         "logs/homer/annotate/{sample}.{peaktype}.log",
@@ -36,4 +37,6 @@ rule homer_annotatepeaks:
         "-mfasta {output.mfasta} "
         "-mbed {output.mbed} "
         "-mlogic {output.mlogic} "
+        "-go {output.go} "
+        "{params.extra} "
         "> {log} 2>&1 "

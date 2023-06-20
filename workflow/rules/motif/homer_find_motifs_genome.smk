@@ -1,3 +1,23 @@
+rule add_chr_bed:
+    input:
+        unpack(get_peak_file_list),
+    output:
+        temp("homer/peaks/{sample}.{peaktype}.bed"),
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024,
+        runtime=lambda wildcards, attempt: attempt * 60 * 1,
+        tmpdir=tmp,
+    log:
+        "logs/homer/add_chr/{sample}.{peaktype}.log",
+    params:
+        script=workflow.source_path("../../scripts/misc/bed_add_chr_to_sequence.awk"),
+    conda:
+        "../../envs/bash.yaml"
+    shell:
+        "awk --file {params.script} {input} > {output} 2> {log}"
+
+
 rule homer_find_motif_genome:
     input:
         unpack(get_homer_find_motif_input),
