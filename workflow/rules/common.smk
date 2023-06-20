@@ -1444,19 +1444,6 @@ def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> 
 ### Motifs ###
 ##############
 
-
-def get_homer_find_motif_input(
-    wildcards: snakemake.io.Wildcards,
-    peaktype_list: List[str] = peaktype_list,
-    seacr_mode_list: List[str] = seacr_mode_list,
-) -> Dict[str, str]:
-    """
-    Return correct input file for homer, given peaktype wildcard
-    """
-    bed_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
-    return {"peak": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)}
-
-
 def get_homer_annotatepeaks_params(
     wildcards: snakemake.io.Wildcards,
     protocol: str = protocol,

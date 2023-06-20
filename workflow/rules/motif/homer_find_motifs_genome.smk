@@ -20,7 +20,7 @@ rule add_chr_bed:
 
 rule homer_find_motif_genome:
     input:
-        unpack(get_homer_find_motif_input),
+        peak="homer/peaks/{sample}.{peaktype}.bed",
     output:
         motif="homer/motif/{peaktype}/{sample}/homerMotifs.motifs",
         all_motif="homer/motif/{peaktype}/{sample}/homerMotifs.all.motifs",
