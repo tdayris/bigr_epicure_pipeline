@@ -43,7 +43,7 @@ if (filter_method == "average_log_cpm") {
         min_cpm <- base::as.numeric(x = snakemake@params[["min_cpm"]])
     }
     abundance <- edgeR::aveLogCPM(SummarizedExperiment::asDGEList(counts))
-    keep <- abundances > aveLogCPM(min_cpm, lib.size=mean(counts$totals))
+    keep <- abundances > aveLogCPM(min_cpm, lib.size = mean(counts$totals))
     counts <- counts[keep, ]
 } else if (filter_method == "proportion") {
     # Filter based on estimated proportion of signal of interest / noise
@@ -121,10 +121,16 @@ if (filter_method == "average_log_cpm") {
     input_counts <- base::readRDS(
         file = base::as.character(x = snakemake@input[["input_counts"]])
     )
+    counts_binned <- base::readRDS(
+        file = base::as.character(x = snakemake@input[["binned"]])
+    )
+    input_binned <- base::readRDS(
+        file = base::as.character(x = snakemake@input[["input_binned"]])
+    ) 
 
     scale_info <- csaw::scaleControlFilter(
-        data = counts,
-        background <- input_counts
+        data = counts_binned,
+        background = input_binned
     )
 
     filter_stat <- csaw::filterWindowsControl(

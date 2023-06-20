@@ -1154,12 +1154,14 @@ def get_csaw_count_params(
     Return best parameters considering IO files list
     """
     extra: str = "width = 100, filter = 10"
-    if str(wildcards.signal) == "binned":
+    if "binned" in str(wildcards.signal):
         extra += ", bin = TRUE"
 
     # Atac-seq reads should be shifted to account for transposase size
-    if protocol_is_atac(protocol):
-        extra += ", shift = 4"
+    # if protocol_is_atac(protocol):
+    # This step is automatically performed over the BAM
+    # file through deeptools alignment sieve
+    # extra += ", shift = 4"
 
     sample_list: List[str] = get_sample_list_from_model_name(
         model_name=wildcards.model_name, signal=wildcards.signal, design=design
@@ -1222,6 +1224,10 @@ def get_csaw_filter_input(
     )
     if len(input_list) > 0:
         csaw_filter_input["input_counts"] = f"csaw/count/{wildcards.model_name}.input.RDS"
+        csaw_filter_input[
+            "input_counts"
+        ] = f"csaw/count/{wildcards.model_name}.input_binned.RDS"
+        csaw_filter_input["binned"] = f"csaw/count/{wildcards.model_name}.binned.RDS"
     else:
         csaw_filter_input["binned"] = f"csaw/count/{wildcards.model_name}.binned.RDS"
 
@@ -1468,7 +1474,7 @@ wildcard_constraints:
     command=r"|".join(["scale-region", "reference-point"]),
     tool=r"|".join(["bowtie2", "sambamba", "deeptools"]),
     subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve", "corrected"]),
-    signal=r"|".join(["tested", "input", "binned"]),
+    signal=r"|".join(["tested", "input", "binned", "input_binned"]),
     library=r"|".join(["se", "pe"]),
     chipseeker_plot=r"|".join(chipseeker_plot_list),
     model_name=r"|".join(get_model_names(config)),
