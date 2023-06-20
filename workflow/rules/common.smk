@@ -526,9 +526,12 @@ def get_bam_prefix(wildcards: snakemake.io.Wildcards, protocol: str = protocol) 
     """
     Return the best refined file after all corrections
     """
+    shift: str = str(
+        config.get("mapping", {}).get("deeptools", {}).get("alignment_sieve_extra", "")
+    )
     bam_prefix: str = "sambamba/markdup"
     # Atac-seq samples should be shifted
-    if protocol_is_atac(protocol):
+    if protocol_is_atac(protocol) or shift != "":
         bam_prefix = "deeptools/sorted_sieve"
     # OxiDIP-seq requires GC correction and filters
     elif protocol_is_ogseq(protocol):
