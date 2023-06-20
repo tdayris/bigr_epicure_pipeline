@@ -1,3 +1,9 @@
+# 0.10.0 – Motifs
+
+## Feature
+
+* Homer find motifs installation enhanced
+
 # 0.9.0 – Cut&Run, Cut&Tag
 
 ## Features
