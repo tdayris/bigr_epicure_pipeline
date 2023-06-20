@@ -39,7 +39,7 @@ rule homer_find_motif_genome:
         genome="hg38" if build == "GRCh38" else "mm10",
         size=200,
         output_directory="data_output/Motifs/{peaktype}/{sample}",
-        extra=" -homer2 "
+        extra=" -homer2 ",
     conda:
         "../../envs/homer.yaml"
     shell:
