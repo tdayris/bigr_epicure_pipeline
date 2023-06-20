@@ -724,7 +724,7 @@ def get_samtools_stats_input(
     Return expected input files for Samtools stats
     """
 
-    bam_prefix: str = get_bam_prefix(wildcards, protocol)
+    bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
 
     return {
         "bam": f"{bam_prefix}/{wildcards.sample}.bam",
@@ -811,15 +811,19 @@ def get_deeptools_estimate_gc_bias_params(
     extra: str = " --plotFileFormat png "
 
     # Single-ended samples requires fragment size (fs)
-    if not is_paired(wildcards.sample):
-        fs: Union[str, int] = has_fragment_size(wildcards.sample)
+    if not is_paired(sample=wildcards.sample, design=design):
+        fs: Union[str, int] = has_fragment_size(
+            sample=wildcards.sample, design=design, sample_is_paired=False
+        )
         extra += f" --fragmentLength {fs} "
 
     return extra
 
 
 def get_deeptools_alignment_sieve_params(
-    wildcards: snakemake.io.Wildcards, protocol: str = protocol, config: Dict[str, Any] = config
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    config: Dict[str, Any] = config,
 ) -> str:
     """
     Return best parameters for deeptools alignment sieve
@@ -885,7 +889,7 @@ def get_deeptools_bamcoverage_input(
     """
     Return the expected list of DeepTools input file list
     """
-    bam_prefix = get_bam_prefix(wildcards, protocol)
+    bam_prefix = get_bam_prefix(wildcards=wildcards, protocol=protocol)
 
     return {
         "blacklist": blacklist_path,
@@ -927,7 +931,7 @@ def get_deeptools_plotfingerprint_input(
     """
     Return the list of expected input files for deeptools plot fingerprint
     """
-    bam_prefix = get_bam_prefix(wildcards, protocol)
+    bam_prefix = get_bam_prefix(wildcards=wildcards, protocol=protocol)
 
     deeptools_plotfingerprint_input: Dict[str, List[str]] = {
         "bam_files": [],
@@ -967,7 +971,9 @@ def get_deeptools_bampefragmentsize_params(
     return f" --plotFileFormat png --samplesLabel {labels} "
 
 
-def get_deeptools_plotpca_params(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> str:
+def get_deeptools_plotpca_params(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> str:
     """
     Return the best parameters for deeptools plot PCA
     """
@@ -991,7 +997,11 @@ def get_deeptools_compute_matrix_input(
         ),
         "blacklist": blacklist_path,
         "bed": expand(
-            get_peak_file(wildcards, peaktype_list, seacr_mode_list),
+            get_peak_file(
+                wildcards=wildcards,
+                peaktype_list=peaktype_list,
+                seacr_mode_list=seacr_mode_list,
+            ),
             sample=get_tested_sample_list(design=design),
             peaktype=[wildcards.peaktype],
         ),
@@ -1006,7 +1016,7 @@ def get_deeptools_compute_matrix_params(
     """
     Return best parameters for deeptools compute matrix
     """
-    labels: str = " ".join(get_tested_sample_list(design))
+    labels: str = " ".join(get_tested_sample_list(design=design))
     extra: str = f" --skipZeros --missingDataAsZero --samplesLabel {labels} --binSize 50 "
     if str(wildcards.command) == "reference-point":
         extra += " --referencePoint TSS "
@@ -1022,7 +1032,7 @@ def get_deeptools_multibigwigsummary_params(
     """
     Return best parameters for deeptools multiBigwigSummary
     """
-    labels: str = " ".join(get_tested_sample_list(design))
+    labels: str = " ".join(get_tested_sample_list(design=design))
     return f" --labels {labels} --chromosomesToSkip chrX chrY chrM"
 
 
@@ -1034,7 +1044,7 @@ def get_deeptools_plotcoverage_params(
     """
     Return best parameters for deeptools plot coverage
     """
-    labels: str = " ".join(get_tested_sample_list(design))
+    labels: str = " ".join(get_tested_sample_list(design=design))
     extra: str = f"--labels {labels} --skipZeros --minMappingQuality 30"
     if not (protocol_is_cutnrun(protocol) or protocol_is_cutntag(protocol)):
         extra += " --ignoreDuplicates "
@@ -1141,15 +1151,19 @@ def get_csaw_count_input(
     wildcards: snakemake.io.Wildcards,
     design: pandas.DataFrame = design,
     protocol: str = protocol,
+    config: Dict[str, Any] = config,
 ) -> Dict[str, Union[str, List[str]]]:
     """
     Return expected list of input files for csaw-count
     """
     sample_list: List[str] = get_sample_list_from_model_name(
-        model_name=wildcards.model_name, signal=wildcards.signal, design=design
+        model_name=wildcards.model_name,
+        signal=wildcards.signal,
+        design=design,
+        config=config,
     )
 
-    bam_prefix = get_bam_prefix(wildcards, protocol)
+    bam_prefix = get_bam_prefix(wildcards=wildcards, protocol=protocol)
 
     # Handle both single-ended and pair-ended sequencing libraries
     library: str = "se"
@@ -1167,6 +1181,7 @@ def get_csaw_count_params(
     wildcards: snakemake.io.Wildcards,
     design: pandas.DataFrame = design,
     protocol: str = protocol,
+    config: Dict[str, Any] = config,
 ) -> str:
     """
     Return best parameters considering IO files list
@@ -1182,7 +1197,10 @@ def get_csaw_count_params(
     # extra += ", shift = 4"
 
     sample_list: List[str] = get_sample_list_from_model_name(
-        model_name=wildcards.model_name, signal=wildcards.signal, design=design
+        model_name=wildcards.model_name,
+        signal=wildcards.signal,
+        design=design,
+        config=config,
     )
     if any(is_paired(sample=sample, design=design) for sample in sample_list):
         if not all(is_paired(sample=sample, design=design) for sample in sample_list):
@@ -1229,7 +1247,9 @@ def get_csaw_read_param(
 
 
 def get_csaw_filter_input(
-    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    config: Dict[str, Any] = config,
 ) -> Dict[str, str]:
     """
     Return the list of input files expected by csaw_filter.R
@@ -1238,7 +1258,7 @@ def get_csaw_filter_input(
         "counts": f"csaw/count/{wildcards.model_name}.tested.RDS",
     }
     input_list: List[str] = get_sample_list_from_model_name(
-        model_name=wildcards.model_name, signal="input", design=design
+        model_name=wildcards.model_name, signal="input", design=design, config=config
     )
     if len(input_list) > 0:
         csaw_filter_input["input_counts"] = f"csaw/count/{wildcards.model_name}.input.RDS"
@@ -1267,7 +1287,7 @@ def get_macs2_callpeak_input(
     """
     macs2_callpeak_input = {}
 
-    bam_prefix = get_bam_prefix(wildcards, protocol)
+    bam_prefix = get_bam_prefix(wildcards=wildcards, protocol=protocol)
 
     macs2_callpeak_input["treatment"] = f"{bam_prefix}/{wildcards.sample}.bam"
 
@@ -1321,8 +1341,10 @@ def get_bedtools_intersect_macs2_input(
     Return expected input files for bedtools intersect after macs2 calling.
     This is used to compute FRiP score.
     """
-    peak_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
-    bam_prefix = get_bam_prefix(wildcards, protocol)
+    peak_file: str = get_peak_file(
+        wildcards=wildcards, peaktype_list=peaktype_list, seacr_mode_list=seacr_mode_list
+    )
+    bam_prefix = get_bam_prefix(wildcards=wildcards, protocol=protocol)
 
     return {
         "right": peak_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample),
@@ -1341,7 +1363,7 @@ def get_seacr_callpeak_input(
     }
 
     # If input are available, then use it
-    input_signal = has_input(wildcards.sample)
+    input_signal = has_input(sample=wildcards.sample, design=design)
     if input_signal:
         seacr_callpeak_input["input_bg"] = f"bedtools/genomecov/{input_signal}.bg"
 
@@ -1355,7 +1377,7 @@ def get_seacr_callpeak_params(
     Return best parameters for SEACR shell interface
     """
     seacr_callpeak_params = ""
-    input_signal = has_input(wildcards.sample)
+    input_signal = has_input(sample=wildcards.sample, design=design)
 
     # If input are available, then use it
     if input_signal:
@@ -1376,7 +1398,9 @@ def get_chipseeker_annotate_peak_single_sample_input(
     """
     Return expected input file list for chipseeker, with correct peak-caller
     """
-    bed_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
+    bed_file: str = get_peak_file(
+        wildcards=wildcards, peaktype_list=peaktype_list, seacr_mode_list=seacr_mode_list
+    )
     return {"bed": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)}
 
 
@@ -1402,7 +1426,9 @@ def get_chipseeker_genome_cov_single_sample_input(
     """
     Return expected list of input files for chipseeker genome coverage
     """
-    bed_file: str = get_peak_file(wildcards, peaktype_list, seacr_mode_list)
+    bed_file: str = get_peak_file(
+        wildcards=wildcards, peaktype_list=peaktype_list, seacr_mode_list=seacr_mode_list
+    )
     return {"bed": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)}
 
 
@@ -1444,15 +1470,19 @@ def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> 
 ### Motifs ###
 ##############
 
+
 def get_homer_annotatepeaks_params(
     wildcards: snakemake.io.Wildcards,
     protocol: str = protocol,
+    design: pandas.DataFrame = design,
 ) -> str:
     """
     Return best parameters for Homer annotate peaks
     """
     extra: str = ""
-    fs: str = has_fragment_size(wildcards.sample)
+    fs: str = has_fragment_size(
+        sample=wildcards.sample, design=design, sample_is_paired=False
+    )
     if fs:
         extra += f" -fragLength {fs} "
 
@@ -1462,11 +1492,17 @@ def get_homer_annotatepeaks_params(
     return extra
 
 
-def get_peak_file_list(wildcards: snakemake.io.Wildcards):
+def get_peak_file_list(
+    wildcards: snakemake.io.Wildcards,
+    peaktype_list: List[str] = peaktype_list,
+    seacr_mode_list: List[str] = seacr_mode_list,
+):
     return [
-        get_peak_file(wildcards).format(
-            peaktype=wildcards.peaktype, sample=wildcards.sample
-        )
+        get_peak_file(
+            wildcards=wildcards,
+            peaktype_list=peaktype_list,
+            seacr_mode_list=seacr_mode_list,
+        ).format(peaktype=wildcards.peaktype, sample=wildcards.sample)
     ]
 
 
@@ -1601,7 +1637,7 @@ def targets(
         expected_targets["homer_annotate"] = expand(
             "data_output/Motifs/{peaktype}/{sample}_homer_annot.txt",
             peaktype=peak_type_and_mode_list,
-            sample=get_tested_sample_list(),
+            sample=get_tested_sample_list(design=design),
         )
 
     return expected_targets
