@@ -819,7 +819,7 @@ def get_deeptools_estimate_gc_bias_params(
 
 
 def get_deeptools_alignment_sieve_params(
-    wildcards, protocol: str = protocol, config: Dict[str, Any] = config
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol, config: Dict[str, Any] = config
 ) -> str:
     """
     Return best parameters for deeptools alignment sieve
@@ -958,7 +958,7 @@ def get_deeptools_fingerprint_params(
 
 
 def get_deeptools_bampefragmentsize_params(
-    wildcards, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
 ) -> str:
     """
     Return the best parameters for deeptools bampe fragment size
@@ -967,7 +967,7 @@ def get_deeptools_bampefragmentsize_params(
     return f" --plotFileFormat png --samplesLabel {labels} "
 
 
-def get_deeptools_plotpca_params(wildcards, design: pandas.DataFrame = design) -> str:
+def get_deeptools_plotpca_params(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> str:
     """
     Return the best parameters for deeptools plot PCA
     """
