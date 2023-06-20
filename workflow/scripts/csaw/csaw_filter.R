@@ -132,14 +132,14 @@ if (filter_method == "average_log_cpm") {
     base::message("Input (binned) counts loaded")
 
     scale_info <- csaw::scaleControlFilter(
-        data = counts_binned,
-        background = input_binned
+        data.bin = counts_binned,
+        back.bin = input_binned
     )
 
     filter_stat <- csaw::filterWindowsControl(
         data = counts,
         background = input_counts,
-        prior.count = 5,
+        prior.count = 2,
         scale.info = scale_info
     )
 
