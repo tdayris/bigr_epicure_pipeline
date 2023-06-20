@@ -21,7 +21,19 @@ rule homer_annotatepeaks:
     params:
         mode="tss hg38" if build == "GRCh38" else "tss mm10",
         extra="-CpG",
+        genome="hg38" if build == "GRCh38" else "mm10",
     log:
         "logs/homer/annotate/{sample}.{peaktype}.log",
-    wrapper:
-        "v1.32.1/bio/homer/annotatePeaks"
+    conda:
+        "../../envs/homer.yaml"
+    shell:
+        "annotatePeaks.pl "
+        "{input.peak} "
+        "{params.genome} "
+        "-cpu {threads} "
+        "-wig {input.wig} "
+        "-m {input.motif_files} "
+        "-mfasta {output.mfasta} "
+        "-mbed {output.mbed} "
+        "-mlogic {output.mlogic} "
+        "> {log} 2>&1 "

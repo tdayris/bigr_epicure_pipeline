@@ -4,3 +4,6 @@ channels:
   - defaults
 dependencies:
   - homer=4.11
+  - weblogo=3.7.12
+  - ghostscript=9.54.0
+  - blat=36
