@@ -23,4 +23,5 @@ rule homer_annotatepeaks:
         "-cpu {threads} "
         "-wig {input.wig} "
         "{params.extra} "
-        "> {log} 2>&1 "
+        "> {output.annotations} "
+        "2> {log} "
