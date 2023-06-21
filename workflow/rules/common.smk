@@ -1187,7 +1187,7 @@ def get_csaw_count_params(
     Return best parameters considering IO files list
     """
     extra: str = "filter = 10 "
-    if "binned" in str(wildcards.signal):
+    if str(wildcards.signal) in ["binned", "input_binned"]:
         extra += ", bin = TRUE, width=10000 "
     else:
         extra += ",  width=100 "
