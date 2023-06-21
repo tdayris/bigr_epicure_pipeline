@@ -135,6 +135,7 @@ if (filter_method == "average_log_cpm") {
         data.bin = counts_binned,
         back.bin = input_binned
     )
+    base::message("Scale control filter acquired")
 
     filter_stat <- csaw::filterWindowsControl(
         data = counts,
@@ -142,6 +143,7 @@ if (filter_method == "average_log_cpm") {
         prior.count = 2,
         scale.info = scale_info
     )
+    base::message("Negative control signal filtered")
 
     keep <- filter_stat$filter > log2(3)
     counts <- counts[keep, ]
@@ -154,6 +156,7 @@ base::saveRDS(
     object = counts,
     file = base::as.character(x = snakemake@output[["rds"]])
 )
+base::message("Process over")
 
 # Proper syntax to close the connection for the log file
 # but could be optional for Snakemake wrapper
