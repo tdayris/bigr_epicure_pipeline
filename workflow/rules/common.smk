@@ -1186,9 +1186,11 @@ def get_csaw_count_params(
     """
     Return best parameters considering IO files list
     """
-    extra: str = "width = 100, filter = 10"
+    extra: str = "filter = 10 "
     if "binned" in str(wildcards.signal):
-        extra += ", bin = TRUE"
+        extra += ", bin = TRUE, width=10000 "
+    else:
+        extra += ",  width=100 "
 
     # Atac-seq reads should be shifted to account for transposase size
     # if protocol_is_atac(protocol):
