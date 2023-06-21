@@ -22,11 +22,6 @@ rule homer_find_motif_genome:
     input:
         peak="homer/peaks/{sample}.{peaktype}.bed",
     output:
-        motif="homer/motif/{peaktype}/{sample}/homerMotifs.motifs",
-        all_motif="homer/motif/{peaktype}/{sample}/homerMotifs.all.motifs",
-        params=temp("homer/motif/{peaktype}/{sample}/motifFindingParameters.txt"),
-        known="homer/motif/{peaktype}/{sample}/knownResults.txt",
-        seq="homer/motif/{peaktype}/{sample}/seq.autonorm.tsv",
         html="data_output/Motifs/{peaktype}/{sample}/homerResults.html",
     threads: 20
     resources:

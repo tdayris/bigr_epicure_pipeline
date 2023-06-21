@@ -1641,4 +1641,10 @@ def targets(
             sample=get_tested_sample_list(design=design),
         )
 
+        expected_targets["homer_denovo"] = expand(
+            "data_output/Motifs/{peaktype}/{sample}_homer_annot.txt",
+            peaktype=peak_type_and_mode_list,
+            sample=get_tested_sample_list(design=design),
+        )
+
     return expected_targets
