@@ -3,17 +3,6 @@ rule homer_annotatepeaks:
         unpack(get_homer_annotatepeaks_input),
     output:
         annotations="data_output/Motifs/{peaktype}/{sample}_homer_annot.txt",
-        matrix=multiext(
-            "homet/{peaktype}/{sample}",
-            ".count.matrix.txt",
-            ".ratio.matrix.txt",
-            ".logPvalue.matrix.txt",
-            ".stats.txt",
-        ),
-        mfasta="data_output/Motifs/{peaktype}/{sample}_motif.fasta",
-        mbed="data_output/Motifs/{peaktype}/{sample}_motif.bed",
-        mlogic="data_output/Motifs/{peaktype}/{sample}_motif.logic",
-        go=directory("data_output/Motifs/{peaktype}/{sample}_GO"),
     threads: 2
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 8,
@@ -33,10 +22,5 @@ rule homer_annotatepeaks:
         "{params.genome} "
         "-cpu {threads} "
         "-wig {input.wig} "
-        "-m {input.motif_files} "
-        "-mfasta {output.mfasta} "
-        "-mbed {output.mbed} "
-        "-mlogic {output.mlogic} "
-        "-go {output.go} "
         "{params.extra} "
         "> {log} 2>&1 "

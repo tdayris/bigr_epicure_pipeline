@@ -1520,7 +1520,6 @@ def get_homer_annotatepeaks_input(
         "genome": genome_fasta_path,
         "gtf": genome_annotation_path,
         "wig": f"data_output/Coverage/{wildcards.sample}.bw",
-        "motif_files": f"homer/motif/{wildcards.peaktype}/{wildcards.sample}/homerMotifs.motifs",
         "peak": f"homer/peaks/{wildcards.sample}.{wildcards.peaktype}.bed",
     }
 
