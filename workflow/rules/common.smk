@@ -1456,16 +1456,29 @@ def get_deeptools_plot_correlation_params(wildcards: snakemake.io.Wildcards) -> 
     """
     labels: str = " ".join(design.index.tolist())
     deeptools_plot_correlation_params: str = (
-        f"--plotFileFormat png --skipZeros --corMethod spearman --labels {labels} "
+        f" --plotFileFormat png --skipZeros --corMethod spearman --labels {labels} "
     )
     if str(wildcards.plot_type) == "heatmap":
         deeptools_plot_correlation_params += str(
-            "--whatToPlot heatmap --colorMap RdYlBu --plotNumbers"
+            " --whatToPlot heatmap --colorMap Blues --plotNumbers --plotNumbers "
         )
     else:
-        deeptools_plot_correlation_params += " --whatToPlot scatterplot"
+        deeptools_plot_correlation_params += " --whatToPlot scatterplot "
 
     return deeptools_plot_correlation_params
+
+
+def get_deeptools_plotheatmap_params(wildcards: snakemake.io.Wildcards) -> str:
+    """
+    Retrun correct parameters for deeptools plot heatmap
+    """
+    labels: str = " ".join(design.index.tolist())
+    return str(
+        f"--samplesLabel {labels} --plotFileFormat 'png' "
+        "--colorMap 'Blues' --missingDataColor 1 "
+        "--whatToShow 'heatmap and colorbar' "
+    )
+
 
 
 ##############
