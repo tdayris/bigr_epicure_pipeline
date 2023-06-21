@@ -30,7 +30,7 @@ rule homer_find_motif_genome:
         html="data_output/Motifs/{peaktype}/{sample}/homerResults.html",
     threads: 20
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 15,
         runtime=lambda wildcards, attempt: attempt * 60 * 5,
         tmpdir=tmp,
     log:
