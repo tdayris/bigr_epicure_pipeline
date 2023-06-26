@@ -654,6 +654,19 @@ def get_multiqc_trimming_input(
 ###############
 
 
+def get_sambamba_quality_filter_params(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> str:
+    """
+    Return best parameters for Sambamba quality filter
+    """
+    extra: str = " --with-header --format 'bam' "
+    if is_paired(sample=wildcard.sample, design=design):
+        extra += " --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
+    else:
+        extra += " --filter 'mapping_quality >= 30' "
+    
+    return extra
+
+
 def get_bowtie2_align_input(
     wildcards: snakemake.io.Wildcards,
     design: pandas.DataFrame = design,

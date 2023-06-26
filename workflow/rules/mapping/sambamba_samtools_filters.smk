@@ -12,12 +12,7 @@ rule sambamba_quality_filter:
     log:
         "logs/sambamba/view/{sample}.filter.log",
     params:
-        extra=(
-            "--with-header "
-            "--filter 'mapping_quality >= 30 and "
-            "not (unmapped or mate_is_unmapped)' "
-            "--format 'bam'"
-        ),
+        extra=lambda wildcards: get_sambamba_quality_filter_params(wildcards),
     wrapper:
         "v1.32.1/bio/sambamba/view"
 
