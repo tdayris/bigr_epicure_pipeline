@@ -530,16 +530,16 @@ def get_bam_prefix(wildcards: snakemake.io.Wildcards, protocol: str = protocol) 
         config.get("mapping", {}).get("deeptools", {}).get("alignment_sieve_extra", "")
     )
     bam_prefix: str = "sambamba/markdup"
+    # For raw-bam quality control
+    if "step" in wildcards:
+        if str(wildcards.step) == "raw":
+            bam_prefix = "bowtie2/align"
     # Atac-seq samples should be shifted
-    if protocol_is_atac(protocol) or shift != "":
+    elif protocol_is_atac(protocol) or shift != "":
         bam_prefix = "deeptools/sorted_sieve"
     # OxiDIP-seq requires GC correction and filters
     elif protocol_is_ogseq(protocol):
         bam_prefix = "deeptools/corrected"
-    # For raw-bam quality control
-    elif "step" in wildcards:
-        if str(wildcards.step) == "raw":
-            bam_prefix = "bowtie2/align"
 
     return bam_prefix
 
