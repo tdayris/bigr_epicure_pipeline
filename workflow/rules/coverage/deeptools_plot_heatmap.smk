@@ -17,6 +17,6 @@ rule deeptools_plot_heatmap:
     log:
         "logs/deeptools/plot_heatmap/{peaktype}.{command}.log",
     params:
-        extra=lambda wildcards: get_deeptools_plotheatmap_params(wildcards)
+        extra=lambda wildcards: get_deeptools_plotheatmap_params(wildcards),
     wrapper:
         "v1.32.1/bio/deeptools/plotheatmap"

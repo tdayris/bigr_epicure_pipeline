@@ -654,16 +654,18 @@ def get_multiqc_trimming_input(
 ###############
 
 
-def get_sambamba_quality_filter_params(wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design) -> str:
+def get_sambamba_quality_filter_params(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> str:
     """
     Return best parameters for Sambamba quality filter
     """
     extra: str = " --with-header --format 'bam' "
-    if is_paired(sample=wildcard.sample, design=design):
+    if is_paired(sample=wildcards.sample, design=design):
         extra += " --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
     else:
         extra += " --filter 'mapping_quality >= 30' "
-    
+
     return extra
 
 
@@ -1491,7 +1493,6 @@ def get_deeptools_plotheatmap_params(wildcards: snakemake.io.Wildcards) -> str:
         "--colorMap 'Blues' --missingDataColor 1 "
         "--whatToShow 'heatmap and colorbar' "
     )
-
 
 
 ##############
