@@ -16,6 +16,7 @@ include: "rules/trimming/fastq_screen.smk"
 # Mapping
 include: "rules/mapping/bowtie2_mapping.smk"
 include: "rules/mapping/sambamba_samtools_filters.smk"
+include: "rules/mapping/bedtools_filter_roi.smk"
 include: "rules/mapping/sambamba_markdup.smk"
 include: "rules/mapping/deeptools_shift.smk"
 include: "rules/mapping_qc/picard_collect_mutiple_metrics.smk"

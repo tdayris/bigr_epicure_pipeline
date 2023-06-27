@@ -119,6 +119,12 @@ reference:
   #          Do not use this variable. Use `genome_fasta`.
   # mouse_fasta: /path/to/sequences.fasta
 
+  # Path to a bed-file containing regions of interest (roi).
+  # The whole pipeline would stick to these regions only.
+  # WARNING: The rest of the genome will be ignored if this
+  #          option is enabled.
+  # roi_bed: /path/to/intervals.bed
+
 
 # Macs2 peak caller parameters
 macs2:

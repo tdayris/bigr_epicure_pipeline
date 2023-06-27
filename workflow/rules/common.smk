@@ -849,7 +849,7 @@ def get_sambamba_markdup_params(
     extra = " --overflow-list-size 600000 "
 
     # Duplicates should not be removed in Cut&Tag sequencings
-    if not protocol_is_cutntag(protocol):
+    if not protocol_is_cutntag(protocol) and not protocol_is_cutnrun(protocol):
         extra += " --remove-duplicates "
 
     return extra
@@ -943,6 +943,34 @@ def get_deeptools_alignment_sieve_params(
         extra = " --ATACshift "
 
     return extra
+
+
+def get_bedtools_filter_roi_input(
+    wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config
+) -> Dict[str, str]:
+    """
+    If exists, return path to the regions of interest
+    """
+    bedtools_filter_roi_input: Dict[str, str] = {
+        "left": f"samtools/view/{wildcards.sample}.bam"
+    }
+
+    roi_bed: Optional[str] = config.get("reference", {}).get("roi_bed")
+    if roi_bed:
+        bedtools_filter_roi_input["right"] = roi_bed
+
+    return bedtools_filter_roi_input
+
+
+def get_sambamba_sort_filtered(
+    wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config
+) -> List[str]:
+    """
+    Return best input file for sambamba sort filtered
+    """
+    if config.get("reference", {}).get("roi_bed"):
+        return ["bedtools/filter_roi/{sample}.bam"]
+    return ["samtools/view/{sample}.bam"]
 
 
 ################

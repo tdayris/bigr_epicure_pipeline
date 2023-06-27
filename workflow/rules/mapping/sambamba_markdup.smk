@@ -1,6 +1,6 @@
 rule sambamba_sort_filtered:
     input:
-        "samtools/view/{sample}.bam",
+        unpack(get_sambamba_sort_filtered),
     output:
         temp("sambamba/filtered/{sample}.bam"),
     threads: config.get("max_threads", 20)
