@@ -10,7 +10,7 @@ Snakemake pipeline for Epicure analyses: Chip-Seq, Atac-Seq, Cut&Tag, Cut&Run, M
     1. [Configuration](https://github.com/tdayris/bigr_epicure_pipeline#configure-workflow-following-snakemake-workflows-guidelines)
     1. [Run this workflow](https://github.com/tdayris/bigr_epicure_pipeline#run-workflow-following-snakemake-workflows-guidelines)
     1. [Report](https://github.com/tdayris/bigr_epicure_pipeline#generate-report-following-snakemake-workflows-guidelines)
-1. [Open-On-Demand Flamingo]()
+1. [Open-On-Demand Flamingo](https://github.com/tdayris/bigr_epicure_pipeline#open-on-demand-flamingo)
 1. [Pipeline components](https://github.com/tdayris/bigr_epicure_pipeline#pipeline-description)
     1. [Preprocessing](https://github.com/tdayris/bigr_epicure_pipeline#pre-pocessing)
     1. [Read mapping](https://github.com/tdayris/bigr_epicure_pipeline#read-mapping)
