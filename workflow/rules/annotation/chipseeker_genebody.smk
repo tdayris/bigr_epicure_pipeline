@@ -1,6 +1,7 @@
 rule chipseeker_genebody_cov_single_sample:
     input:
         ranges="chipseeker/tagmatrix/{sample}.{peaktype}.RDS",
+        tag_matrix="chipseeker/tagmatrix/{sample}.{peaktype}.RDS",
     output:
         png="data_output/Peak_Calling/{peaktype}/Gene_Body_Coverage/{sample}.png",
     threads: 1
@@ -21,6 +22,7 @@ rule chipseeker_genebody_cov_single_sample:
 rule chipseeker_genebody_cov_differential_binding:
     input:
         ranges="chipseeker/annotation/{model_name}.RDS",
+        tag_matrix="chipseeker/tagmatrix/{model_name}.RDS",
     output:
         png="data_output/Differential_Binding/{model_name}/Gene_Body_Coverage.png",
     threads: 1
