@@ -10,6 +10,7 @@ include: "rules/reference/download_fastq_screen_index.smk"
 include: "rules/reference/download_blacklist.smk"
 # Trimming
 include: "rules/trimming/fastp.smk"
+include: "rules/mapping/xenome_pdx.smk"
 # Library quality controls
 include: "rules/trimming/fastq_screen.smk"
 # Mapping
@@ -42,6 +43,9 @@ include: "rules/peak-calling/manual_frip_score.smk"
 # Differential binding
 include: "rules/differential_binding/csaw_db.smk"
 include: "rules/differential_binding/medips_edger.smk"
+include: "rules/differential_binding/pull_samples_coverage.smk"
+include: "rules/differential_binding/pull_samples_peaks.smk"
+include: "rules/differential_binding/pull_samples_heatmap.smk"
 # Annotation
 include: "rules/annotation/chipseeker_peak_annotate.smk"
 include: "rules/annotation/chipseeker_tagmatrix.smk"

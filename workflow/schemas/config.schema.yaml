@@ -38,6 +38,8 @@ properties:
   reference:
     type: object
     properties:
+      pdx:
+        type: boolean
       species:
         type: string
       build:
@@ -56,6 +58,8 @@ properties:
       fastq_screen_config:
         type: string
       two_bits:
+        type: string
+      mouse_genome:
         type: string
 
   macs2:

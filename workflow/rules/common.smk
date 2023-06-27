@@ -1,3 +1,4 @@
+import itertools
 import logging
 import os
 import pandas
@@ -35,12 +36,21 @@ design: pandas.DataFrame = pandas.read_csv(
 validate(design, schema="../schemas/design.schema.yaml")
 
 
+################################
+### Main Snakemake variables ###
+################################
+
+
 report: "../report/workflow.rst"
 
 
 # this container defines the underlying OS for each job when using the workflow
 # with --use-conda --use-singularity
 container: "docker://continuumio/miniconda3"
+
+
+# This is the main version of all snakemake-wrappers
+snakemake_wrappers_version: str = "v2.0.0"
 
 
 ########################
@@ -306,6 +316,8 @@ if seacr_params.get("stringent", False):
 
 peak_type_and_mode_list: List[str] = peaktype_list + seacr_mode_list
 
+command_list: List[str] = ["reference-point"]  # ["scale-region", "reference-point"]
+
 
 #############################################
 ### Experimental design related functions ###
@@ -381,16 +393,23 @@ def get_samples_per_level(
     For a `wildcards.level` return the list of samples id
     belonging to that level
     """
-    try:
+    if "level" in wildcards.keys():
         return (
-            design[design.eq(wildcards.level).any(axis=1)].index.drop_duplicates().tolist()
-        )
-    except AttributeError:
-        return (
-            design[design.eq(wildcards.model_name).any(axis=1)]
+            design[design.eq(wildcards.level).any(axis=1)]
             .index.drop_duplicates()
             .tolist()
         )
+    if "factor_level" in wildcards.keys():
+        return (
+            design[design.eq(wildcards.factor_level).any(axis=1)]
+            .index.drop_duplicates()
+            .tolist()
+        )
+    return (
+        design[design.eq(wildcards.model_name).any(axis=1)]
+        .index.drop_duplicates()
+        .tolist()
+    )
 
 
 def get_input_per_level(
@@ -463,7 +482,9 @@ def get_sample_list_from_model_name(
                 design=design,
             )
             sample_list += get_input_per_level(
-                wildcards=snakemake.io.Wildcards(fromdict={"level": level_dict["test"]}),
+                wildcards=snakemake.io.Wildcards(
+                    fromdict={"level": level_dict["test"]}
+                ),
                 design=design,
             )
         elif not protocol_is_atac(protocol):
@@ -589,7 +610,9 @@ def get_fastp_input(
     return fastp_input
 
 
-def get_fastp_params(wildcards: snakemake.io.Wildcards, protocol: str = protocol) -> str:
+def get_fastp_params(
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol
+) -> str:
     """
     Return fastp parameters
     """
@@ -649,6 +672,61 @@ def get_multiqc_trimming_input(
     return multiqc_trimming_input
 
 
+###########
+### PDX ###
+###########
+
+
+def get_xenome_index_input(
+    wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config
+) -> Dict[str, str]:
+    """
+    Return best input files for xenome input
+    """
+    if species.lower() != "homo_sapiens":
+        raise ValueError("Xenographft from human (graft) into mouse (host) only")
+
+    mouse_fasta = config.get("reference", {}).get(
+        "mouse_fasta", "reference/mus_musculus.GRCm38.99.fasta"
+    )
+
+    return {
+        "human": genome_fasta_path,
+        "mouse": mouse_fasta,
+    }
+
+
+def get_xenome_classify_input(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> Dict[str, Union[str, List[str]]]:
+    """
+    Return best input files for xenome classify
+    """
+    xenome_classify_input: Dict[str, Union[str, List[str]]] = {
+        "index": multiext(
+            "xenome/index/pdx-both",
+            ".header",
+            ".kmers-d0",
+            ".kmers-d1",
+            ".kmers.header",
+            ".kmers.high-bits",
+            ".kmers.low-bits.lwr",
+            ".kmers.low-bits.upr",
+            ".lhs-bits",
+            ".rhs-bits",
+        ),
+    }
+
+    pair = is_paired(sample=wildcards.sample, design=design)
+    if pair:
+        xenome_classify_input["r1"] = f"fastp/trimmed/pe/{wildcards.sample}.1.fastq"
+        xenome_classify_input["r2"] = f"fastp/trimmed/pe/{wildcards.sample}.2.fastq"
+    else:
+        xenome_classify_input["reads"] = f"fastp/trimmed/se/{wildcards.sample}.fastq"
+
+    return xenome_classify_input
+
+
 ###############
 ### Mapping ###
 ###############
@@ -662,7 +740,9 @@ def get_sambamba_quality_filter_params(
     """
     extra: str = " --with-header --format 'bam' "
     if is_paired(sample=wildcards.sample, design=design):
-        extra += " --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
+        extra += (
+            " --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
+        )
     else:
         extra += " --filter 'mapping_quality >= 30' "
 
@@ -673,17 +753,30 @@ def get_bowtie2_align_input(
     wildcards: snakemake.io.Wildcards,
     design: pandas.DataFrame = design,
     bowtie2_index: str = bowtie2_index_path,
+    config: Dict[str, Any] = config,
 ) -> Dict[str, List[str]]:
     """
     Return the list of bowtie2 align input
     """
     bowtie2_align_input: Dict[str, List[str]] = {"idx": bowtie2_index_path}
     down: Optional[str] = is_paired(sample=wildcards.sample, design=design)
+    pdx: bool = config.get("reference", {}).get("pdx", False)
     if down:
+        if pdx:
+            bowtie2_align_input["sample"] = expand(
+                "xenome/classify/{sample}_graft_{stream}.fastq",
+                stream=["1", "2"],
+                sample=[wildcards.sample],
+            )
+        else:
+            bowtie2_align_input["sample"] = expand(
+                "fastp/trimmed/pe/{sample}.{stream}.fastq",
+                stream=["1", "2"],
+                sample=[wildcards.sample],
+            )
+    elif pdx:
         bowtie2_align_input["sample"] = expand(
-            "fastp/trimmed/pe/{sample}.{stream}.fastq",
-            stream=["1", "2"],
-            sample=[wildcards.sample],
+            "xenome/classify/{sample}_graft.fastq", sample=wildcards.sample
         )
     else:
         bowtie2_align_input["sample"] = expand(
@@ -857,6 +950,66 @@ def get_deeptools_alignment_sieve_params(
 ################
 
 
+def get_sambamba_merge_input(
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    design: pandas.DataFrame = design,
+) -> List[str]:
+    """
+    Return required bam files for sambamba merge per factors in each models
+    """
+    samples: List[str] = get_samples_per_level(wildcards=wildcards, design=design)
+    bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+    return [f"{bam_prefix}/{sample}.bam" for sample in samples]
+
+
+def get_bedtools_merge_factor_input(
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    design: pandas.DataFrame = design,
+) -> List[str]:
+    """
+    Return required bam files for bedtools merge per factors in each models
+    """
+    samples: List[str] = get_samples_per_level(wildcards=wildcards, design=design)
+    peak_file: str = get_peak_file(
+        wildcards=wildcards,
+        peaktype_list=peaktype_list,
+        seacr_mode_list=seacr_mode_list,
+    )
+
+    return [
+        peak_file.format(peaktype=wildcards.peaktype, sample=sample)
+        for sample in samples
+    ]
+
+
+def get_deeptools_compute_matrix_per_factor_input(
+    wildcards: snakemake.io.Wildcards, config: Dict[str, Any] = config
+) -> Dict[str, Union[str, List[str]]]:
+    """
+    Return list of expected input files in deeptools_compute_matrix_per_factor
+    """
+    factors: List[str] = list(
+        set(
+            get_level_from_model_name(
+                model_name=wildcards.model_name, config=config
+            ).values()
+        )
+    )
+    return {
+        "blacklist": blacklist_path,
+        "bed": expand(
+            "bedtools/merge/{factor_level}.{peaktype}.bed",
+            factor_level=factors,
+            allow_missing=True,
+        ),
+        "bigwig": expand(
+            "data_output/Coverage/{factor_level}.bw", factor_level=factors
+        ),
+    }
+
+
 def get_multiqc_coverage_input(
     wildcards: snakemake.io.Wildcards,
     protocol: str = protocol,
@@ -953,9 +1106,13 @@ def get_deeptools_plotfingerprint_input(
         "bam_idx": [],
     }
     for sample in design.index:
-        deeptools_plotfingerprint_input["bam_files"].append(f"{bam_prefix}/{sample}.bam")
+        deeptools_plotfingerprint_input["bam_files"].append(
+            f"{bam_prefix}/{sample}.bam"
+        )
 
-        deeptools_plotfingerprint_input["bam_idx"].append(f"{bam_prefix}/{sample}.bam.bai")
+        deeptools_plotfingerprint_input["bam_idx"].append(
+            f"{bam_prefix}/{sample}.bam.bai"
+        )
 
     return deeptools_plotfingerprint_input
 
@@ -1026,13 +1183,20 @@ def get_deeptools_compute_matrix_input(
 
 
 def get_deeptools_compute_matrix_params(
-    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    config: Dict[str, Any] = config,
 ) -> str:
     """
     Return best parameters for deeptools compute matrix
     """
     labels: str = " ".join(get_tested_sample_list(design=design))
-    extra: str = f" --skipZeros --missingDataAsZero --samplesLabel {labels} --binSize 50 "
+    if "model_name" in wildcards.keys():
+        labels = " --smartLabels "
+    else:
+        labels = f" --samplesLabel {labels} "
+
+    extra: str = f" --skipZeros --missingDataAsZero {labels} --binSize 50 "
     if str(wildcards.command) == "reference-point":
         extra += " --referencePoint TSS "
     else:
@@ -1108,7 +1272,9 @@ def get_medips_meth_coverage_input(
     Return list of input expected by rule medips_meth_coverage
     """
     # Gathering comparison information
-    comparisons: Optional[List[Dict[str, str]]] = config.get("differential_peak_coverage")
+    comparisons: Optional[List[Dict[str, str]]] = config.get(
+        "differential_peak_coverage"
+    )
     if not comparisons:
         raise ValueError(
             "No differential peak coverage information provided in "
@@ -1124,7 +1290,9 @@ def get_medips_meth_coverage_input(
             tested = models["tested"]
             break
     else:
-        raise ValueError("Could not find a comparison " f"named: {wildcards.model_name}")
+        raise ValueError(
+            "Could not find a comparison " f"named: {wildcards.model_name}"
+        )
 
     reference_samples: List[str] = get_samples_per_level(
         wildcards=snakemake.io.Wildcards(fromdict={"level": reference}), design=design
@@ -1229,7 +1397,9 @@ def get_csaw_count_params(
             map(
                 str,
                 [
-                    has_fragment_size(sample=sample, design=design, sample_is_paired=False)
+                    has_fragment_size(
+                        sample=sample, design=design, sample_is_paired=False
+                    )
                     for sample in sample_list
                 ],
             )
@@ -1278,7 +1448,9 @@ def get_csaw_filter_input(
         model_name=wildcards.model_name, signal="input", design=design, config=config
     )
     if len(input_list) > 0:
-        csaw_filter_input["input_counts"] = f"csaw/count/{wildcards.model_name}.input.RDS"
+        csaw_filter_input[
+            "input_counts"
+        ] = f"csaw/count/{wildcards.model_name}.input.RDS"
         csaw_filter_input[
             "input_binned"
         ] = f"csaw/count/{wildcards.model_name}.input_binned.RDS"
@@ -1359,7 +1531,9 @@ def get_bedtools_intersect_macs2_input(
     This is used to compute FRiP score.
     """
     peak_file: str = get_peak_file(
-        wildcards=wildcards, peaktype_list=peaktype_list, seacr_mode_list=seacr_mode_list
+        wildcards=wildcards,
+        peaktype_list=peaktype_list,
+        seacr_mode_list=seacr_mode_list,
     )
     bam_prefix = get_bam_prefix(wildcards=wildcards, protocol=protocol)
 
@@ -1402,7 +1576,9 @@ def get_seacr_callpeak_params(
     else:
         seacr_callpeak_params += " 0.01 "
 
-    seacr_callpeak_params += f" norm {wildcards.seacr_mode} seacr/raw/{wildcards.sample}"
+    seacr_callpeak_params += (
+        f" norm {wildcards.seacr_mode} seacr/raw/{wildcards.sample}"
+    )
 
     return seacr_callpeak_params
 
@@ -1416,9 +1592,13 @@ def get_chipseeker_annotate_peak_single_sample_input(
     Return expected input file list for chipseeker, with correct peak-caller
     """
     bed_file: str = get_peak_file(
-        wildcards=wildcards, peaktype_list=peaktype_list, seacr_mode_list=seacr_mode_list
+        wildcards=wildcards,
+        peaktype_list=peaktype_list,
+        seacr_mode_list=seacr_mode_list,
     )
-    return {"bed": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)}
+    return {
+        "bed": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)
+    }
 
 
 ############################
@@ -1444,9 +1624,13 @@ def get_chipseeker_genome_cov_single_sample_input(
     Return expected list of input files for chipseeker genome coverage
     """
     bed_file: str = get_peak_file(
-        wildcards=wildcards, peaktype_list=peaktype_list, seacr_mode_list=seacr_mode_list
+        wildcards=wildcards,
+        peaktype_list=peaktype_list,
+        seacr_mode_list=seacr_mode_list,
     )
-    return {"bed": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)}
+    return {
+        "bed": bed_file.format(peaktype=wildcards.peaktype, sample=wildcards.sample)
+    }
 
 
 def get_edger_formula(
@@ -1488,8 +1672,12 @@ def get_deeptools_plotheatmap_params(wildcards: snakemake.io.Wildcards) -> str:
     Retrun correct parameters for deeptools plot heatmap
     """
     labels: str = " ".join(design.index.tolist())
+    if "model_name" in wildcards.keys():
+        labels = " --smartLabels "
+    else:
+        labels = f" --samplesLabel {labels} "
     return str(
-        f"--samplesLabel {labels} --plotFileFormat 'png' "
+        f"{labels} --plotFileFormat 'png' "
         "--colorMap 'Blues' --missingDataColor 1 "
         "--whatToShow 'heatmap and colorbar' "
     )
@@ -1555,21 +1743,33 @@ def get_homer_annotatepeaks_input(
 ### Wildcards constraints ###
 #############################
 
+factor_level_list: List[str] = list(
+    set(
+        itertools.chain.from_iterable(
+            [
+                get_level_from_model_name(model, config).values()
+                for model in get_model_names(config)
+            ]
+        )
+    )
+)
+
 
 wildcard_constraints:
     sample=r"|".join(design.index),
     protocol=protocol,
-    release=str(release),
-    build=str(build),
-    species=str(species),
+    release=r"|".join([release, "99"]),
+    build=r"|".join([build, "GRCm38"]),
+    species=r"|".join([species, "mus_musculus"]),
     step=r"|".join([".raw", ""]),
-    command=r"|".join(["scale-region", "reference-point"]),
+    command=r"|".join(command_list),
     tool=r"|".join(["bowtie2", "sambamba", "deeptools"]),
     subcommand=r"|".join(["align", "markdup", "view", "alignment_sieve", "corrected"]),
     signal=r"|".join(["tested", "input", "binned", "input_binned"]),
     library=r"|".join(["se", "pe"]),
     chipseeker_plot=r"|".join(chipseeker_plot_list),
     model_name=r"|".join(get_model_names(config)),
+    factor_level=r"|".join(factor_level_list),
     plot_type=r"|".join(deeptools_plot_type),
     peaktype=r"|".join(peaktype_list + ["gapped"] + seacr_mode_list),
     seacr_mode=r"|".join(seacr_mode_list),
@@ -1621,7 +1821,8 @@ def targets(
 
     if steps.get("coverage", False):
         expected_targets["bam_coverage"] = expand(
-            "data_output/Coverage/{sample}.bw", sample=get_tested_sample_list(design=design)
+            "data_output/Coverage/{sample}.bw",
+            sample=get_tested_sample_list(design=design),
         )
 
     if steps.get("calling", False):
@@ -1641,7 +1842,7 @@ def targets(
             )
             expected_targets["deeptools_heatmap"] = expand(
                 "data_output/Heatmaps/{peaktype}/{command}.png",
-                command=["reference-point"],
+                command=command_list,
                 peaktype=peak_type_and_mode_list,
             )
 
@@ -1659,6 +1860,13 @@ def targets(
                 "data_output/Differential_Binding/{model_name}/{chipseeker_plot}.png",
                 model_name=comparison_list,
                 chipseeker_plot=chipseeker_plot_list,
+            )
+
+            expected_targets["heatmap_per_model"] = expand(
+                "data_output/Heatmaps/{peaktype}/{command}.{model_name}.png",
+                model_name=comparison_list,
+                peaktype=peak_type_and_mode_list,
+                command=command_list,
             )
 
     if steps.get("motives", False):

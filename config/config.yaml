@@ -77,6 +77,9 @@ protocol: 'cutnrun'
 design: config/design.tsv
 
 reference:
+  # Data are from xenograft.
+  pdx: true
+
   # Ensembl organism name. eg. `homo_sapiens`.
   species: homo_sapiens
 
@@ -109,6 +112,12 @@ reference:
   # A missing genome sequence in TwoBit format will lead
   # to a fasta to TwoBit conversion
   # two_bits: /path/to/sequence.2bit
+
+  # Path to mouse sequence genome in case of PDX
+  # A missinge genome sequence will be downloaded.
+  # WARNING: If you're working with mouse-only datasets,
+  #          Do not use this variable. Use `genome_fasta`.
+  # mouse_fasta: /path/to/sequences.fasta
 
 
 # Macs2 peak caller parameters
