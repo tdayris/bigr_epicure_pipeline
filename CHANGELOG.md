@@ -1,3 +1,10 @@
+# 0.11.2 – Fixes
+
+## Fix
+
+* Gene body coverage missing tag matrix fixed
+* Deeptools PCA arguments fixed
+
 # 0.11.1 – Flamingo-launcher
 
 ## Documentation
