@@ -23,4 +23,4 @@ rule deeptools_plot_fingerprint:
     params:
         lambda wildcards: get_deeptools_fingerprint_params(wildcards),
     wrapper:
-        "v1.32.1/bio/deeptools/plotfingerprint"
+        f"{snakemake_wrappers_version}/bio/deeptools/plotfingerprint"

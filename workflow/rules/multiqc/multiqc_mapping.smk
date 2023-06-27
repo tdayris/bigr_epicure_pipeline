@@ -20,4 +20,4 @@ rule multiqc_mapping:
     log:
         "logs/multiqc/mapping.log",
     wrapper:
-        "v1.32.1/bio/multiqc"
+        f"{snakemake_wrappers_version}/bio/multiqc"

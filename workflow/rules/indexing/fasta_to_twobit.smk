@@ -13,4 +13,4 @@ rule fasta_to_two_bit:
     params:
         extra="",
     wrapper:
-        "v1.32.1/bio/ucsc/faToTwoBit"
+        f"{snakemake_wrappers_version}/bio/ucsc/faToTwoBit"

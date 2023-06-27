@@ -17,4 +17,4 @@ rule samtools_cram:
         extra="",
         region="",
     wrapper:
-        "v1.32.1/bio/samtools/view"
+        f"{snakemake_wrappers_version}/bio/samtools/view"

@@ -13,7 +13,7 @@ rule bedtools_genomecoveragebed:
     params:
         extra=" -bg ",
     wrapper:
-        "v1.32.1/bio/bedtools/genomecov"
+        f"{snakemake_wrappers_version}/bio/bedtools/genomecov"
 
 
 rule seacr_callpeak:

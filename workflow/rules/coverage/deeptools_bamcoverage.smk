@@ -18,7 +18,7 @@ rule deeptools_bamcoverage:
     log:
         "logs/deeptools/coverage/{sample}.log",
     wrapper:
-        "v1.32.1/bio/deeptools/bamcoverage"
+        f"{snakemake_wrappers_version}/bio/deeptools/bamcoverage"
 
 
 rule deeptools_multibigwig_summary:
@@ -72,4 +72,4 @@ rule deeptools_plotcoverage:
     params:
         extra=lambda wildcards: get_deeptools_plotcoverage_params(wildcards),
     wrapper:
-        "v1.32.1/bio/deeptools/plotcoverage"
+        f"{snakemake_wrappers_version}/bio/deeptools/plotcoverage"

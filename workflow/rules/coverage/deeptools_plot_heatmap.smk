@@ -19,4 +19,4 @@ rule deeptools_plot_heatmap:
     params:
         extra=lambda wildcards: get_deeptools_plotheatmap_params(wildcards),
     wrapper:
-        "v1.32.1/bio/deeptools/plotheatmap"
+        f"{snakemake_wrappers_version}/bio/deeptools/plotheatmap"

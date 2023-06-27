@@ -14,4 +14,4 @@ rule samtools_stats:
     log:
         "logs/samtools/stats/{sample}.{step}.log",
     wrapper:
-        "v1.32.1/bio/samtools/stats"
+        f"{snakemake_wrappers_version}/bio/samtools/stats"

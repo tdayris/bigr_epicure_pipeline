@@ -15,7 +15,7 @@ rule macs2_callpeak_broad:
     params:
         lambda wildcards: get_macs2_params(wildcards),
     wrapper:
-        "v1.32.1/bio/macs2/callpeak"
+        f"{snakemake_wrappers_version}/bio/macs2/callpeak"
 
 
 rule macs2_save_broad:
@@ -55,7 +55,7 @@ rule macs2_callpeak_narrow:
     params:
         lambda wildcards: get_macs2_params(wildcards),
     wrapper:
-        "v1.32.1/bio/macs2/callpeak"
+        f"{snakemake_wrappers_version}/bio/macs2/callpeak"
 
 
 rule macs2_save_narrow:

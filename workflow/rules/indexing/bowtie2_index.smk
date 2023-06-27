@@ -22,4 +22,4 @@ rule bowtie2_build:
     params:
         extra="-f",
     wrapper:
-        "v1.32.1/bio/bowtie2/build"
+        f"{snakemake_wrappers_version}/bio/bowtie2/build"

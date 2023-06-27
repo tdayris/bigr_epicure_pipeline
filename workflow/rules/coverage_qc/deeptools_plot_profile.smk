@@ -14,4 +14,4 @@ rule deeptools_plot_profile:
     params:
         lambda wildcards: get_deeptools_bampefragmentsize_params(wildcards),
     wrapper:
-        "v1.32.1/bio/deeptools/plotprofile"
+        f"{snakemake_wrappers_version}/bio/deeptools/plotprofile"

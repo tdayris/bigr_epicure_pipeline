@@ -13,7 +13,7 @@ rule bowtie2_align:
     params:
         extra="--very-sensitive",
     wrapper:
-        "v1.32.1/bio/bowtie2/align"
+        f"{snakemake_wrappers_version}/bio/bowtie2/align"
 
 
 rule sambamba_sort_bowtie2_aligned:
@@ -31,7 +31,7 @@ rule sambamba_sort_bowtie2_aligned:
     params:
         extra=lambda wildcards, resources: f"--memory-limit {resources.mem_mb - 1024}MiB",
     wrapper:
-        "v1.32.1/bio/sambamba/sort"
+        f"{snakemake_wrappers_version}/bio/sambamba/sort"
 
 
 rule sambamba_index_raw_bowtie2:
@@ -49,4 +49,4 @@ rule sambamba_index_raw_bowtie2:
     log:
         "logs/sambamba/index/{sample}.raw.log",
     wrapper:
-        "v1.32.1/bio/sambamba/index"
+        f"{snakemake_wrappers_version}/bio/sambamba/index"

@@ -14,7 +14,7 @@ rule sambamba_quality_filter:
     params:
         extra=lambda wildcards: get_sambamba_quality_filter_params(wildcards),
     wrapper:
-        "v1.32.1/bio/sambamba/view"
+        f"{snakemake_wrappers_version}/bio/sambamba/view"
 
 
 rule samtools_filter_canonical_chromosomes:
@@ -35,4 +35,4 @@ rule samtools_filter_canonical_chromosomes:
         extra="",
         region=" ".join(canonical_chromosomes),
     wrapper:
-        "v1.32.1/bio/samtools/view"
+        f"{snakemake_wrappers_version}/bio/samtools/view"

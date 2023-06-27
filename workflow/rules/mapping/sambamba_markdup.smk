@@ -13,7 +13,7 @@ rule sambamba_sort_filtered:
     params:
         extra=lambda wildcards, resources: f"--memory-limit {resources.mem_mb - 1024}MiB",
     wrapper:
-        "v1.32.1/bio/sambamba/sort"
+        f"{snakemake_wrappers_version}/bio/sambamba/sort"
 
 
 rule sambamba_markdup:
@@ -31,4 +31,4 @@ rule sambamba_markdup:
     log:
         "logs/sambamba/markdup/{sample}.log",
     wrapper:
-        "v1.32.1/bio/sambamba/markdup"
+        f"{snakemake_wrappers_version}/bio/sambamba/markdup"

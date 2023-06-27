@@ -16,4 +16,4 @@ rule deeptools_compute_matrix:
         command="{command}",
         extra=lambda wildcards: get_deeptools_compute_matrix_params(wildcards),
     wrapper:
-        "v1.32.1/bio/deeptools/computematrix"
+        f"{snakemake_wrappers_version}/bio/deeptools/computematrix"
