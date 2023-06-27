@@ -124,7 +124,7 @@ Fill the "Path" section with the following path: `/mnt/beegfs/pipelines/bigr_epi
 
 Hit the white "save" button at the bottom left of the form.
 
-## Adit the template with your current work
+## Edit the template with your current work
 
 Back to the "Template" page we saw earlier, a new line should be displayed with our new template. Click on the line and the right section of the page should display dedicated informations about this template.
 
