@@ -21,6 +21,11 @@ counts <- base::readRDS(
     file = base::as.character(x = snakemake@input[["counts"]])
 )
 
+log_threshold <- 1.1
+if ("log_threshold" %in% base::names(snakemake@params)) {
+    log_threshold <- as.numeric(snakemake@params[["log_threshold"]])
+}
+
 
 filter_method <- "average_log_cpm"
 if ("filter_method" %in% base::names(x = snakemake@params)) {
@@ -75,7 +80,7 @@ if (filter_method == "average_log_cpm") {
         background = binned
     )
 
-    keep <- filter_stat$filter > log2(3)
+    keep <- filter_stat$filter > log2(log_threshold)
     counts <- counts[keep, ]
 } else if (filter_method == "local_enrichment") {
     # Mimicking single-sample peak callers.
@@ -93,7 +98,7 @@ if (filter_method == "average_log_cpm") {
         background = neighbor
     )
 
-    keep <- filter_stat$filter > log2(3)
+    keep <- filter_stat$filter > log2(log_threshold)
     counts <- counts[keep, ]
 } else if (filter_method == "local_maxima") {
     # Use highest average abundance within 1kbp on either side.
@@ -110,7 +115,7 @@ if (filter_method == "average_log_cpm") {
         background = neighbor
     )
 
-    keep <- filter_stat$filter > log2(3)
+    keep <- filter_stat$filter > log2(log_threshold)
     counts <- counts[keep, ]
 } else if (filter_method == "input_controls") {
     # Use negative controls for ChIP-seq to account for
@@ -145,7 +150,7 @@ if (filter_method == "average_log_cpm") {
     )
     base::message("Negative control signal filtered")
 
-    keep <- filter_stat$filter > log2(3)
+    keep <- filter_stat$filter > log2(log_threshold)
     counts <- counts[keep, ]
 } else {
     base::stop("Unknown filter method")
