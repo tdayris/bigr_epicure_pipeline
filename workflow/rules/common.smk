@@ -1701,7 +1701,7 @@ def get_deeptools_plotheatmap_params(wildcards: snakemake.io.Wildcards) -> str:
     """
     labels: str = " ".join(design.index.tolist())
     if "model_name" in wildcards.keys():
-        labels = " --smartLabels "
+        labels = ""
     else:
         labels = f" --samplesLabel {labels} "
     return str(
