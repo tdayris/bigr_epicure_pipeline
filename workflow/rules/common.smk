@@ -621,7 +621,7 @@ def get_fastp_params(
     if user_defined:
         extra += user_defined.get("fastp_extra")
 
-    if protocol_is_medip(protocol) or protocol_is_ogseq(protocol):
+    if protocol_is_ogseq(protocol):
         extra += " --poly_g_min_len 25 "
 
     return extra
