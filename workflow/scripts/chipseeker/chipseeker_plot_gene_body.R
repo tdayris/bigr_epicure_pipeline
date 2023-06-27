@@ -35,10 +35,11 @@ if ("bed" %in% base::names(x = snakemake@input)) {
         file = base::as.character(x = snakemake@input[["ranges"]])
     )
 }
+base::message("Peaks/Ranges loaded")
 tag_matrix <- base::readRDS(
     file = base::as.character(x = snakemake@input[["tagmatrix"]])
 )
-base::message("File list acquired")
+base::message("Tagmatrix loaded")
 
 
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
@@ -47,6 +48,7 @@ if ("organism" %in% base::names(x = snakemake@params)) {
         organism <- TxDb.Mmusculus.UCSC.mm10.knownGene
     }
 }
+base::message("Organism library available")
 
 # Build plot
 png(
