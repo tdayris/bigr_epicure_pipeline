@@ -17,7 +17,7 @@ rule xenome_index:
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 15,
-        runtime=lambda wildcards, attempt: attempt * 60,
+        runtime=lambda wildcards, attempt: attempt * 60 * 3,
         tmpdir=tmp,
     cache: True
     log:
@@ -55,7 +55,7 @@ rule xenome_classify_pairs:
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 15,
-        runtime=lambda wildcards, attempt: attempt * 60,
+        runtime=lambda wildcards, attempt: attempt * 60 * 2,
         tmpdir=tmp,
     log:
         general="logs/xenome/classify/{sample}.pairs.log",
@@ -92,7 +92,7 @@ rule xenome_classify_single:
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 15,
-        runtime=lambda wildcards, attempt: attempt * 60,
+        runtime=lambda wildcards, attempt: attempt * 60 * 2,
         tmpdir=tmp,
     log:
         general="logs/xenome/classify/{sample}.pairs.log",
