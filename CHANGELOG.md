@@ -1,3 +1,14 @@
+# 0.11.0 – ROI
+
+## Feature
+
+* Select regions of interest
+* Merge sample sharing condition for heatmaps
+
+## Changes
+
+* Log2(threshold) changed from 3 to 1.1 in csaw filters
+
 # 0.10.0 – Motifs
 
 ## Feature
