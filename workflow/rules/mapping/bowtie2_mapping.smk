@@ -11,7 +11,7 @@ rule bowtie2_align:
     log:
         "logs/bowtie2/align/{sample}.log",
     params:
-        extra="--very-sensitive" if not protocol_is_ogseq() else ""
+        extra="--very-sensitive" if not protocol_is_ogseq() else "",
     wrapper:
         f"{snakemake_wrappers_version}/bio/bowtie2/align"
 
