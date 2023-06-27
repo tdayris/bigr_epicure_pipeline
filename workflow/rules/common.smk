@@ -1178,7 +1178,7 @@ def get_deeptools_plotpca_params(
     Return the best parameters for deeptools plot PCA
     """
     labels: str = " ".join(design.index.tolist())
-    return f" --plotFileFormat png --labels {labels} --PCs '1 2'"
+    return f" --plotFileFormat png --labels {labels} --PCs 1 2"
 
 
 def get_deeptools_compute_matrix_input(
