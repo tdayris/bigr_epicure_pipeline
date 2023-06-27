@@ -1,5 +1,9 @@
 # 0.11.1 – Flamingo-launcher
 
+## Documentation
+
+* Job composer in open-on-demand
+
 ## Fix
 
 * Launcher version
