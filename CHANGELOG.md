@@ -1,9 +1,10 @@
 # 0.11.0 – ROI
 
-## Feature
+## Features
 
 * Select regions of interest
 * Merge sample sharing condition for heatmaps
+* Xenome for BiGR flamingo cluster only
 
 ## Changes
 
@@ -11,7 +12,7 @@
 
 # 0.10.0 – Motifs
 
-## Feature
+## Features
 
 * Homer find motifs installation enhanced
 
