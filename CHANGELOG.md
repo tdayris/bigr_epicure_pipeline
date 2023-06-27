@@ -1,3 +1,9 @@
+# 0.11.1 – Flamingo-launcher
+
+## Fix
+
+* Launcher version
+
 # 0.11.0 – ROI
 
 ## Features
