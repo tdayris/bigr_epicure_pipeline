@@ -4,12 +4,13 @@ Snakemake pipeline for Epicure analyses: Chip-Seq, Atac-Seq, Cut&Tag, Cut&Run, M
 
 # Summary
 
-1. [Usage](https://github.com/tdayris/bigr_epicure_pipeline#usage)
+1. [CLI-Usage](https://github.com/tdayris/bigr_epicure_pipeline#usage)
     1. [Installation](https://github.com/tdayris/bigr_epicure_pipeline#installation-following-snakemake-workflows-guidelines)
     1. [Deployment](https://github.com/tdayris/bigr_epicure_pipeline#deployment-following-snakemake-workflows-guidelines)
     1. [Configuration](https://github.com/tdayris/bigr_epicure_pipeline#configure-workflow-following-snakemake-workflows-guidelines)
     1. [Run this workflow](https://github.com/tdayris/bigr_epicure_pipeline#run-workflow-following-snakemake-workflows-guidelines)
     1. [Report](https://github.com/tdayris/bigr_epicure_pipeline#generate-report-following-snakemake-workflows-guidelines)
+1. [Open-On-Demand Flamingo]()
 1. [Pipeline components](https://github.com/tdayris/bigr_epicure_pipeline#pipeline-description)
     1. [Preprocessing](https://github.com/tdayris/bigr_epicure_pipeline#pre-pocessing)
     1. [Read mapping](https://github.com/tdayris/bigr_epicure_pipeline#read-mapping)
@@ -23,6 +24,9 @@ Snakemake pipeline for Epicure analyses: Chip-Seq, Atac-Seq, Cut&Tag, Cut&Run, M
     1. [Cut&Run](https://github.com/tdayris/bigr_epicure_pipeline#cutrun)
     1. [MeDIP-Seq](https://github.com/tdayris/bigr_epicure_pipeline#medip-seq)
     1. [OG-Seq](https://github.com/tdayris/bigr_epicure_pipeline#og-seq)
+    1. [Gro-Seq](https://github.com/tdayris/bigr_epicure_pipeline#gro-seq)
+    1. [Ribo-Seq](https://github.com/tdayris/bigr_epicure_pipeline#ribo-seq)
+    1. [MNase-Seq](https://github.com/tdayris/bigr_epicure_pipeline#mnase-seq)
 1. [Up-comming features](https://github.com/tdayris/bigr_epicure_pipeline#roadmap)
 
 
@@ -93,6 +97,58 @@ After finalizing your data analysis, you can automatically generate an interacti
 `snakemake --report report.zip`
 
 The resulting `report.zip` file can be passed on to collaborators, provided as a supplementary file in publications, or uploaded to a service like [Zenodo](https://zenodo.org/) in order to obtain a citable [DOI](https://en.wikipedia.org/wiki/Digital_object_identifier). 
+
+# Open-on-demand Flamingo
+
+This section describes the pipeline usage through Open-on-demand web-interface at Flamingo, Gustave Roussy.
+
+## Open-on-demand job composer
+
+Log-in to Flamingo Open-On-Demand web-page using your institutional user name and password. On the main page, click on "Job", then, in the drop-down menu, hit "Job Composer"
+
+![hit-job-composer](docs/image/Jobs.png)
+
+## Create a new template
+
+On the top of the new page, in the grey bar menu, hit "Template". Then use the light blue button "+ New Template".
+
+![new-template](docs/image/new_template.png)
+
+An empty template for appears:
+
+![empty-form](docs/image/empty_template.png)
+
+Fill the "Path" section with the following path: `/mnt/beegfs/pipelines/bigr_epicure_pipeline/open-on-demand-templates`. It is very important that you do not change this path. Fill the rest of the template as you like.
+
+![filled-form](docs/image/Fill_template.png)
+
+Hit the white "save" button at the bottom left of the form.
+
+## Adit the template with your current work
+
+Back to the "Template" page we saw earlier, a new line should be displayed with our new template. Click on the line and the right section of the page should display dedicated informations about this template.
+
+![select-pipeline](docs/image/select_pipeline.png)
+
+Name it as you like, but **do not** create a job now! Scroll down and hit the white button: "Open Dir"
+
+![open-dir](docs/image/scroll_down.png)
+
+## Edit `bigr_launcher.sh`
+
+Click on the file `bigr_launcher.sh` and hit the white button: "Edit".
+
+![bigr_launcher](docs/image/edit_launcher.png)
+
+Follow comments in grey and edit the line 11 to 30 as you'd like. You can refer to this page to know the latest version of this pipeline. You should always be using the latest version of this pipeline when starting a new project.
+
+![lines-edit](docs/image/edit_lines_11_to_30.png)
+
+## Launch a new job
+
+Back to the Job Composer window, you can now click "+ New Job", "From Template" and select the template we just made.
+
+![launch](docs/image/new_job.png)
 
 # Pipeline description
 
