@@ -1,5 +1,9 @@
 # 0.11.2 – Fixes
 
+## Documentation
+
+* Mat&Met updates
+
 ## Fix
 
 * Gene body coverage missing tag matrix fixed
