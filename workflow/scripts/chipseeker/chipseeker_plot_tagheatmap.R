@@ -25,7 +25,7 @@ tagmatrix_list <- base::lapply(
 base::message("Ranges loaded")
 
 # Build plot
-png(
+grDevices::png(
   filename = snakemake@output[["png"]],
   width = 1024,
   height = 768,

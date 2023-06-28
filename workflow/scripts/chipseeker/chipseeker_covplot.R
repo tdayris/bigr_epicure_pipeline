@@ -31,7 +31,7 @@ if ("bed" %in% base::names(x = snakemake@input)) {
 base::message("Ranges loaded")
 
 # Build plot
-png(
+grDevices::png(
   filename = snakemake@output[["png"]],
   width = 1024,
   height = 768,

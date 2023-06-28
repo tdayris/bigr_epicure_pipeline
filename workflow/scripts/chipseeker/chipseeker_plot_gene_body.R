@@ -64,12 +64,16 @@ prime_factors <- function(x) {
   }
   base::return(factors)
 }
+
 primes <- base::as.data.frame(x = base::table(prime_factors(x = window_number)))
 primes$Var1 <- base::as.integer(base::as.character(primes$Var1))
 primes <- primes$Var1 ^ primes$Freq
 
+
+
 # Closest prime to default resample value
-resample <- primes[which(abs(primes - resample) == min(abs(primes - resample)))]
+primes_min <- base::abs(primes - resample)
+resample <- primes[base::which(primes_min == base::min(primes_min))]
 base::message("Resampling value: ", resample)
 
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
@@ -81,7 +85,7 @@ if ("organism" %in% base::names(x = snakemake@params)) {
 base::message("Organism library available")
 
 # Build plot
-png(
+grDevices::png(
   filename = snakemake@output[["png"]],
   width = 1024,
   height = 768,
