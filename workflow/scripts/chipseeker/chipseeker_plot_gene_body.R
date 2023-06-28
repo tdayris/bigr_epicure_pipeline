@@ -42,7 +42,6 @@ tag_matrix <- base::readRDS(
 upstream <- base::attr(x = tag_matrix, which = "upsteam")
 downstream <- base::attr(x = tag_matrix, which = "downstream")
 label <- base::attr(x = tag_matrix, which = "label")
-xlim <- c(-upstream, downstream)
 base::message("Tagmatrix loaded")
 
 
@@ -78,7 +77,6 @@ ChIPseeker::plotPeakProf(
     facet = "row",
     nbin = 800,
     verbose = TRUE,
-    xlim = xlim,
 )
 
 dev.off()
