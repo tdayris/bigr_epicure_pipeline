@@ -8,6 +8,7 @@ include: "rules/indexing/bowtie2_index.smk"
 include: "rules/indexing/samtools_faidx.smk"
 include: "rules/reference/download_fastq_screen_index.smk"
 include: "rules/reference/download_blacklist.smk"
+include: "rules/indexing/xenome_index.smk"
 # Trimming
 include: "rules/trimming/fastp.smk"
 include: "rules/mapping/xenome_pdx.smk"
