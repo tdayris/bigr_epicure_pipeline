@@ -39,6 +39,10 @@ base::message("Peaks/Ranges loaded")
 tag_matrix <- base::readRDS(
     file = base::as.character(x = snakemake@input[["tagmatrix"]])
 )
+upstream <- base::attr(x = tag_matrix, which = "upsteam")
+downstream <- base::attr(x = tag_matrix, which = "downstream")
+label <- base::attr(x = tag_matrix, which = "label")
+xlim <- c(-upstream, downstream)
 base::message("Tagmatrix loaded")
 
 
@@ -59,11 +63,12 @@ png(
   type = "cairo"
 )
 
-ChIPseeker::plotPeakProf2(
+ChIPseeker::plotPeakProf(
     peak = ranges,
     tagMatrix = tag_matrix,
-    upstream = rel(0.2),
-    downstream = rel(0.2),
+    upstream = upstream, # rel(0.2),
+    downstream = downstream, # rel(0.2),
+    label = label,
     weightCol = "V5",
     ignore_strand = TRUE,
     conf = 0.95,
@@ -71,7 +76,9 @@ ChIPseeker::plotPeakProf2(
     type = "body",
     TxDb = txdb,
     facet = "row",
-    nbin = 800
+    nbin = 800,
+    verbose = TRUE,
+    xlim = xlim,
 )
 
 dev.off()
