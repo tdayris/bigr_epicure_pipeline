@@ -7,6 +7,7 @@
 ## Fix
 
 * Gene body coverage missing tag matrix fixed
+* Fixed OOM occurring on gene body coverage analysis
 * Deeptools PCA arguments fixed
 
 # 0.11.1 – Flamingo-launcher
