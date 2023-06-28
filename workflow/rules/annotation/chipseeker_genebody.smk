@@ -1,12 +1,12 @@
 rule chipseeker_genebody_cov_single_sample:
     input:
-        ranges="chipseeker/tagmatrix/{sample}.{peaktype}.RDS",
+        ranges="chipseeker/annotation/{sample}.{peaktype}.RDS",
         tagmatrix="chipseeker/tagmatrix/{sample}.{peaktype}.RDS",
     output:
         png="data_output/Peak_Calling/{peaktype}/Gene_Body_Coverage/{sample}.png",
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1024 * 15,
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 80,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
@@ -27,7 +27,7 @@ rule chipseeker_genebody_cov_differential_binding:
         png="data_output/Differential_Binding/{model_name}/Gene_Body_Coverage.png",
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1024 * 15,
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 80,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
