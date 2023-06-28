@@ -44,9 +44,30 @@ tag_matrix <- base::readRDS(
 )
 upstream <- base::attr(x = tag_matrix, which = "upsteam")
 downstream <- base::attr(x = tag_matrix, which = "downstream")
-label <- base::attr(x = tag_matrix, which = "label")
 base::message("Tagmatrix loaded")
 
+# The default resample value
+resample <- 500
+window_number <- base::length(tag_matrix)
+
+# Search all prime factors for the given number of windows
+prime_factors <- function(x) {
+  factors <- c()
+  last_prime <- 2
+  while(x >= last_prime){
+    if (! x %% last_prime) {
+      factors <- c(factors, last_prime)
+      x <- x / last_prime
+      last_prime <- last_prime - 1
+      }
+    last_prime <- last_prime + 1
+  }
+  base::return(factors)
+}
+primes <- prime_factors(x = window_number)
+# Closest prime to defautl resample value
+resample <- primes[which(abs(primes - resample) == min(abs(primes - resample)))]
+base::message("Resampling value: ", resample)
 
 txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 if ("organism" %in% base::names(x = snakemake@params)) {
@@ -79,6 +100,7 @@ ChIPseeker::plotPeakProf(
     facet = "row",
     nbin = 800,
     verbose = TRUE,
+    resample = resample
 )
 
 dev.off()
