@@ -64,8 +64,11 @@ prime_factors <- function(x) {
   }
   base::return(factors)
 }
-primes <- prime_factors(x = window_number)
-# Closest prime to defautl resample value
+primes <- base::as.data.frame(x = base::table(prime_factors(x = window_number)))
+primes$Var1 <- base::as.integer(base::as.character(primes$Var1))
+primes <- primes$Var1 ^ primes$Freq
+
+# Closest prime to default resample value
 resample <- primes[which(abs(primes - resample) == min(abs(primes - resample)))]
 base::message("Resampling value: ", resample)
 
