@@ -22,6 +22,8 @@ Snakemake pipeline for Epicure analyses: Chip-Seq, Atac-Seq, Cut&Tag, Cut&Run, M
     1. [Coverage](https://github.com/tdayris/bigr_epicure_pipeline#coverage)
     1. [Peak Calling](https://github.com/tdayris/bigr_epicure_pipeline#peak-calling)
     1. [Differential Peak Coverage](https://github.com/tdayris/bigr_epicure_pipeline#differential-peak-calling)
+    1. [Peak annotation](https://github.com/tdayris/bigr_epicure_pipeline#peak-annotation)
+    1. [Motifs](https://github.com/tdayris/bigr_epicure_pipeline#motifs)
 1. [Material and methods](https://github.com/tdayris/bigr_epicure_pipeline#material-and-methods)
     1. [ChIP-Seq](https://github.com/tdayris/bigr_epicure_pipeline#chip-seq)
     1. [Atac-Seq](https://github.com/tdayris/bigr_epicure_pipeline#atac-seq)
