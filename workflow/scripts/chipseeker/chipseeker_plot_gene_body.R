@@ -22,6 +22,9 @@ base::library(
     package = "TxDb.Mmusculus.UCSC.mm10.knownGene",
     character.only = TRUE
 )
+
+ncpus <- base::as.numeric(snakemake@threads[[1]])
+mc.cores <- ncpus
 base::message("Libraries loaded")
 
 ranges <- NULL
