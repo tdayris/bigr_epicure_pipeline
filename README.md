@@ -378,7 +378,7 @@ A quality control is made _both before and after_ these filters to ensure no val
 
 Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.2](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). Chromosome X and Y were ignored in the RPKM normalization in order to reduce noise the final result. using the following optional parameters ` --normalizeUsing RPKM --binSize 5 --skipNonCoveredRegions --ignoreForNormalization chrX chrM chrY --ignoreDuplicates`. Reads marked as duplicates were treated as normal reads. The same tool was used to plot both quality controls and peak coverage heatmaps.
 
-Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. Pair-ended libraries recieved the `--format BAMPE` parameters, while single-ended libraries used estimated fragment size provided in input.
+Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. Pair-ended libraries recieved the `--format BAMPE` parameters, while single-ended libraries used estimated fragment size provided in input. Alongside with Macs2, [SEACR](https://github.com/FredHutch/SEACR/blob/master/SEACR_1.3.R) version [1.3](https://github.com/tdayris/bigr_epicure_pipeline/blob/f7a783b6857ea3c74811f1003bc5091c6267d907/workflow/envs/seacr.yaml#L6) was used to perform single-sample peak-calling using parameters hinted in the original publication of SEACR.
 
 The peak annotation was done using [ChIPSeeker](https://bioconductor.org/packages/release/bioc/vignettes/ChIPseeker/inst/doc/ChIPseeker.html#peak-annotation) version [1.34.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml), using [Org.eg.db](https://bioconductor.org/packages/3.16/data/annotation/html/org.Hs.eg.db.html) annotations version [3.16.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml).
 
@@ -402,7 +402,7 @@ A quality control is made _both before and after_ these filters to ensure no val
 
 Genome coverage was assessed with [DeepTools](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage) version [3.5.2](https://deeptools.readthedocs.io/en/develop/content/tools/bamCoverage.html?highlight=bamcoverage). Chromosome X and Y were ignored in the RPKM normalization in order to reduce noise the final result. using the following optional parameters ` --normalizeUsing RPKM --binSize 5 --skipNonCoveredRegions --ignoreForNormalization chrX chrM chrY --ignoreDuplicates`. Reads marked as duplicates were treated as normal reads. The same tool was used to plot both quality controls and peak coverage heatmaps.
 
-Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. Pair-ended libraries recieved the `--format BAMPE` parameters, while single-ended libraries used estimated fragment size provided in input.
+Single-sample peak calling was performed by [Macs2](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html) version [2.2.7.1](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/macs2/callpeak.html#software-dependencies) using both broad and narrow options. Pair-ended libraries recieved the `--format BAMPE` parameters, while single-ended libraries used estimated fragment size provided in input.Alongside with Macs2, [SEACR](https://github.com/FredHutch/SEACR/blob/master/SEACR_1.3.R) version [1.3](https://github.com/tdayris/bigr_epicure_pipeline/blob/f7a783b6857ea3c74811f1003bc5091c6267d907/workflow/envs/seacr.yaml#L6) was used to perform single-sample peak-calling using parameters hinted in the original publication of SEACR.
 
 The peak annotation was done using [ChIPSeeker](https://bioconductor.org/packages/release/bioc/vignettes/ChIPseeker/inst/doc/ChIPseeker.html#peak-annotation) version [1.34.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml), using [Org.eg.db](https://bioconductor.org/packages/3.16/data/annotation/html/org.Hs.eg.db.html) annotations version [3.16.0](https://github.com/tdayris/bigr_epicure_pipeline/blob/main/workflow/envs/chipseeker.yaml).
 
@@ -486,7 +486,6 @@ The whole pipeline was powered by [Snakemake](https://snakemake.readthedocs.io/)
 # Roadmap
 
 * Coverage: PBC
-* Peak-calling: FDR
 * Peak-annotation: CentriMo
 * Differential Peak Calling: DiffBind
 * IGV: screen-shot, igv-reports
