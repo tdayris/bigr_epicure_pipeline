@@ -6,7 +6,7 @@ rule chipseeker_genebody_cov_single_sample:
         png="data_output/Peak_Calling/{peaktype}/Gene_Body_Coverage/{sample}.png",
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 15,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
@@ -27,7 +27,7 @@ rule chipseeker_genebody_cov_differential_binding:
         png="data_output/Differential_Binding/{model_name}/Gene_Body_Coverage.png",
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 15,
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     log:
