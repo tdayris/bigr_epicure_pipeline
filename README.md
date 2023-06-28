@@ -269,6 +269,8 @@ The whole pipeline was powered by [Snakemake](https://snakemake.readthedocs.io/)
 
 ## MNase-seq
 
+![rulegraph-mnase](https://raw.githubusercontent.com/tdayris/bigr_epicure_pipeline/main/docs/rulegraphs/mnase-seq.rulegraph.png)
+
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/fastp.html#software-dependencies), using default parameters. Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/bowtie2/align.html#software-dependencies), using `--very-sensitive` parameter to increase mapping specificity.
 
 Mapped reads with a quality lower than 30 are dropped out using [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/sambamba/view.html#software-dependencies) with parameter `--filter 'mapping_quality >= 30'`. In case of pair-ended library, orphan reads a dropped out using `--filter 'not (unmapped or mate_is_unmapped)'` in [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/sambamba/view.html#software-dependencies). Remaining reads are filtered over canonical chromosomes, using [Samtools](http://www.htslib.org/doc/samtools-stats.html) version [1.17](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/samtools/stats.html#software-dependencies). Mitochondrial chromosome is not considered as a canonical chromosome, that being so, mitochondrial reads are dropped out. In case regions of interest are defined over the genome, [BedTools](https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html) version [2.31.0](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/bedtools/intersect.html#software-dependencies) with `-wa -sorted` as optional parameter to keep mapped reads that overlap the regions of interest by, at least, one base. Duplicated reads were filtered out, using [Sambamba](https://lomereiter.github.io/sambamba/docs/sambamba-view.html) version [1.0](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/sambamba/view.html#software-dependencies) using the optional parameter `--remove-duplicates --overflow-list-size 600000`.
@@ -288,6 +290,8 @@ Additional quality controls were made using [FastqScreen](https://snakemake-wrap
 The whole pipeline was powered by [Snakemake](https://snakemake.readthedocs.io/) version [7.26.0](https://snakemake.readthedocs.io/en/stable/project_info/history.html#id14) and the [Snakemake-Wrappers](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/index.html) version [v2.0.0](https://github.com/snakemake/snakemake-wrappers).
 
 ## Gro-seq
+
+![rulegraph-groseq](https://raw.githubusercontent.com/tdayris/bigr_epicure_pipeline/main/docs/rulegraphs/gro-seq.rulegraph.png)
 
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/fastp.html#software-dependencies), using default parameters. Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/bowtie2/align.html#software-dependencies), using `--very-sensitive` parameter to increase mapping specificity.
 
@@ -309,6 +313,7 @@ The whole pipeline was powered by [Snakemake](https://snakemake.readthedocs.io/)
 
 ## Ribo-seq
 
+![rulegraph-riboseq](https://raw.githubusercontent.com/tdayris/bigr_epicure_pipeline/main/docs/rulegraphs/ribo-seq.rulegraph.png)
 
 Reads are trimmed using [fastp](https://github.com/OpenGene/fastp) version [0.23.2](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/fastp.html#software-dependencies), using default parameters. Trimmed reads are mapped over the genome of interest defined in the configuration file, using [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml) version [2.5.1](https://snakemake-wrappers.readthedocs.io/en/v2.0.0/wrappers/bowtie2/align.html#software-dependencies), using `--very-sensitive` parameter to increase mapping specificity.
 
