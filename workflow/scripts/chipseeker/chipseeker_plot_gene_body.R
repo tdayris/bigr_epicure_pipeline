@@ -67,7 +67,6 @@ ChIPseeker::plotPeakProf(
     tagMatrix = tag_matrix,
     upstream = upstream, # rel(0.2),
     downstream = downstream, # rel(0.2),
-    label = label,
     weightCol = "V5",
     ignore_strand = TRUE,
     conf = 0.95,
