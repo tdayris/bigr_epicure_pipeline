@@ -10,6 +10,9 @@ protocols=(
     "medip-seq"
     "cutntag"
     "cutnrun"
+    "mnase-seq"
+    "gro-seq"
+    "ribo-seq"
 )
 
 for PROTOCOL in "${protocols[@]}"; do
