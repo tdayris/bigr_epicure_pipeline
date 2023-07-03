@@ -952,7 +952,8 @@ def get_bedtools_filter_roi_input(
     If exists, return path to the regions of interest
     """
     bedtools_filter_roi_input: Dict[str, str] = {
-        "left": f"samtools/view/{wildcards.sample}.bam"
+        "left": f"samtools/view/{wildcards.sample}.bam",
+        "genome": "reference/genome_contigs.txt",
     }
 
     roi_bed: Optional[str] = config.get("reference", {}).get("roi_bed")

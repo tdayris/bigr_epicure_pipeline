@@ -1,3 +1,24 @@
+
+rule get_genome_contigs:
+    input:
+        genome_fasta_path,
+    output:
+        "reference/genome_contigs.txt"
+    threads: 2
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 512,
+        runtime=lambda wildcards, attempt: attempt * 5,
+        tmpdir=tmp,
+    log:
+        "logs/bash/sequence_contigs.log",
+    params:
+        gp="'>'",
+    conda:
+        "../../envs/bash.yaml"
+    shell:
+        "grep {params.gp} {input} | sort > {output} 2> {log}"
+
+
 rule bedtools_filter_roi:
     input:
         unpack(get_bedtools_filter_roi_input),
@@ -17,6 +38,7 @@ rule bedtools_filter_roi:
     shell:
         "bedtools intersect "
         "{params.extra} "
+        "-g {input.genome} "
         "-abam {input.left} "
         "-b {input.right} "
         "> {output} 2> {log}"
