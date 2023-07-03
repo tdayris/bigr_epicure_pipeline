@@ -1,10 +1,10 @@
 
 rule get_genome_contigs:
     input:
-        genome_fasta_path,
+        genome_fai_path,
     output:
         "reference/genome_contigs.txt"
-    threads: 3
+    threads: 2
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,
         runtime=lambda wildcards, attempt: attempt * 5,
@@ -12,11 +12,12 @@ rule get_genome_contigs:
     log:
         "logs/bash/sequence_contigs.log",
     params:
-        gp="'>'",
+        cut=" -f1,2 -d ' ' ",
+        sort=" -k1,1 "
     conda:
         "../../envs/bash.yaml"
     shell:
-        "grep {params.gp} {input} | cut -f1 -d ' ' | sort > {output} 2> {log}"
+        "cut {params.cut} {input} | sort {params.sort} > {output} 2> {log}"
 
 
 rule bedtools_filter_roi:
