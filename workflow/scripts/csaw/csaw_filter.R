@@ -33,6 +33,13 @@ if ("filter_method" %in% base::names(x = snakemake@params)) {
         x = snakemake@params[["filter_method"]]
     )
 }
+
+keep <- base::data.frame(
+    "Kept" = 0,
+    "Filtered" = 0,
+    "PercentFiltered" = 0,
+    "PercentKept" = 0
+)
 base::message("Input data loaded")
 
 # Filtering counts
@@ -156,12 +163,49 @@ if (filter_method == "average_log_cpm") {
     base::stop("Unknown filter method")
 }
 
+
+k <- base::summary(object = keep)
+keep <- base::as.data.frame()
+keep$Kept <- k[["TRUE"]]
+keep$Filtered <- k[["FALSE"]]
+keep$PercentFiltered <- keep$Filtered / (keep$Kept + keep$Filtered)
+keep$PercentKept <- keep$Kept / (keep$Kept + keep$Filtered)
+
+
 # Saving results
+utils::write.table(
+    x = keep,
+    file = base::as.character(x = snakemake@output[["qc"]]),
+    sep = "\t"
+)
+base::message("QC table saved")
+
+if ("png" %in% base::names(x = snakemake@output)) {
+    # Saving QC plot
+    grDevices::png(
+        filename = base::as.character(x = snakemake@output[["png"]]),
+        width = 1024,
+        height = 768
+    )
+
+    graphics::hist(
+        filter_stat$filter,
+        main = "",
+        breaks = 50,
+        xlab = "Background abundance (log2-CPM)"
+    )
+    graphics::abline(v = log2(log_threshold), col = "red")
+
+    grDevices::dev.off()
+    base::message("QC plot saved")
+}
+
+
 base::saveRDS(
     object = counts,
     file = base::as.character(x = snakemake@output[["rds"]])
 )
-base::message("Process over")
+base::message("RDS saved, process over")
 
 # Proper syntax to close the connection for the log file
 # but could be optional for Snakemake wrapper

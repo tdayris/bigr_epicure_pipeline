@@ -4,6 +4,7 @@ rule csaw_count_normalize:
         bins="csaw/count/{model_name}.binned.RDS",
     output:
         rds=temp("csaw/normalized/{model_name}.RDS"),
+        adj_counts=temp("csaw/normalized/{model_name}.adj_counts.RDS"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,
@@ -27,6 +28,9 @@ rule csaw_edger:
     output:
         csaw=temp("csaw/results/{model_name}.RDS"),
         edger=temp("csaw/edger/{model_name}.RDS"),
+        disp_png="data_output/Differential_Binding/{model_name}/Dispersion_Estimates.png",
+        ql_png="data_output/Differential_Binding/{model_name}/Quasi_likelihood_dispersion.png",
+        qc=temp("csaw/edger/{model_name}.sig.tsv"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,

@@ -51,6 +51,17 @@ y <- edgeR::estimateDisp(
 )
 base::message("Dispersion estimated")
 
+grDevices::png(
+    filename = base::as.character(x = snakemake@output[["disp_png"]]),
+    width = 1024,
+    height = 768
+)
+
+edgeR::plotBCV(y = y)
+
+grDevices::dev.off()
+base::message("Dispersion plot saved")
+
 fit <- edgeR::glmQLFit(
     y = y,
     design = design,
@@ -64,8 +75,44 @@ results <- edgeR::glmQLFTest(
 )
 base::message("Window counts tested")
 
-rowData(counts) <- base::cbind(rowData(counts), results$table)
+grDevices::png(
+    filename = base::as.character(x = snakemake@output[["ql_png"]]),
+    width = 1024,
+    height = 768
+)
+
+edgeR::plotQLDisp(glmfit = results)
+
+grDevices::dev.off()
+base::message("Quasi-likelihood dispersion plot saved")
+
+# rowData(counts) <- base::cbind(rowData(counts), results$table)
+merged <-  csaw::mergeResults(
+    counts,
+    results$table,
+    tol = 100,
+    merge.args = list(max.width = 5000)
+)
 base::message("Results stored in RangedSummarizedExperiment object")
+
+
+# Save results
+if ("qc" %in% base::names(snakemake@output)) {
+    is_significative <- summary(merged$combined$FDR <= 0.05)
+    direction <- summary(table(merged$combined$direction[is_significative]))
+    sig <- base::data.frame(
+        Differentially_Expressed = is_significative[["TRUE"]],
+        Not_Significative = is_significative[["FALSE"]],
+        Up_Regulated = direction[["up"]],
+        Down_Regulated = direction[["down"]]
+    )
+    utils::write.table(
+        x = sig,
+        file = base::as.character(x = snakemake@output[["qc"]]),
+        sep = "\t"
+    )
+    base::message("QC table saved")
+}
 
 if ("csaw" %in% base::names(snakemake@output)) {
     base::saveRDS(

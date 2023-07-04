@@ -974,6 +974,20 @@ def get_sambamba_sort_filtered(
     return ["samtools/view/{sample}.bam"]
 
 
+def get_rsamtools_bam_file(
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol
+) -> Dict[str, str]:
+    """
+    Return correct bam file for RSamtools
+    """
+    bam_prefix = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+
+    return {
+        "bam": f"{bam_prefix}/{wildcards.sample}.bam",
+        "bai": f"{bam_prefix}/{wildcards.sample}.bam.bai",
+    }
+
+
 ################
 ### Coverage ###
 ################
@@ -1386,6 +1400,8 @@ def get_csaw_count_input(
         "bams": [f"{bam_prefix}/{sample}.bam" for sample in sample_list],
         "bais": [f"{bam_prefix}/{sample}.bam.bai" for sample in sample_list],
         "read_params": f"csaw/readparam.{library}.RDS",
+        "design": "rsamtools/design.RDS",
+        "fragment_length": "csaw/fragment_length.RDS",
     }
 
 

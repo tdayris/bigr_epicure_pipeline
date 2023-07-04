@@ -14,12 +14,18 @@ sink(log_file, type = "message")
 
 # Load libraries
 base::library(package = "csaw", character.only = TRUE)
+base::library(package = "edgeR", character.only = TRUE)
 base::message("Libraries loaded")
 
 norm_method <- "composition"
 if ("norm_method" %in% base::names(snakemake@params)) {
     norm_method <- base::as.character(x = snakemake@params[["norm_method"]])
 }
+
+design <- base::readRDS(
+    file = base::as.character(x = snakemake@input[["design"]])
+)
+base::message("Design loaded")
 
 
 counts <- base::readRDS(
@@ -40,27 +46,43 @@ if (norm_method == "composition") {
         file = base::as.character(x = snakemake@input[["bins"]])
     )
 
-    norm_factors <- csaw::normFactors(
+    counts <- csaw::normFactors(
         object = binned,
         se.out = counts
     )
+
+    adj_counts <- edgeR::cpm(
+        y = csaw::asDGEList(object = binned, log = TRUE)
+    )
+    normfacs <- counts$norm.factors
+
 } else if (norm_method == "efficiency") {
     # Efficiency biases in ChIP-seq data refer to fold changes in enrichment
     # that are introduced by variability in IP efficiencies between libraries.
     base::message("Normalizing efficiency bias")
 
     counts <- csaw::normFactors(
-        object = binned,
+        object = counts,
         se.out = TRUE
     )
+
+    adj_counts <- edgeR::cpm(
+        y = csaw::asDGEList(object = counts, log = TRUE)
+    )
+    normfacs <- counts$norm.factors
 }
 
+base::saveRDS(
+    object = adj_counts,
+    file = base::as.character(x = snakemake@output["adj_counts"])
+)
+base::message("Adjusted counts saved")
 
 base::saveRDS(
     object = counts,
     file = base::as.character(x = snakemake@output[["rds"]])
 )
-base::message("Process over")
+base::message("RDS saved, process over")
 
 # Proper syntax to close the connection for the log file
 # but could be optional for Snakemake wrapper

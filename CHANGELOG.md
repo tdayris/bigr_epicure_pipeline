@@ -1,3 +1,16 @@
+# 0.12.0 – Quality Controls
+
+## Features
+
+* New QC in CSaw (cout, filters, normalize)
+* New QC in EdgeR (disp, qldisp, tables)
+* New QC before CSaw import
+* Explicit fragment length estimation with corresponding graph
+
+## Fix
+
+* CSaw normalize now returns GRanges in any case
+
 # 0.11.2 – Fixes
 
 ## Documentation

@@ -1,19 +1,20 @@
-rule csaw_readparam:
+rule csaw_fragment_length:
+    input:
+        design="rsamtools/design.RDS",
     output:
-        rds=temp("csaw/readparam.{library}.RDS"),
-    threads: 1
+        fragment_length="csaw/fragment_length.RDS",
+        png="data_output/Differential_Binding/CCF_Delay.png",
+    threads: config.get("max_threads", 20)
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1024,
-        runtime=lambda wildcards, attempt: attempt * 10,
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,
+        runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/csaw/readparam/{library}.log",
-    params:
-        extra=lambda wildcards: get_csaw_read_param(wildcards),
+        "logs/csaw/fragment_length.log",
     conda:
         "../../envs/csaw.yaml"
     script:
-        "../../scripts/csaw/csaw_readparam.R"
+        "../../scripts/csaw/csaw_fregment_length.R"
 
 
 rule csaw_window_count:
@@ -41,6 +42,7 @@ rule csaw_count_filter:
         unpack(get_csaw_filter_input),
     output:
         rds=temp("csaw/filtered/{model_name}.RDS"),
+        png="data_output/Differential_Binding/{model_name}/Background_filter_abundance.png",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,

@@ -20,12 +20,17 @@ if (snakemake@threads > 1) {
     BiocParallel::register(
         BiocParallel::MulticoreParam(snakemake@threads)
     )
+    options("mc.cores" = snakemake@threads)
+    base::message("Process multi-threaded")
 }
 
 # Loading list of input files
-bam_files <- sapply(
-    snakemake@input[["bams"]],
-    function(bam_path) base::as.character(x = bam_path)
+design <- readRDS(
+    file = base::as.character(x = snakemake@input[["design"]])
+)
+
+frag_length <- readRDS(
+    file = base::as.character(x = snakemake@input[["fragment_length"]])
 )
 
 # Loading filter parameters
@@ -34,7 +39,7 @@ read_params <- base::readRDS(
 )
 base::message("Input data loaded")
 
-extra <- "bam.files = bam_files, param = read_params"
+extra <- "bam.files = design$BamPath, param = read_params, ext=frag.len"
 if ("extra" %in% base::names(x = snakemake@params)) {
     extra <- base::paste(
         extra,
@@ -66,7 +71,8 @@ base::saveRDS(
     object = counts,
     file = snakemake@output[["rds"]]
 )
-base::message("Process over")
+base::print(counts$totals)
+base::message("RDS saved, process over")
 
 
 # Proper syntax to close the connection for the log file

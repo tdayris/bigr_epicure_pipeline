@@ -3,7 +3,7 @@ rule get_genome_contigs:
     input:
         genome_fai_path,
     output:
-        "reference/genome_contigs.txt"
+        "reference/genome_contigs.txt",
     threads: 2
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,
@@ -13,7 +13,7 @@ rule get_genome_contigs:
         "logs/bash/sequence_contigs.log",
     params:
         cut=" -f1,2 -d ' ' ",
-        sort=" -k1,1 "
+        sort=" -k1,1 ",
     conda:
         "../../envs/bash.yaml"
     shell:
