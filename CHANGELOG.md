@@ -9,6 +9,7 @@
 * Gene body coverage missing tag matrix fixed
 * Fixed OOM occurring on gene body coverage analysis
 * Deeptools PCA arguments fixed
+* ROI filter now considers only regions defined in the reference genomic fasta file
 
 # 0.11.1 – Flamingo-launcher
 
