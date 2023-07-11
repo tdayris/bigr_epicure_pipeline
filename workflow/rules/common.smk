@@ -488,7 +488,7 @@ def get_sample_list_from_model_name(
                 design=design,
             )
         elif not protocol_is_atac(protocol):
-            raise Warning(
+            logging.warning(
                 "No sample have corresponding input. "
                 "Filtering and normalisation cannot be done using Input files."
             )
