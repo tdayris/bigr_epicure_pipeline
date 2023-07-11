@@ -2,6 +2,7 @@
 include: "rules/common.smk"
 # Genome reference data acquisition (if user did not
 # provide any genomic reference in configuration file)
+include: "rules/indexing/rename.smk"
 include: "rules/reference/download_genome_annotation.smk"
 include: "rules/reference/download_genome_sequence.smk"
 include: "rules/indexing/bowtie2_index.smk"

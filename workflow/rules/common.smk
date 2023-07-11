@@ -594,20 +594,34 @@ def get_peak_file(
 ################
 
 
+def get_rename_input(
+    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+) -> Dict[str, List[str]]:
+    """
+    Return the list of Fastp input files
+    """
+    rename_input: Dict[str, List[str]] = {
+        "sample": [design["Upstream_file"].loc[wildcards.sample]],
+    }
+    down: Optional[str] = is_paired(sample=wildcards.sample, design=design)
+    if down:
+        rename_input["sample"].append(down)
+
+    return rename_input
+
+
 def get_fastp_input(
     wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
 ) -> Dict[str, List[str]]:
     """
     Return the list of Fastp input files
     """
-    fastp_input: Dict[str, List[str]] = {
-        "sample": [design["Upstream_file"].loc[wildcards.sample]],
-    }
-    down: Optional[str] = is_paired(sample=wildcards.sample, design=design)
-    if down:
-        fastp_input["sample"].append(down)
-
-    return fastp_input
+    if is_paired(sample=wildcards.sample, design=design):
+        return [
+            f"data_input/reads/{wildcards.sample}.{stream}.fastq.gz"
+            for stream in ["1", "2"]
+        ]
+    return [f"data_input/reads/{wildcards.sample}.fastq.gz"]
 
 
 def get_fastp_params(
