@@ -1,6 +1,4 @@
 rule rename_input_files_single:
-    input:
-        unpack(get_rename_input),
     output:
         temp("data_input/reads/{sample}.fastq.gz"),
     threads: 1
@@ -11,7 +9,7 @@ rule rename_input_files_single:
     log:
         "logs/rename_concat/{sample}.log",
     params:
-        "",
+        input=unpack(get_rename_input),
     conda:
         "../../envs/python.yaml"
     script:
@@ -19,8 +17,6 @@ rule rename_input_files_single:
 
 
 rule rename_input_files_paired:
-    input:
-        unpack(get_rename_input),
     output:
         temp(
             expand(
@@ -37,7 +33,7 @@ rule rename_input_files_paired:
     log:
         "logs/rename_concat/{sample}.log",
     params:
-        "",
+        input=unpack(get_rename_input),
     conda:
         "../../envs/python.yaml"
     script:
