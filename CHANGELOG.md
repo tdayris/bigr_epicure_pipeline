@@ -1,3 +1,14 @@
+# 0.12.1 – No input
+
+## Features
+
+* Design without input file is not handled.
+
+## Fix
+
+* Expand not allowed in params, replaced by list
+
+
 # 0.12.0 – Quality Controls
 
 ## Features
