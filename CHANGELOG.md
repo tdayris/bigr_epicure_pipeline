@@ -6,6 +6,7 @@
 * New QC in EdgeR (disp, qldisp, tables)
 * New QC before CSaw import
 * Explicit fragment length estimation with corresponding graph
+* Rename and concat file, automatically retrieve files from iRODS in Gustave Roussy
 
 ## Fix
 
