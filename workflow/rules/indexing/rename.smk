@@ -9,7 +9,7 @@ rule rename_input_files_single:
     log:
         "logs/rename_concat/{sample}.log",
     params:
-        input=unpack(get_rename_input),
+        input=lambda wildcards: get_rename_input(wildcards, design),
     conda:
         "../../envs/python.yaml"
     script:
@@ -33,7 +33,7 @@ rule rename_input_files_paired:
     log:
         "logs/rename_concat/{sample}.log",
     params:
-        input=unpack(get_rename_input),
+        input=lambda wildcards: get_rename_input(wildcards, design),
     conda:
         "../../envs/python.yaml"
     script:
