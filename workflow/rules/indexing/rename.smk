@@ -1,6 +1,6 @@
 rule rename_input_files_single:
     output:
-        temp("data_input/reads/{sample}.fastq.gz"),
+        temp("data_input/{sample}.fastq.gz"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
