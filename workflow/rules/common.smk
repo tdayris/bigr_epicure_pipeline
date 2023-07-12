@@ -615,10 +615,10 @@ def get_fastp_input(
     Return the list of Fastp input files
     """
     if is_paired(sample=wildcards.sample, design=design):
-        return [
+        return {"sample": [
             f"data_input/{wildcards.sample}.{stream}.fq.gz" for stream in ["1", "2"]
-        ]
-    return [f"data_input/{wildcards.sample}.fq.gz"]
+        ]}
+    return {"sample": [f"data_input/{wildcards.sample}.fq.gz"]}
 
 
 def get_fastp_params(
