@@ -618,10 +618,9 @@ def get_fastp_input(
     """
     if is_paired(sample=wildcards.sample, design=design):
         return [
-            f"data_input/{wildcards.sample}.{stream}.fastq.gz"
-            for stream in ["1", "2"]
+            f"data_input/{wildcards.sample}.{stream}.fastq.gz" for stream in ["1", "2"]
         ]
-    return [f"data_input/reads/{wildcards.sample}.fastq.gz"]
+    return [f"data_input/{wildcards.sample}.fastq.gz"]
 
 
 def get_fastp_params(

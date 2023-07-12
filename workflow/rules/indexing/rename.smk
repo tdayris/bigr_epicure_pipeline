@@ -25,7 +25,7 @@ rule rename_input_files_paired:
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
-        "logs/rename_concat/{sample}.log",
+        "logs/rename_concat/{sample}.{stream}.log",
     params:
         input=lambda wildcards: get_rename_input(wildcards, design),
     conda:
