@@ -1,6 +1,6 @@
 rule rename_input_files_single:
     output:
-        temp("data_input/{sample}.fastq.gz"),
+        temp("data_input/{sample}.fq.gz"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
@@ -18,7 +18,7 @@ rule rename_input_files_single:
 
 rule rename_input_files_paired:
     output:
-        temp("data_input/{sample}.{stream}.fastq.gz"),
+        temp("data_input/{sample}.{stream}.fq.gz"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
