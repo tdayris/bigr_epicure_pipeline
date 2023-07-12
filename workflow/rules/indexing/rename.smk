@@ -20,7 +20,7 @@ rule rename_input_files_paired:
     output:
         temp(
             expand(
-                "data_input/reads/{sample}.{stream}.fastq.gz",
+                "data_input/{sample}.{stream}.fastq.gz",
                 stream=["1", "2"],
                 allow_missing=True,
             )
