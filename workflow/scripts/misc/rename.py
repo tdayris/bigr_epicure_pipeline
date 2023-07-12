@@ -28,14 +28,7 @@ from snakemake.shell import shell
 from tempfile import TemporaryDirectory
 
 # Logging behaviour
-try:
-    logging.basicConfig(filename=snakemake.log[0], filemode="w", level=logging.DEBUG)
-except Exception:
-    logging.basicConfig(level=logging.DEBUG)
-    logging.warning(
-        "No logging file was provided in Snakemake rule. "
-        "Logging will be written in standard output."
-    )
+logging.basicConfig(filename=snakemake.log[0], filemode="w", level=logging.DEBUG)
 
 
 # Prepare logging
@@ -50,6 +43,7 @@ extra_rsync = snakemake.params.get(
 use_cp_over_rsync = snakemake.params.get("use_cp_over_rsync", False)
 master_node = snakemake.params.get("master_node", "flamingo-lg-01")
 parallel = snakemake.params.get("internal_parallel", False)
+logging.info("Extra acquired")
 
 if ("-N" not in extra_iget) and snakemake.threads > 1:
     max_threads = snakemake.threads
@@ -72,6 +66,7 @@ if ("-N" not in extra_iget) and snakemake.threads > 1:
 cold_storage = ("/mnt/isilon", "/mnt/archivage", "/mnt/install")
 if "cold_storage" in snakemake.params.keys():
     cold_storage = snakemake.params["cold_storage"]
+logging.info("Mounting point qualified")
 
 
 def cat_files(dest: str, *src: str, log: str = log) -> None:
@@ -91,10 +86,12 @@ def bash_copy(
     use_cp: bool = use_cp_over_rsync,
 ) -> None:
     if not src.startswith(cold):
+        logging.info("Operation on cold storage")
         command = f"ln {extra_ln} {src} {dest} {log}"
         logging.info(command)
         shell(command)
     else:
+        logging.info("Operation on active storage")
         command = "cp" if use_cp else "rsync"
         extra = extra_cp if use_cp else extra_rsync
         command = f"{command} {extra} {src} {dest} {log}"
@@ -110,12 +107,15 @@ def iRODS_copy(src: str, dest: str, extra: str = extra_iget, log: str = log) -> 
 
 def copy(src: str, dest: str) -> None:
     if src.startswith("/odin/kdi/dataset/"):
+        logging.info("Using iRODS")
         iRODS_copy(src, dest)
     else:
+        logging.info("*Not* using iRODS")
         bash_copy(src, dest)
 
 
 def copy_then_concat(dest: str, *src: str) -> None:
+    logging.info("Performing conatenation")
     with TemporaryDirectory() as tmpdir:
         outfiles = []
         for path in src:
