@@ -18,13 +18,7 @@ rule rename_input_files_single:
 
 rule rename_input_files_paired:
     output:
-        temp(
-            expand(
-                "data_input/{sample}.{stream}.fastq.gz",
-                stream=["1", "2"],
-                allow_missing=True,
-            )
-        ),
+        temp("data_input/{sample}.{stream}.fastq.gz"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
