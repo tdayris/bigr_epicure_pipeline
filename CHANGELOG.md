@@ -2,12 +2,12 @@
 
 ## Features
 
-* Design without input file is not handled.
+* Design without input file is now handled.
 
 ## Fix
 
 * Expand not allowed in params, replaced by list
-* Bigr Launcher does not find Conda
+* Bigr Launcher now finds Conda
 
 
 # 0.12.0 – Quality Controls
