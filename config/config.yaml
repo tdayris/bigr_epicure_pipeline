@@ -44,21 +44,35 @@ steps:
   motives: true
 
 
-# Must be one of: `chip-seq`, `atac-seq`, `medip-seq`
+# Must be one of the following
 # Main differences:
 # * `chip-seq`:
+#    - Base pipeline
 #
 # * `atac-seq`: 
 #    - Read shifting is performed on aligned reads (on BAM files, after deduplication)
 #
 # * `cut&run` :
+#    - No deduplication
+#    - Seacr is used as a peak caller alongside with Macs2
 #
 # * `cut&tag` :
+#    - No deduplication
 #
 # * `medip-seq`:
 #    - CpG density calculation for peak-coverage normalization/merging/QC
 #
 # * `og-seq`:
+#   - Specific bias accounted in CSAW
+#
+# * `gro-seq`:
+#   - Specific bias accounted in CSAW
+#
+# * `ribo-seq`:
+#   - Specific bias accounted in coverage analysis
+#
+# * `mnase-seq`:
+#   - Specific bias accounted in coverage analysis
 #
 protocol: 'cutnrun'
 
@@ -78,7 +92,7 @@ design: config/design.tsv
 
 reference:
   # Data are from xenograft.
-  pdx: true
+  pdx: false
 
   # Ensembl organism name. eg. `homo_sapiens`.
   species: homo_sapiens
@@ -150,12 +164,6 @@ differential_peak_coverage:
     reference: WT  # Reference samples. WARNING: reference ≠ input. Reference = fold-change denominator.
     tested: Mut  # Tested samples, the fold-change numerator.
     formula: "~Condition"
-  # - model_name: Factor
-  #   reference: ReferenceFactorLevel
-  #   tested: TestedFactorLevel
-  # - model_name: OtherFactor
-  #   reference: ReferenceOtherFactorLevel
-  #   tested: TestedOtherFactorLevel
 
 # The following options involve trimming (fastp)
 # trimming:

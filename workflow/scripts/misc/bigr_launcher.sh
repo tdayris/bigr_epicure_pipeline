@@ -21,7 +21,7 @@ PROTOCOL="chip-seq"
 # Keep the pipeline version homogen
 # among multiple sequencing in a same
 # research project
-PIPELINE_VERSION="v0.11.0"
+PIPELINE_VERSION="v0.12.1"
 
 # Organism name: "homo_sapiens" or "mus_musculus"
 ORGANISM="homo_sapiens"

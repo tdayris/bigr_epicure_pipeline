@@ -7,6 +7,7 @@
 ## Fix
 
 * Expand not allowed in params, replaced by list
+* Bigr Launcher does not find Conda
 
 
 # 0.12.0 – Quality Controls
