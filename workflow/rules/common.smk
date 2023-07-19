@@ -600,14 +600,12 @@ def get_rename_input(
     """
     Return the list of Fastp input files
     """
-    rename_input: Dict[str, List[str]] = {
-        "sample": [design["Upstream_file"].loc[wildcards.sample]],
-    }
-    down: Optional[str] = is_paired(sample=wildcards.sample, design=design)
-    if down:
-        rename_input["sample"].append(down)
-
-    return rename_input
+    if "stream" in wildcards.keys():
+        if int(wildcards.stream) == 1:
+            return design["Upstream_file"].loc[wildcards.sample]
+        pair = is_paired(sample=wildcards.sample, design=design)
+        return pair
+    return design["Upstream_file"].loc[wildcards.sample]
 
 
 def get_fastp_input(
@@ -617,11 +615,10 @@ def get_fastp_input(
     Return the list of Fastp input files
     """
     if is_paired(sample=wildcards.sample, design=design):
-        return [
-            f"data_input/reads/{wildcards.sample}.{stream}.fastq.gz"
-            for stream in ["1", "2"]
-        ]
-    return [f"data_input/reads/{wildcards.sample}.fastq.gz"]
+        return {"sample": [
+            f"data_input/{wildcards.sample}.{stream}.fq.gz" for stream in ["1", "2"]
+        ]}
+    return {"sample": [f"data_input/{wildcards.sample}.fq.gz"]}
 
 
 def get_fastp_params(
