@@ -30,7 +30,7 @@ ORGANISM="homo_sapiens"
 LIBRARY="paired"
 
 ########################################
-##           DO NOT EDIT              ##
+##        DO NOT EDIT BELOW           ##
 ## Unless you know what you are doing ##
 ########################################
 
@@ -129,5 +129,5 @@ snakemake --snakefile 'workflow/Snakefile' \
           --profile '/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/profiles/slurm-web/' \
           --cache \
           --rerun-incomplete \
-          --nt
+          --nt "$@"
           
