@@ -72,7 +72,28 @@ base::saveRDS(
     file = snakemake@output[["rds"]]
 )
 base::print(counts$totals)
-base::message("RDS saved, process over")
+base::message("RDS saved")
+
+if ("ranges" %in% base::names(snakemake@output)) {
+    if (base::endsWith(x = snakemake@output[["ranges"]], suffix = ".RDS")) {
+        base::saveRDS(
+            object = rowRanges(x = counts),
+            file = snakemake@output[["ranges"]]
+        )
+    } else {
+        utils::write.table(
+            x = base::as.data.frame(rowRanges(x = counts)),
+            file = snakemake@output[["ranges"]],
+            sep = "\t",
+            col.names = TRUE,
+            row.names = TRUE
+        )
+    }
+}
+
+base::messages("Total number of ranges counted: ")
+base::print(data$totals)
+base::message("Process over.")
 
 
 # Proper syntax to close the connection for the log file
