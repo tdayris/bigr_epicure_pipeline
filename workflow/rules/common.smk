@@ -837,7 +837,7 @@ def get_fastq_screen_input(
 
 
 def get_samtools_stats_input(
-    wildcards: snakemake.io.Wildcards, protocol: str = protocol
+    wildcards: snakemake.io.Wildcards, protocol: str = protocol, config: Dict[str, Any] = config
 ) -> Dict[str, str]:
     """
     Return expected input files for Samtools stats
@@ -845,10 +845,15 @@ def get_samtools_stats_input(
 
     bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
 
-    return {
+    samtools_stats_input: Dict[str, str] = {
         "bam": f"{bam_prefix}/{wildcards.sample}.bam",
         "bai": f"{bam_prefix}/{wildcards.sample}.bam.bai",
     }
+    roi_bed: str = config.get("reference", {}).get("roi_bed")
+    if roi_bed:
+        samtools_stats_input["bed"] = roi_bed
+
+    return samtools_stats_input
 
 
 def get_sambamba_markdup_params(
