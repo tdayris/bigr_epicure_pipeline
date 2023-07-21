@@ -1,5 +1,9 @@
 # 0.12.2 – Fixes
 
+## Features
+
+* CSaw count QC logged
+
 ## Fix
 
 * Samtools stats regions
