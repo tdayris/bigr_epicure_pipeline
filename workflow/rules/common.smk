@@ -194,6 +194,26 @@ if not bowtie2_index_path:
     )
 
 
+xenome_index: List[str] = config.get("reference", {}).get("xenome_index")
+if not xenome_index:
+    logging.info(
+        "Missing Xenome index path in the file `config.yaml`. "
+        "A new one will be created."
+    )
+    xenome_index = multiext(
+        "xenome/index/pdx-both",
+        ".header",
+        ".kmers-d0",
+        ".kmers-d1",
+        ".kmers.header",
+        ".kmers.high-bits",
+        ".kmers.low-bits.lwr",
+        ".kmers.low-bits.upr",
+        ".lhs-bits",
+        ".rhs-bits",
+    )
+
+
 # Genome blacklisted regions
 blacklist_path: str = config.get("reference", {}).get("blacklist")
 if not blacklist_path:
@@ -615,9 +635,11 @@ def get_fastp_input(
     Return the list of Fastp input files
     """
     if is_paired(sample=wildcards.sample, design=design):
-        return {"sample": [
-            f"data_input/{wildcards.sample}.{stream}.fq.gz" for stream in ["1", "2"]
-        ]}
+        return {
+            "sample": [
+                f"data_input/{wildcards.sample}.{stream}.fq.gz" for stream in ["1", "2"]
+            ]
+        }
     return {"sample": [f"data_input/{wildcards.sample}.fq.gz"]}
 
 
@@ -708,24 +730,15 @@ def get_xenome_index_input(
 
 
 def get_xenome_classify_input(
-    wildcards: snakemake.io.Wildcards, design: pandas.DataFrame = design
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    xenome_index: List[str] = xenome_index,
 ) -> Dict[str, Union[str, List[str]]]:
     """
     Return best input files for xenome classify
     """
     xenome_classify_input: Dict[str, Union[str, List[str]]] = {
-        "index": multiext(
-            "xenome/index/pdx-both",
-            ".header",
-            ".kmers-d0",
-            ".kmers-d1",
-            ".kmers.header",
-            ".kmers.high-bits",
-            ".kmers.low-bits.lwr",
-            ".kmers.low-bits.upr",
-            ".lhs-bits",
-            ".rhs-bits",
-        ),
+        "index": xenome_index,
     }
 
     pair = is_paired(sample=wildcards.sample, design=design)
@@ -837,7 +850,9 @@ def get_fastq_screen_input(
 
 
 def get_samtools_stats_input(
-    wildcards: snakemake.io.Wildcards, protocol: str = protocol, config: Dict[str, Any] = config
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+    config: Dict[str, Any] = config,
 ) -> Dict[str, str]:
     """
     Return expected input files for Samtools stats

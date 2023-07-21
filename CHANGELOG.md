@@ -3,6 +3,7 @@
 ## Features
 
 * CSaw count QC logged
+* Xenome index passing allowed
 
 ## Fix
 

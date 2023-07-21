@@ -92,7 +92,7 @@ design: config/design.tsv
 
 reference:
   # Data are from xenograft.
-  pdx: false
+  pdx: true
 
   # Ensembl organism name. eg. `homo_sapiens`.
   species: homo_sapiens
@@ -138,6 +138,11 @@ reference:
   # WARNING: The rest of the genome will be ignored if this
   #          option is enabled.
   # roi_bed: /path/to/intervals.bed
+
+  # Path to Xenome indexed genomes
+  # A missing index directory will be re-computed.
+  # xenome_index: 
+  #  - /path/to/index/files
 
 
 # Macs2 peak caller parameters

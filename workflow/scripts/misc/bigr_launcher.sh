@@ -45,8 +45,8 @@ conda shell.bash activate "/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/s
 export SNAKEMAKE_OUTPUT_CACHE="/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/snakemake_cache/"
 
 # Building IO architecture
-mkdir --parent --verbose logs/slurm tmp data_{output,input} reference/blacklist
-cd tmp || exit 1
+mkdir --parent --verbose logs/slurm tmp data_{output,input} reference/{blacklist,xenome/index}
+# cd tmp || exit 1
 
 # Deploy workflow
 if [ ! -f "workflow/Snakefile" ]; then
@@ -99,6 +99,13 @@ if [ "${ORGANISM}" == "homo_sapiens" ]; then
     ln --symbolic --force --relative --verbose \
         "/mnt/beegfs/database/bioinfo/Index_DB/blacklist/hg38.blacklist.merged.bed" \
         "reference/blacklist/homo_sapiens.GRCh38.merged.109.bed.gz"
+
+    find "/mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/" -type f | while read FILE; do
+        FILE_NAME=$(basename "${FILE/GRCh38_GRCm38_r99_DNA/pdx-both}")
+        ln --symbolic --force --relative --verbose \
+            "${FILE}" \
+            "${FILE_NAME}"
+    done
 
 elif [ "${ORGANISM}" == "mus_musculus" ]; then
     echo "Mouse references not yet available"
