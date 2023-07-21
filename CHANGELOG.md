@@ -1,3 +1,9 @@
+# 0.12.2 – Fixes
+
+## Fix
+
+* Samtools stats regions
+
 # 0.12.1 – No input
 
 ## Features
