@@ -3,7 +3,7 @@ rule xenome_index:
         unpack(get_xenome_index_input),
     output:
         multiext(
-            "xenome/index/pdx-both",
+            "reference/xenome/index/pdx-both",
             ".header",
             ".kmers-d0",
             ".kmers-d1",

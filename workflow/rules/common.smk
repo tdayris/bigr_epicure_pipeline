@@ -201,7 +201,7 @@ if not xenome_index:
         "A new one will be created."
     )
     xenome_index = multiext(
-        "xenome/index/pdx-both",
+        "reference/xenome/index/pdx-both",
         ".header",
         ".kmers-d0",
         ".kmers-d1",
