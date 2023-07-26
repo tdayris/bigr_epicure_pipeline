@@ -69,6 +69,7 @@ include: "rules/multiqc/multiqc_coverage.smk"
 # Motifs
 include: "rules/motif/homer_find_motifs_genome.smk"
 include: "rules/annotation/homer_annotate_peaks.smk"
+include: "rules/footprints/plot_footprints.smk"
 
 
 

@@ -1,3 +1,9 @@
+# 0.13.0 – FingerPrints
+
+## Features
+
+* New Fingerprint motifs plot
+
 # 0.12.2 – Fixes
 
 ## Features

@@ -336,6 +336,8 @@ if seacr_params.get("stringent", False):
 
 peak_type_and_mode_list: List[str] = peaktype_list + seacr_mode_list
 
+motifs_list: Optional[List[str]] = config.get("finger_prints", {}).get("motifs")
+
 command_list: List[str] = ["reference-point"]  # ["scale-region", "reference-point"]
 
 
