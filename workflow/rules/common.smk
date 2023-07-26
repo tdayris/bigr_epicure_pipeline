@@ -1983,4 +1983,11 @@ def targets(
             sample=get_tested_sample_list(design=design),
         )
 
+        if (motifs_list != None) and (len(motifs_list) > 0):
+            expected_targets["motifs_fingerprints"] = expand(
+                "data_output/Motifs/Fingerprints/{target}/{target}.{motif}.png",
+                target=sample_list + get_model_names(config),
+                motif=motifs_list,
+            )
+
     return expected_targets
