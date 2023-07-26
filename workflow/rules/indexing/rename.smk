@@ -24,8 +24,6 @@ rule rename_input_files_paired:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
-    message:
-        "output: {output}, params: {params.input}, wildcards: {wildcards.sample}, {wildcards.stream}"
     log:
         "logs/rename_concat/{sample}.{stream}.log",
     params:
