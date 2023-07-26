@@ -8,6 +8,7 @@
 ## Fix
 
 * Samtools stats regions
+* Renaming scheme fixed
 
 # 0.12.1 – No input
 
