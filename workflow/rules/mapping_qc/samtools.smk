@@ -10,7 +10,6 @@ rule samtools_stats:
         tmpdir=tmp,
     params:
         extra="",
-        # region="",
     log:
         "logs/samtools/stats/{sample}.{step}.log",
     wrapper:

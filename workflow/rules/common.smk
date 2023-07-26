@@ -1,31 +1,48 @@
+# Used for faster/easier iterations in python
 import itertools
+# Used to define logging behavior
 import logging
+# Used to check OS environment
 import os
+# Used to deal with (large) tables
 import pandas
+# Main pipeline handler
 import snakemake
+# Display non-blocking warnings
 import warnings
 
+# Validate user IO
 from snakemake.utils import validate
+
+# Type hinting for future devs
 from typing import Any, Dict, List, Optional, Tuple, Union
+
+
+##########################
+### Load configuration ###
+##########################
+
+# Load config if and only if user did not provide any
+if config == {}:
+
+    configfile: "config/config.yaml"
+
+# Check config required fields, and variable types
+validate(config, schema="../schemas/config.schema.yaml")
 
 
 #########################
 ### Logging behaviour ###
 #########################
-if config == {}:
-
-    configfile: "config/config.yaml"
-
 
 logging.basicConfig(filename="epicure_pipeline.log", filemode="w", level=logging.DEBUG)
-validate(config, schema="../schemas/config.schema.yaml")
 
 
 ########################
 ### Load design file ###
 ########################
 
-
+# Load design
 design_path: str = config.get("designs", "config/design.tsv")
 design: pandas.DataFrame = pandas.read_csv(
     filepath_or_buffer=design_path,
@@ -33,6 +50,8 @@ design: pandas.DataFrame = pandas.read_csv(
     header=0,
     index_col=0,
 )
+
+# Check design required fields, and variable types
 validate(design, schema="../schemas/design.schema.yaml")
 
 
@@ -40,7 +59,7 @@ validate(design, schema="../schemas/design.schema.yaml")
 ### Main Snakemake variables ###
 ################################
 
-
+# Main report content
 report: "../report/workflow.rst"
 
 
@@ -70,6 +89,7 @@ canonical_chromosomes += [f"chr{chrom}" for chrom in canonical_chromosomes]
 
 
 # Protocol. It can be either : `chip-seq`, `atac-seq`, `cut&run`, `cut&tag`, or `medip-seq`
+# Protocol is converted to lower case here. No need to do it later.
 protocol: str = config.get("protocol", "chip-seq").lower().replace(" ", "")
 
 
@@ -194,6 +214,7 @@ if not bowtie2_index_path:
     )
 
 
+# Xenome genomes index with host = mouse, and target = human
 xenome_index: List[str] = config.get("reference", {}).get("xenome_index")
 if not xenome_index:
     logging.info(
@@ -287,6 +308,7 @@ if not effective_genome_size:
     )
 
 
+# FastQ-Screen indexes
 default_fastq_screen_genomes: List[str] = [
     "Adapters/",
     "Arabidopsis/",
@@ -304,6 +326,7 @@ default_fastq_screen_genomes: List[str] = [
     "rRNA/",
 ]
 
+# List of expected ChipSeeker plots
 chipseeker_plot_list: List[str] = [
     "UpsetVenn",
     "Feature_Distribution",
@@ -312,8 +335,10 @@ chipseeker_plot_list: List[str] = [
     "Gene_Body_Coverage",
 ]
 
+# List of expected deeptools plots
 deeptools_plot_type: List[str] = ["heatmap", "scatterplot"]
 
+# List of expected peaks with Macs2
 peaktype_list: List[str] = []
 macs2_params = config.get("macs2", {})
 if macs2_params is None:
@@ -323,6 +348,7 @@ if macs2_params.get("broad", False):
 if macs2_params.get("narrow", False):
     peaktype_list.append("narrow")
 
+# List of expected peaks with Seacr
 seacr_mode_list: List[str] = []
 seacr_params = config.get("seacr", {})
 if (seacr_params is None) and (
@@ -334,10 +360,13 @@ if seacr_params.get("relaxed", False):
 if seacr_params.get("stringent", False):
     seacr_mode_list.append("stringent")
 
+# List of expected peaks with ALL peak-callers
 peak_type_and_mode_list: List[str] = peaktype_list + seacr_mode_list
 
+# Optional expected list of motifs to plot
 motifs_list: Optional[List[str]] = config.get("finger_prints", {}).get("motifs")
 
+# List of deeptools transformations to do
 command_list: List[str] = ["reference-point"]  # ["scale-region", "reference-point"]
 
 
@@ -773,6 +802,19 @@ def get_sambamba_quality_filter_params(
         extra += " --filter 'mapping_quality >= 30' "
 
     return extra
+
+
+def get_sambamba_merge_per_factors_level_input_input(
+    wildcards: snakemake.io.Wildcards,
+    design: pandas.DataFrame = design,
+    protocol: str = protocol,
+) -> List[str]:
+    """
+    Return correct list of bam file to concat
+    """
+    samples: List[str] = get_samples_per_level(wildcards=wildcards, design=design)
+    bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+    return expand("{prefix}/{sample}.bam", sample=samples, prefix=[bam_prefix])
 
 
 def get_bowtie2_align_input(
@@ -1835,9 +1877,7 @@ def get_plot_footprints_input(
             "bam": f"{bam_prefix}/{wildcards.model_name}.bam",
             "bai": f"{bam_prefix}/{wildcards.model_name}.bam.bai",
         }
-    raise ValueError(
-        "Could not find correct bam to return to FootPrints"
-    )
+    raise ValueError("Could not find correct bam to return to FootPrints")
 
 
 #############################
@@ -1986,7 +2026,7 @@ def targets(
         if (motifs_list != None) and (len(motifs_list) > 0):
             expected_targets["motifs_fingerprints"] = expand(
                 "data_output/Motifs/Fingerprints/{target}/{target}.{motif}.png",
-                target=sample_list + get_model_names(config),
+                target=get_tested_sample_list(design=design) + get_model_names(config),
                 motif=motifs_list,
             )
 

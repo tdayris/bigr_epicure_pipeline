@@ -12,7 +12,7 @@ rule plot_footprints_sample:
         runtime=lambda wildcards, attempt: attempt * 60 * 2,
         tmpdir=tmp,
     log:
-        "logs/plot_footprints/{sample}.log"
+        "logs/plot_footprints/{sample}.{motif}.log",
     params:
         name="{sample}",
         motif="{motif}",
@@ -36,7 +36,7 @@ rule plot_footprints_condition:
         runtime=lambda wildcards, attempt: attempt * 60 * 2,
         tmpdir=tmp,
     log:
-        "logs/plot_footprints/{model_name}.log"
+        "logs/plot_footprints/{model_name}.{motif}.log",
     params:
         name="{model_name}",
         motif="{motif}",

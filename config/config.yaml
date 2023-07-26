@@ -183,3 +183,9 @@ differential_peak_coverage:
 # mapping:
 #   deeptools:
 #     alignment_sieve_extra: --shift -200 -200
+
+
+# The following options involve motifs over signal
+finger_prints:
+  motifs:
+    - CTCF
