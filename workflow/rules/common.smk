@@ -1817,6 +1817,29 @@ def get_homer_annotatepeaks_input(
     }
 
 
+def get_plot_footprints_input(
+    wildcards: snakemake.io.Wildcards,
+    protocol: str = protocol,
+) -> Dict[str, str]:
+    """
+    Return required input files for ATACSeqQC
+    """
+    bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+    if "sample" in wildcards.keys():
+        return {
+            "bam": f"{bam_prefix}/{wildcards.sample}.bam",
+            "bai": f"{bam_prefix}/{wildcards.sample}.bam.bai",
+        }
+    elif "model_name" in wildcards.keys():
+        return {
+            "bam": f"{bam_prefix}/{wildcards.model_name}.bam",
+            "bai": f"{bam_prefix}/{wildcards.model_name}.bam.bai",
+        }
+    raise ValueError(
+        "Could not find correct bam to return to FootPrints"
+    )
+
+
 #############################
 ### Wildcards constraints ###
 #############################
