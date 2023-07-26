@@ -1,4 +1,4 @@
-Sample_id	Upstream_file	flag	Condition	Input	Fragment_size
+Sample_id	Upstream_file	Downstream_file	Condition	Input	Fragment_size
 S1	S1.R1.fq.gz	S1.R2.fq.gz	WT	I1	200
 S2	S2.R1.fq.gz	S2.R2.fq.gz	WT	I1	200
 I1	I1.R1.fq.gz	I1.R2.fq.gz			200
