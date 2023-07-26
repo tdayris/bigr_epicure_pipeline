@@ -133,9 +133,11 @@ def copy_or_concat(src: str, dest: str) -> None:
 
 
 output_directory = op.realpath(op.dirname(snakemake.output[0]))
-
+logging.debug(output_directory)
 sources = snakemake.params.get("input", snakemake.input)
+logging.debug(source)
 destinations = snakemake.output
+logging.debug(destination)
 
 if len(destinations) == 1:
     # Then there is only one directory as a destination
