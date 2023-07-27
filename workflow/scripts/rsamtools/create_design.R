@@ -44,7 +44,11 @@ for (i in base::seq_along(design$BamPath)) {
     )
     marked <- Rsamtools::countBam(bam, param = params)$records
 
-    diagnostics[[b]] <- c(Total = total, Mapped = mapped, Marked = marked)
+    diagnostics[[b]] <- c(
+        Total = total_reads, 
+        Mapped = tota_mapped, 
+        Marked = marked
+    )
 }
 
 diag_stats <- base::data.frame(base::do.call(rbind, diagnostics))
