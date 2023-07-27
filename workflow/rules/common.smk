@@ -1,13 +1,18 @@
 # Used for faster/easier iterations in python
 import itertools
+
 # Used to define logging behavior
 import logging
+
 # Used to check OS environment
 import os
+
 # Used to deal with (large) tables
 import pandas
+
 # Main pipeline handler
 import snakemake
+
 # Display non-blocking warnings
 import warnings
 
@@ -26,6 +31,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 if config == {}:
 
     configfile: "config/config.yaml"
+
 
 # Check config required fields, and variable types
 validate(config, schema="../schemas/config.schema.yaml")
@@ -58,6 +64,7 @@ validate(design, schema="../schemas/design.schema.yaml")
 ################################
 ### Main Snakemake variables ###
 ################################
+
 
 # Main report content
 report: "../report/workflow.rst"
