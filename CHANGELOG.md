@@ -3,6 +3,7 @@
 ## Fix
 
 * Fix Xenome missing output file issue
+* NameError fixed in RSamtools
 
 # 0.13.0 – FingerPrints
 
