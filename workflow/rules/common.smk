@@ -1879,10 +1879,10 @@ def get_plot_footprints_input(
             "bam": f"{bam_prefix}/{wildcards.sample}.bam",
             "bai": f"{bam_prefix}/{wildcards.sample}.bam.bai",
         }
-    elif "model_name" in wildcards.keys():
+    elif "factor_level" in wildcards.keys():
         return {
-            "bam": f"{bam_prefix}/{wildcards.model_name}.bam",
-            "bai": f"{bam_prefix}/{wildcards.model_name}.bam.bai",
+            "bam": f"{bam_prefix}/{wildcards.factor_level}.bam",
+            "bai": f"{bam_prefix}/{wildcards.factor_level}.bam.bai",
         }
     raise ValueError("Could not find correct bam to return to FootPrints")
 
@@ -2033,7 +2033,7 @@ def targets(
         if (motifs_list != None) and (len(motifs_list) > 0):
             expected_targets["motifs_fingerprints"] = expand(
                 "data_output/Motifs/Fingerprints/{target}/{target}.{motif}.png",
-                target=get_tested_sample_list(design=design) + get_model_names(config),
+                target=get_tested_sample_list(design=design) + factor_level_list,
                 motif=motifs_list,
             )
 

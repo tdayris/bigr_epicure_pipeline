@@ -26,19 +26,19 @@ rule plot_footprints_condition:
     input:
         unpack(get_plot_footprints_input),
     output:
-        png="data_output/Motifs/Fingerprints/{model_name}/{model_name}.{motif}.png",
-        bam=temp("fingerprints/{model_name}.{motif}.bam"),
-        bai=temp("fingerprints/{model_name}.{motif}.bam.bai"),
-        rda=temp("fingerprints/{model_name}.{motif}.RData"),
+        png="data_output/Motifs/Fingerprints/{factor_level}/{factor_level}.{motif}.png",
+        bam=temp("fingerprints/{factor_level}.{motif}.bam"),
+        bai=temp("fingerprints/{factor_level}.{motif}.bam.bai"),
+        rda=temp("fingerprints/{factor_level}.{motif}.RData"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 30,
         runtime=lambda wildcards, attempt: attempt * 60 * 2,
         tmpdir=tmp,
     log:
-        "logs/plot_footprints/{model_name}.{motif}.log",
+        "logs/plot_footprints/{factor_level}.{motif}.log",
     params:
-        name="{model_name}",
+        name="{factor_level}",
         motif="{motif}",
     conda:
         "../../envs/factorfootprints.yaml"
