@@ -20,7 +20,7 @@ rule xenome_classify_pairs:
         tool="logs/xenome/classify/{sample}.pairs.internal.log",
     params:
         extra=" --verbose --pairs ",
-        out_prefix=lambda wildcards, output: output[0][: -len("ambiguous_1.fastq")],
+        out_prefix=lambda wildcards, output: output[0][: -len("_ambiguous_1.fastq")],
         idx_prefix=lambda wildcards, input: input.index[0].split("-")[0],
     envmodules:
         "xenome/1.0.0_patched",
@@ -57,7 +57,7 @@ rule xenome_classify_single:
         tool="logs/xenome/classify/{sample}.pairs.internal.log",
     params:
         extra=" --verbose --pairs ",
-        out_prefix=lambda wildcards, output: output[0][: -len("ambiguous.fastq")],
+        out_prefix=lambda wildcards, output: output[0][: -len("_ambiguous.fastq")],
         idx_prefix=lambda wildcards, input: "-".split(input.index[0])[0],
     envmodules:
         "xenome/1.0.0_patched",

@@ -1,3 +1,9 @@
+# 0.13.1 – Fixes
+
+## Fix
+
+* Fix Xenome missing output file issue
+
 # 0.13.0 – FingerPrints
 
 ## Features
