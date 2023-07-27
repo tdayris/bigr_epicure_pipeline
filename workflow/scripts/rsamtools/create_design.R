@@ -18,7 +18,7 @@ base::message("BamFiles loaded")
 
 design <- utils::read.table(
     file = base::as.character(x = snakemake@input[["design"]]),
-    header = True,
+    header = TRUE,
     sep = "\t",
     stringsAsFactors = FALSE
 )
