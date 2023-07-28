@@ -51,6 +51,7 @@ for (i in base::seq_along(design$BamPath)) {
     )
 }
 
+base::print(diagnostics)
 diag_stats <- base::data.frame(base::do.call(rbind, diagnostics))
 base::rownames(diag_stats) <- design$Sample_id
 
