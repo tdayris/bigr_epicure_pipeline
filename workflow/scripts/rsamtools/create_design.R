@@ -55,8 +55,9 @@ base::print(diagnostics)
 diag_stats <- base::data.frame(base::do.call(rbind, diagnostics))
 base::rownames(diag_stats) <- design$Sample_id
 
-diag_stats$Prop.mapped <- (diag_stats$Mapped / diag_stats$Total) * 100
-diag_stats$Prop.marked <- (diag_stats$Marked / diag_stats$Mapped) * 100
+
+diag_stats$Prop.mapped <- (as.numeric(x = diag_stats[["Mapped.records"]]) / as.numeric(x = diag_stats[["Total"]])) * 100
+diag_stats$Prop.marked <- (as.numeric(x = diag_stats[["Marked"]]) / as.numeric(x = diag_stats[["Mapped.records"]])) * 100
 base::message("Quality controls performed")
 
 # Saving results
