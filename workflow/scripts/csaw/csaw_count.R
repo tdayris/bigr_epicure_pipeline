@@ -39,7 +39,7 @@ read_params <- base::readRDS(
 )
 base::message("Input data loaded")
 
-extra <- "bam.files = design$BamPath, param = read_params, ext=frag.len"
+extra <- "bam.files = design$BamPath, param = read_params, ext=frag_length"
 if ("extra" %in% base::names(x = snakemake@params)) {
     extra <- base::paste(
         extra,
@@ -91,8 +91,8 @@ if ("ranges" %in% base::names(snakemake@output)) {
     }
 }
 
-base::messages("Total number of ranges counted: ")
-base::print(data$totals)
+# base::message("Total number of ranges counted: ")
+# base::print(counts$totals)
 base::message("Process over.")
 
 

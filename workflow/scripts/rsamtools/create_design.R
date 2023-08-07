@@ -60,10 +60,16 @@ diag_stats$Prop.mapped <- (as.numeric(x = diag_stats[["Mapped.records"]]) / as.n
 diag_stats$Prop.marked <- (as.numeric(x = diag_stats[["Marked"]]) / as.numeric(x = diag_stats[["Mapped.records"]])) * 100
 base::message("Quality controls performed")
 
+# diag_stats <- data.frame(t(sapply(diag_stats, c)))
+diag_stats <- data.frame(lapply(diag_stats, as.character), stringsAsFactors=FALSE)
+qc_path <- base::as.character(x = snakemake@output[['qc']])
+print(diag_stats)
+print(qc_path)
+print(str(diag_stats))
 # Saving results
 utils::write.table(
     x = diag_stats,
-    file = base::as.character(x = snakemake@output[["qc"]]),
+    file = qc_path,
     sep = "\t",
     row.names = TRUE,
     col.names = TRUE

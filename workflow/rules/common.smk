@@ -1483,7 +1483,7 @@ def get_csaw_count_input(
         "bais": [f"{bam_prefix}/{sample}.bam.bai" for sample in sample_list],
         "read_params": f"csaw/readparam.{library}.RDS",
         "design": "rsamtools/design.RDS",
-        "fragment_length": "csaw/fragment_length.RDS",
+        "fragment_length": f"csaw/fragment_length/{library}.RDS",
     }
 
 
