@@ -13,7 +13,7 @@ dependencies:
   - bioconductor-rsamtools =2.16.0
   - bioconductor-csaw =1.34.0
   - r-ggplot2 =3.4.2
-  - r-dplyr =2.3.3
+  - r-dplyr =1.1.2
   - bioconductor-chippeakanno =3.34.1
   - bioconductor-phastcons100way.ucsc.hg38 =3.7.1
   - r-cairo =1.6_0
