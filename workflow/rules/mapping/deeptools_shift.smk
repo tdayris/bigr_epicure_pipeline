@@ -54,7 +54,7 @@ rule sambamba_index_deeptools_alignment_sieve:
         f"{snakemake_wrappers_version}/bio/sambamba/index"
 
 
-rule deeptools_alignment_sieve:
+rule deeptools_alignment_sieve_per_factor:
     input:
         aln="sambamba/markdup/{factor_level}.bam",
         aln_idx="sambamba/markdup/{factor_level}.bam.bai",
@@ -74,7 +74,7 @@ rule deeptools_alignment_sieve:
         "master/bio/deeptools/alignmentsieve"
 
 
-rule sort_deeptools_alignment_sieve:
+rule sort_deeptools_alignment_sieve_per_factor:
     input:
         "deeptools/alignment_sieve/{factor_level}.bam",
     output:
@@ -92,7 +92,7 @@ rule sort_deeptools_alignment_sieve:
         f"{snakemake_wrappers_version}/bio/sambamba/sort"
 
 
-rule sambamba_index_deeptools_alignment_sieve:
+rule sambamba_index_deeptools_alignment_sieve_per_factor:
     input:
         "deeptools/sorted_sieve/{factor_level}.bam",
     output:
