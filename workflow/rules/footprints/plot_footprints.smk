@@ -3,9 +3,10 @@ rule plot_footprints_sample:
         unpack(get_plot_footprints_input),
     output:
         png="data_output/Motifs/Fingerprints/{sample}/{sample}.{motif}.png",
-        bam=temp("fingerprints/{sample}.{motif}.bam"),
-        bai=temp("fingerprints/{sample}.{motif}.bam.bai"),
+        #bam=temp("fingerprints/{sample}.{motif}.bam"),
+        #bai=temp("fingerprints/{sample}.{motif}.bam.bai"),
         rda=temp("fingerprints/{sample}.{motif}.RData"),
+        shifted=temp("fingerprints/{sample}.{motif}.bam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 30,
@@ -27,9 +28,10 @@ rule plot_footprints_condition:
         unpack(get_plot_footprints_input),
     output:
         png="data_output/Motifs/Fingerprints/{factor_level}/{factor_level}.{motif}.png",
-        bam=temp("fingerprints/{factor_level}.{motif}.bam"),
-        bai=temp("fingerprints/{factor_level}.{motif}.bam.bai"),
+        #bam=temp("fingerprints/{factor_level}.{motif}.bam"),
+        #bai=temp("fingerprints/{factor_level}.{motif}.bam.bai"),
         rda=temp("fingerprints/{factor_level}.{motif}.RData"),
+        shifted=temp("fingerprints/{factor_level}.{motif}.bam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 30,
