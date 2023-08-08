@@ -820,7 +820,8 @@ def get_sambamba_merge_per_factors_level_input_input(
     Return correct list of bam file to concat
     """
     samples: List[str] = get_samples_per_level(wildcards=wildcards, design=design)
-    bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+    # bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+    bam_prefix: str = "sambamba/markdup"
     return expand("{prefix}/{sample}.bam", sample=samples, prefix=[bam_prefix])
 
 
