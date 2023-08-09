@@ -229,7 +229,7 @@ rule sambamba_view_unzip_bam_factor:
     input:
         "sambamba/markdup/{factor_level}.bam",
     output:
-        temp("sambamba/markdup/{factor_level}.content.txt"),
+        temp("sambamba/markdup/{factor_level}.content.sam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
@@ -271,7 +271,7 @@ rule perl_edit_read_sequences_per_factor:
     input:
         "sambamba/markdup/{factor_level}.content.sam",
     output:
-        temp("sambamba/markdup/{factor_level}.ucsc.sam"),
+        temp("sambamba/markdup/{factor_level}.ucsc.txt"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
