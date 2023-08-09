@@ -533,7 +533,7 @@ def get_sample_list_from_model_name(
     if len(sample_list) == 0:
         raise ValueError(f"No sample found in comparison: {model_name}")
 
-    if str(signal).lower() == "input":
+    if "input" in str(signal).lower():
         if any(has_input(sample=sample, design=design) for sample in sample_list):
             sample_list = get_input_per_level(
                 wildcards=snakemake.io.Wildcards(fromdict={"level": level_dict["ref"]}),

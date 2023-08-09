@@ -119,7 +119,7 @@ if (filter_method == "average_log_cpm") {
 
     filter_stat <- csaw::filterWindowsLocal(
         data = counts,
-        background = neighbor
+        background = maxed
     )
 
     keep <- filter_stat$filter > log2(log_threshold)
