@@ -1,8 +1,8 @@
 rule sambamba_view_unzip_bam_header:
     input:
-        "sambamba/markdup/{sample}.bam"
+        "sambamba/markdup/{sample}.bam",
     output:
-        temp("sambamba/markdup/{sample}.header")
+        temp("sambamba/markdup/{sample}.header"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
@@ -20,9 +20,9 @@ rule sambamba_view_unzip_bam_header:
 
 rule sed_edit_header_sequences:
     input:
-        "sambamba/markdup/{sample}.header"
+        "sambamba/markdup/{sample}.header",
     output:
-        temp("sambamba/markdup/{sample}.sq.sam")
+        temp("sambamba/markdup/{sample}.sq.sam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
@@ -31,9 +31,9 @@ rule sed_edit_header_sequences:
     group:
         "reheader_as_ucsc"
     log:
-        "logs/sed/header/{sample}.log"
+        "logs/sed/header/{sample}.log",
     params:
-        "'s/SN:/SN:chr/g'"
+        "'s/SN:/SN:chr/g'",
     conda:
         "../../envs/bash.yaml"
     shell:
@@ -42,9 +42,9 @@ rule sed_edit_header_sequences:
 
 rule sambamba_view_unzip_bam:
     input:
-        "sambamba/markdup/{sample}.bam"
+        "sambamba/markdup/{sample}.bam",
     output:
-        temp("sambamba/markdup/{sample}.content.sam")
+        temp("sambamba/markdup/{sample}.content.sam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
@@ -62,16 +62,16 @@ rule sambamba_view_unzip_bam:
 
 rule perl_edit_read_sequences:
     input:
-        "sambamba/markdup/{sample}.content.sam"
+        "sambamba/markdup/{sample}.content.sam",
     output:
-        temp("sambamba/markdup/{sample}.ucsc.sam")
+        temp("sambamba/markdup/{sample}.ucsc.sam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
         runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir=tmp,
     log:
-        "logs/sequences/{sample}.log"
+        "logs/sequences/{sample}.log",
     params:
         awk=workflow.source_path("../../scripts/formatter/ensembl_to_ucsc.awk"),
     group:
@@ -91,18 +91,19 @@ rule cat_sam_file:
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
-        runtime= lambda wildcards, attempt: attempt * 35,
+        runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir=tmp,
     log:
-        "logs/cat/ucsc/{sample}.log"
+        "logs/cat/ucsc/{sample}.log",
     params:
-        extra=""
+        extra="",
     conda:
         "../../envs/bash.yaml"
     group:
         "compress_ucsc"
     shell:
         "cat {params.extra} {input.header} {input.reads} > {output} 2> {log}"
+
 
 rule sambamba_zip_sam:
     input:
@@ -112,22 +113,23 @@ rule sambamba_zip_sam:
     threads: 10
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
-        runtime=lambda wildcards, attempt: attempt * 35,    
+        runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir=tmp,
     group:
         "compress_ucsc"
     log:
-        "logs/sambamba/ucsc/{sample}.zip.log"
+        "logs/sambamba/ucsc/{sample}.zip.log",
     params:
-        extra="--format bam --with-header"
+        extra="--format bam --with-header",
     wrapper:
         "v2.0.0/bio/sambamba/view"
 
+
 rule sambamba_sort_ucsc:
     input:
-        "sambamba/ucsc/{sample}.unsorted.bam"
+        "sambamba/ucsc/{sample}.unsorted.bam",
     output:
-        "sambamba/ucsc/{sample}.bam"
+        "sambamba/ucsc/{sample}.bam",
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 20 * 1024,
@@ -139,18 +141,20 @@ rule sambamba_sort_ucsc:
         extra=lambda wildcards, resources: f"--memory-limit {resources.mem_mb - 1024}MiB",
     wrapper:
         f"{snakemake_wrappers_version}/bio/sambamba/sort"
+
+
 rule sambamba_index_ucsc:
     input:
-        "sambamba/ucsc/{sample}.bam"
+        "sambamba/ucsc/{sample}.bam",
     output:
-        "sambamba/ucsc/{sample}.bam.bai"
+        "sambamba/ucsc/{sample}.bam.bai",
     threads: 10
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
         runtime=lambda wildcards, attempt: attempt * 25,
         tmpdir=tmp,
     log:
-        "logs/sambamba/ucsc/{sample}.index.log"
+        "logs/sambamba/ucsc/{sample}.index.log",
     params:
         extra="",
     wrapper:
@@ -159,9 +163,9 @@ rule sambamba_index_ucsc:
 
 rule sambamba_view_unzip_bam_headerfactor:
     input:
-        "sambamba/markdup/{factor_level}.bam"
+        "sambamba/markdup/{factor_level}.bam",
     output:
-        temp("sambamba/markdup/{factor_level}.header")
+        temp("sambamba/markdup/{factor_level}.header"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
@@ -179,9 +183,9 @@ rule sambamba_view_unzip_bam_headerfactor:
 
 rule sed_edit_header_sequences_factor_level:
     input:
-        "sambamba/markdup/{factor_level}.header"
+        "sambamba/markdup/{factor_level}.header",
     output:
-        temp("sambamba/markdup/{factor_level}.sq.sam")
+        temp("sambamba/markdup/{factor_level}.sq.sam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
@@ -190,9 +194,9 @@ rule sed_edit_header_sequences_factor_level:
     group:
         "reheader_as_ucsc"
     log:
-        "logs/sed/header/{factor_level}.log"
+        "logs/sed/header/{factor_level}.log",
     params:
-        "'s/SN:/SN:chr/g'"
+        "'s/SN:/SN:chr/g'",
     conda:
         "../../envs/bash.yaml"
     shell:
@@ -201,9 +205,9 @@ rule sed_edit_header_sequences_factor_level:
 
 rule sambamba_view_unzip_bam_factor:
     input:
-        "sambamba/markdup/{factor_level}.bam"
+        "sambamba/markdup/{factor_level}.bam",
     output:
-        temp("sambamba/markdup/{factor_level}.content.sam")
+        temp("sambamba/markdup/{factor_level}.content.sam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
@@ -219,19 +223,18 @@ rule sambamba_view_unzip_bam_factor:
         "v2.0.0/bio/sambamba/view"
 
 
-
 rule perl_edit_read_sequences_per_factor:
     input:
-        "sambamba/markdup/{factor_level}.content.sam"
+        "sambamba/markdup/{factor_level}.content.sam",
     output:
-        temp("sambamba/markdup/{factor_level}.ucsc.sam")
+        temp("sambamba/markdup/{factor_level}.ucsc.sam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
         runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir=tmp,
     log:
-        "logs/sequences/{factor_level}.log"
+        "logs/sequences/{factor_level}.log",
     params:
         awk=workflow.source_path("../../scripts/formatter/ensembl_to_ucsc.awk"),
     group:
@@ -240,6 +243,7 @@ rule perl_edit_read_sequences_per_factor:
         "../../envs/bash.yaml"
     shell:
         "awk --file {params.awk} {input} > {output} 2> {log}"
+
 
 rule cat_sam_file_factor:
     input:
@@ -250,18 +254,19 @@ rule cat_sam_file_factor:
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
-        runtime= lambda wildcards, attempt: attempt * 35,
+        runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir=tmp,
     log:
-        "logs/cat/ucsc/{factor_level}.log"
+        "logs/cat/ucsc/{factor_level}.log",
     params:
-        extra=""
+        extra="",
     conda:
         "../../envs/bash.yaml"
     group:
         "compress_ucsc"
     shell:
         "cat {params.extra} {input.header} {input.reads} > {output} 2> {log}"
+
 
 rule sambamba_zip_sam_factor:
     input:
@@ -271,22 +276,23 @@ rule sambamba_zip_sam_factor:
     threads: 10
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
-        runtime=lambda wildcards, attempt: attempt * 35,    
+        runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir=tmp,
     group:
         "compress_ucsc"
     log:
-        "logs/sambamba/ucsc/{factor_level}.zip.log"
+        "logs/sambamba/ucsc/{factor_level}.zip.log",
     params:
-        extra="--format bam --with-header"
+        extra="--format bam --with-header",
     wrapper:
         "v2.0.0/bio/sambamba/view"
 
-rule sambamba_sort_ucsc:
+
+rule sambamba_sort_ucsc_factor:
     input:
         "sambamba/ucsc/{factor_level}.unsorted.bam",
     output:
-        "sambamba/ucsc/{factor_level}.bam"
+        "sambamba/ucsc/{factor_level}.bam",
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 20 * 1024,
@@ -299,18 +305,19 @@ rule sambamba_sort_ucsc:
     wrapper:
         f"{snakemake_wrappers_version}/bio/sambamba/sort"
 
-rule sambamba_index_ucsc:
+
+rule sambamba_index_ucsc_factor:
     input:
-        "sambamba/ucsc/{factor_level}.bam"
+        "sambamba/ucsc/{factor_level}.bam",
     output:
-        "sambamba/ucsc/{factor_level}.bam.bai"
+        "sambamba/ucsc/{factor_level}.bam.bai",
     threads: 10
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
         runtime=lambda wildcards, attempt: attempt * 25,
         tmpdir=tmp,
     log:
-        "logs/sambamba/ucsc/{factor_level}.index.log"
+        "logs/sambamba/ucsc/{factor_level}.index.log",
     params:
         extra="",
     wrapper:
