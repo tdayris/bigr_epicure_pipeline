@@ -2006,6 +2006,11 @@ def targets(
                 model_name=comparison_list,
             )
 
+            expected_targets["genome_cov"] = expand(
+                "data_output/Differential_Binding/{model_name}/Genome_Coverage.png"
+                model_name=comparison_list,
+            )
+
             expected_targets["distance_to_tss"] = expand(
                 "data_output/Differential_Binding/{model_name}/{chipseeker_plot}.png",
                 model_name=comparison_list,
