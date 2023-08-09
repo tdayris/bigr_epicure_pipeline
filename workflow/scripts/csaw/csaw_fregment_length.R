@@ -13,7 +13,7 @@ base::message("Library loaded")
 read_params <- base::readRDS(
     file = base::as.character(x = snakemake@input[["read_params"]])
 )
-read_params <- csaw::reform(dedup = TRUE)
+read_params <- csaw::reform(x = read_params, dedup = TRUE)
 base::message("Read parameters loaded, with dedup set to TRUE")
 
 design <- base::readRDS(file = snakemake@input[["design"]])
