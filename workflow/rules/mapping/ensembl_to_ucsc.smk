@@ -18,7 +18,7 @@ rule sambamba_view_unzip_bam_header:
         "v2.0.0/bio/sambamba/view"
 
 
-rule perl_edit_header_sequences:
+rule sed_edit_header_sequences:
     input:
         "sambamba/markdup/{sample}.header"
     output:
@@ -31,14 +31,13 @@ rule perl_edit_header_sequences:
     group:
         "reheader_as_ucsc"
     log:
-        "logs/perl/header/{sample}.log"
+        "logs/sed/header/{sample}.log"
     params:
-        extra="-lpe",
-        regex="'s/SN:([0-9]+|[XY]|MT)/SN:chr$1/'",
+        "'s/SN:/SN:chr/g'"
     conda:
-        "../../envs/perl.yaml"
+        "../../envs/bash.yaml"
     shell:
-        "perl {params.extra} {params.regex} {input} > {output} 2> {log}"
+        "sed {params} {input} > {output} 2> {log}"
 
 
 rule sambamba_view_unzip_bam:
@@ -80,7 +79,7 @@ rule perl_edit_read_sequences:
     conda:
         "../../envs/bash.yaml"
     shell:
-        "awk -F {params.awk} {input} > {output} 2> {log}"
+        "awk --file {params.awk} {input} > {output} 2> {log}"
 
 
 rule cat_sam_file:
@@ -178,7 +177,7 @@ rule sambamba_view_unzip_bam_headerfactor:
         "v2.0.0/bio/sambamba/view"
 
 
-rule perl_edit_header_sequences_factor_level:
+rule sed_edit_header_sequences_factor_level:
     input:
         "sambamba/markdup/{factor_level}.header"
     output:
@@ -191,14 +190,13 @@ rule perl_edit_header_sequences_factor_level:
     group:
         "reheader_as_ucsc"
     log:
-        "logs/perl/header/{factor_level}.log"
+        "logs/sed/header/{factor_level}.log"
     params:
-        extra="-lpe",
-        regex="'s/SN:([0-9]+|[XY]|MT)/SN:chr$1/'",
+        "'s/SN:/SN:chr/g'"
     conda:
-        "../../envs/perl.yaml"
+        "../../envs/bash.yaml"
     shell:
-        "perl {params.extra} {params.regex} {input} > {output} 2> {log}"
+        "sed {params} {input} > {output} 2> {log}"
 
 
 rule sambamba_view_unzip_bam_factor:
@@ -241,7 +239,7 @@ rule perl_edit_read_sequences_per_factor:
     conda:
         "../../envs/bash.yaml"
     shell:
-        "awk -F {params.awk} {input} > {output} 2> {log}"
+        "awk --file {params.awk} {input} > {output} 2> {log}"
 
 rule cat_sam_file_factor:
     input:
