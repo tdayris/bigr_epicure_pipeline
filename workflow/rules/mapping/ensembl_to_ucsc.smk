@@ -64,7 +64,7 @@ rule perl_edit_read_sequences:
     input:
         "sambamba/markdup/{sample}.content.sam",
     output:
-        temp("sambamba/markdup/{sample}.ucsc.sam"),
+        temp("sambamba/markdup/{sample}.ucsc.txt"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
@@ -80,6 +80,28 @@ rule perl_edit_read_sequences:
         "../../envs/bash.yaml"
     shell:
         "awk --file {params.awk} {input} > {output} 2> {log}"
+
+
+rule perl_format_read_sequences:
+    input:
+        "sambamba/markdup/{sample}.ucsc.txt",
+    output:
+        temp("sambamba/markdup/{sample}.ucsc.sam"),
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
+        runtime=lambda wildcards, attempt: attempt * 35,
+        tmpdir=tmp,
+    log:
+        "logs/sequences/{sample}.log",
+    params:
+        "'s/ /\\t/g'",
+    group:
+        "ensembl_as_ucsc"
+    conda:
+        "../../envs/bash.yaml"
+    shell:
+        "sed {params} {input} > {output} 2> {log}"
 
 
 rule cat_sam_file:
@@ -207,7 +229,7 @@ rule sambamba_view_unzip_bam_factor:
     input:
         "sambamba/markdup/{factor_level}.bam",
     output:
-        temp("sambamba/markdup/{factor_level}.content.sam"),
+        temp("sambamba/markdup/{factor_level}.content.txt"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
@@ -221,6 +243,28 @@ rule sambamba_view_unzip_bam_factor:
         extra="",
     wrapper:
         "v2.0.0/bio/sambamba/view"
+
+
+rule perl_format_read_sequences:
+    input:
+        "sambamba/markdup/{sample}.ucsc.txt",
+    output:
+        temp("sambamba/markdup/{sample}.ucsc.sam"),
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
+        runtime=lambda wildcards, attempt: attempt * 35,
+        tmpdir=tmp,
+    log:
+        "logs/sequences/{sample}.log",
+    params:
+        "'s/ /\\t/g'",
+    group:
+        "ensembl_as_ucsc"
+    conda:
+        "../../envs/bash.yaml"
+    shell:
+        "sed {params} {input} > {output} 2> {log}"
 
 
 rule perl_edit_read_sequences_per_factor:
