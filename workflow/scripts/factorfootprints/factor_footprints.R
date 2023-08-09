@@ -23,19 +23,24 @@ base::print(name)
 base::message("BamFiles identified")
 
 base::message("Reading bam tags...")
-possibleTag <- list("integer"=c("AM", "AS", "CM", "CP", "FI", "H0", "H1", "H2", 
-                                "HI", "IH", "MQ", "NH", "NM", "OP", "PQ", "SM",
-                                "TC", "UQ"), 
-                  "character"=c("BC", "BQ", "BZ", "CB", "CC", "CO", "CQ", "CR",
-                                "CS", "CT", "CY", "E2", "FS", "LB", "MC", "MD",
-                                "MI", "OA", "OC", "OQ", "OX", "PG", "PT", "PU",
-                                "Q2", "QT", "QX", "R2", "RG", "RX", "SA", "TS",
-                                "U2"))
+possibleTag <- list(
+    "integer" = c(
+        "AM", "AS", "CM", "CP", "FI", "H0", "H1",
+        "H2", "HI", "IH", "MQ", "NH", "NM", "OP",
+        "PQ", "SM", "TC", "UQ"
+    ),
+    "character" = c(
+        "BC", "BQ", "BZ", "CB", "CC", "CO", "CQ", "CR",
+        "CS", "CT", "CY", "E2", "FS", "LB", "MC", "MD",
+        "MI", "OA", "OC", "OQ", "OX", "PG", "PT", "PU",
+        "Q2", "QT", "QX", "R2", "RG", "RX", "SA", "TS", "U2"
+    )
+)
 bamTop100 <- scanBam(
     BamFile(bamfile$path, yieldSize = 100),
     param = ScanBamParam(tag=unlist(possibleTag))
 )[[1]]$tag
-tags <- names(bamTop100)[lengths(bamTop100)>0]
+tags <- names(bamTop100)[lengths(bamTop100) > 0]
 base::print(tags)
 base::message("Tags Acquired")
 
