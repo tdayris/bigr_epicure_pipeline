@@ -8,28 +8,53 @@ suppressPackageStartupMessages(library("ChIPpeakAnno"))
 suppressPackageStartupMessages(library("Rsamtools"))
 base::message("Libraries loaded.")
 
-base::message("Setting sequence level style...")
-seqlevelsStyle(TxDb.Hsapiens.UCSC.hg38.knownGene) <- "Ensembl"
-seqlevelsStyle(BSgenome.Hsapiens.UCSC.hg38) <- "Ensembl"
-base::message("Database chromosome renamed.")
+# base::message("Setting sequence level style...")
+# seqlevelsStyle(TxDb.Hsapiens.UCSC.hg38.knownGene) <- "Ensembl"
+# seqlevelsStyle(BSgenome.Hsapiens.UCSC.hg38) <- "Ensembl"
+# base::message("Database chromosome renamed.")
 
 base::message("Acquiering bam file...")
 bamfile <- BamFile(
-    file = base::as.character(x = snakemake@input[["bam"]]),
-    index = base::as.character(x = snakemake@input[["bai"]])
+    file = base::as.character(x = snakemake@input[["bam"]])
 )
 name <- base::as.character(x = snakemake@params[["name"]])
-print(bamfile)
-print(name)
+base::print(bamfile)
+base::print(name)
 base::message("BamFiles identified")
+
+base::message("Reading bam tags...")
+possibleTag <- list("integer"=c("AM", "AS", "CM", "CP", "FI", "H0", "H1", "H2", 
+                                "HI", "IH", "MQ", "NH", "NM", "OP", "PQ", "SM",
+                                "TC", "UQ"), 
+                  "character"=c("BC", "BQ", "BZ", "CB", "CC", "CO", "CQ", "CR",
+                                "CS", "CT", "CY", "E2", "FS", "LB", "MC", "MD",
+                                "MI", "OA", "OC", "OQ", "OX", "PG", "PT", "PU",
+                                "Q2", "QT", "QX", "R2", "RG", "RX", "SA", "TS",
+                                "U2"))
+bamTop100 <- scanBam(
+    BamFile(bamfile$path, yieldSize = 100),
+    param = ScanBamParam(tag=unlist(possibleTag))
+)[[1]]$tag
+tags <- names(bamTop100)[lengths(bamTop100)>0]
+base::print(tags)
+base::message("Tags Acquired")
+
+base::message("Retrieving sequence level informations...")
+seqlev <- as.vector(
+    sapply(c(1:22, "X", "Y"), function(chrom) paste0("chr", chrom))
+)
+seqinformation <- seqinfo(TxDb.Hsapiens.UCSC.hg38.knownGene)
+which <- as(seqinformation[seqlev], "GRanges")
+base::print(which)
+base::message("Sequences retrived")
 
 base::message("Loading bam file...")
 bamdata <- readBamFile(
     bamFile = bamfile$path,
-#    index = bamfile$path,
     bigFile = TRUE,
     asMates = TRUE,
-    tags = c("AS", "XN", "XM", "XO", "XG", "NM", "MD", "YS", "YT")
+    tags = tags,
+    which = which,
 )
 base::message("Bam file loaded")
 

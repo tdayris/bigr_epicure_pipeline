@@ -62,6 +62,7 @@ include: "rules/mapping/sambamba_markdup.smk"
 # This snakefile contains rules to shift
 # sequenced reads in order to fix AtacSeq known bias.
 include: "rules/mapping/deeptools_shift.smk"
+include: "rules/mapping/ensembl_to_ucsc.smk"
 #
 # Mapping QC
 #
