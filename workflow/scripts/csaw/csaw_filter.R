@@ -165,7 +165,9 @@ if (filter_method == "average_log_cpm") {
 
 
 k <- base::summary(object = keep)
-keep <- base::as.data.frame()
+base::message("Number of targets passing filters")
+base::print(k)
+keep <- base::as.data.frame(keep)
 keep$Kept <- k[["TRUE"]]
 keep$Filtered <- k[["FALSE"]]
 keep$PercentFiltered <- keep$Filtered / (keep$Kept + keep$Filtered)

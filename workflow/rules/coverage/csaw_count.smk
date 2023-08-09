@@ -1,16 +1,17 @@
 rule csaw_fragment_length:
     input:
         design="rsamtools/design.RDS",
+        read_params="csaw/readparam.{library}.RDS",
     output:
-        fragment_length="csaw/fragment_length.RDS",
-        png="data_output/Differential_Binding/CCF_Delay.png",
+        fragment_length="csaw/fragment_length/{library}.RDS",
+        png="data_output/Differential_Binding/CCF_Delay.{library}.png",
     threads: config.get("max_threads", 20)
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 7,
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
-        "logs/csaw/fragment_length.log",
+        "logs/csaw/fragment_length/{library}.log",
     conda:
         "../../envs/csaw.yaml"
     script:

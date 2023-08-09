@@ -1,3 +1,9 @@
+# 0.13.2 – Factor levels
+
+## Features
+
+* Allow Sieve per factor
+
 # 0.13.1 – Fixes
 
 ## Fix

@@ -19,6 +19,7 @@ base::message("Read parameters loaded, with dedup set to TRUE")
 design <- base::readRDS(file = snakemake@input[["design"]])
 base::message("Experimental design loaded with BamFiles")
 
+max_delay <- 800
 
 if (snakemake@threads > 1) {
     BiocParallel::register(
@@ -31,7 +32,7 @@ if (snakemake@threads > 1) {
 # Compute fragment size with cross-correlation
 correlation <- csaw::correlateReads(
     bam.files = design$BamPath,
-    max.dist = 800,
+    max.dist = max_delay,
     cross = TRUE,
     param = read_params
 )
@@ -52,11 +53,11 @@ grDevices::png(
 )
 
 graphics::plot(
-    x = 1:(length(correlation) - 1),
+    x = 0:max_delay,
     y = correlation,
     xlab = "Delay (bp)",
     ylab = "CCF",
-    type = 1
+    type = "l"
 )
 graphics::abline(v = frag_length, col = "red")
 graphics::text(

@@ -820,7 +820,8 @@ def get_sambamba_merge_per_factors_level_input_input(
     Return correct list of bam file to concat
     """
     samples: List[str] = get_samples_per_level(wildcards=wildcards, design=design)
-    bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+    # bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+    bam_prefix: str = "sambamba/markdup"
     return expand("{prefix}/{sample}.bam", sample=samples, prefix=[bam_prefix])
 
 
@@ -1483,7 +1484,7 @@ def get_csaw_count_input(
         "bais": [f"{bam_prefix}/{sample}.bam.bai" for sample in sample_list],
         "read_params": f"csaw/readparam.{library}.RDS",
         "design": "rsamtools/design.RDS",
-        "fragment_length": "csaw/fragment_length.RDS",
+        "fragment_length": f"csaw/fragment_length/{library}.RDS",
     }
 
 
@@ -1873,7 +1874,8 @@ def get_plot_footprints_input(
     """
     Return required input files for ATACSeqQC
     """
-    bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+    # bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
+    bam_prefix: str = "sambamba/markdup"
     if "sample" in wildcards.keys():
         return {
             "bam": f"{bam_prefix}/{wildcards.sample}.bam",

@@ -72,10 +72,16 @@ diag_stats$Prop.marked <- (
 ) * 100
 base::message("Quality controls performed")
 
+# diag_stats <- data.frame(t(sapply(diag_stats, c)))
+diag_stats <- data.frame(lapply(diag_stats, as.character), stringsAsFactors=FALSE)
+qc_path <- base::as.character(x = snakemake@output[['qc']])
+print(diag_stats)
+print(qc_path)
+print(str(diag_stats))
 # Saving results
 utils::write.table(
     x = diag_stats,
-    file = base::as.character(x = snakemake@output[["qc"]]),
+    file = qc_path,
     sep = "\t",
     row.names = TRUE,
     col.names = TRUE
