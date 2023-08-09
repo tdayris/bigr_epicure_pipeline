@@ -2007,7 +2007,7 @@ def targets(
             )
 
             expected_targets["genome_cov"] = expand(
-                "data_output/Differential_Binding/{model_name}/Genome_Coverage.png"
+                "data_output/Differential_Binding/{model_name}/Genome_Coverage.png",
                 model_name=comparison_list,
             )
 
