@@ -1875,7 +1875,7 @@ def get_plot_footprints_input(
     Return required input files for ATACSeqQC
     """
     # bam_prefix: str = get_bam_prefix(wildcards=wildcards, protocol=protocol)
-    bam_prefix: str = "sambamba/markdup"
+    bam_prefix: str = "sambamba/ucsc"
     if "sample" in wildcards.keys():
         return {
             "bam": f"{bam_prefix}/{wildcards.sample}.bam",
