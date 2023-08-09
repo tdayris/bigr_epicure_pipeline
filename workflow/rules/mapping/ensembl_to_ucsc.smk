@@ -245,18 +245,18 @@ rule sambamba_view_unzip_bam_factor:
         "v2.0.0/bio/sambamba/view"
 
 
-rule perl_format_read_sequences:
+rule perl_format_read_sequences_factor:
     input:
-        "sambamba/markdup/{sample}.ucsc.txt",
+        "sambamba/markdup/{factor_level}.ucsc.txt",
     output:
-        temp("sambamba/markdup/{sample}.ucsc.sam"),
+        temp("sambamba/markdup/{factor_level}.ucsc.sam"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 2,
         runtime=lambda wildcards, attempt: attempt * 35,
         tmpdir=tmp,
     log:
-        "logs/sequences/{sample}.log",
+        "logs/sequences/{factor_level}.log",
     params:
         "'s/ /\\t/g'",
     group:
