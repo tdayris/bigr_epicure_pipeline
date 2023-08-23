@@ -1,9 +1,19 @@
+# 0.14.2 – Formats
+
+## Features
+
+* Replace possible Windows EOL with Unix-style
+
 # 0.14.1 – CLI
+
+## Features
 
 * Launcher now updates workflow version when user changes it
 * Launcher provides more information to the user
 
 # 0.14.0 – Launcher
+
+## Fixes
 
 * Fix launcher conda activation
 

@@ -59,7 +59,7 @@ if [ ! -f "workflow/Snakefile" ]; then
     mv "config/design.tsv" "config/example.design.tsv"
 else
     echo "Updating Snakemake-workflow verison if needed..."
-    sed "s|tag=\"[^\"]\"|tag=\"${PIPELINE_VERSION}\"|g" workflow/Snakefile
+    sed "s|tag=\"[^\"]\"|tag=\"${PIPELINE_VERSION}\"|g" "workflow/Snakefile"
 fi
 
 if [ ! -f "workflow/bigr_launcher.sh" ]; then
@@ -150,6 +150,12 @@ if [ ! -f "config/design.tsv" ]; then
             awk 'BEGIN{FS="\t"; print "Sample_id" FS "Upstream_file"} {print $0}' \
         > "config/design.tsv"
     fi
+fi
+
+# Dealing with windows/mac inputs
+if [ -f "config/design.tsv" ]; then
+    echo "Removing possible Windows complex end of lines..."
+    sed -i 's|\r||g' config/design.tsv
 fi
 
 # Launching pipeline
