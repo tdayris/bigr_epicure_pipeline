@@ -59,7 +59,7 @@ if [ ! -f "workflow/Snakefile" ]; then
     mv "config/design.tsv" "config/example.design.tsv"
 else
     echo "Updating Snakemake-workflow verison if needed..."
-    sed "s|tag=\"[^\"]\"|tag=\"${PIPELINE_VERSION}\"|g" "workflow/Snakefile"
+    sed -i "s|tag=\"[^\"]\"|tag=\"${PIPELINE_VERSION}\"|g" "workflow/Snakefile"
 fi
 
 if [ ! -f "workflow/bigr_launcher.sh" ]; then
@@ -90,33 +90,47 @@ sed --in-place \
     "config/config.yaml"
 
 if [ "${ORGANISM}" == "homo_sapiens" ]; then
-    ln --symbolic --force --relative --verbose \
-        "/mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.fasta" \
-        "reference/homo_sapiens.GRCh38.109.fasta"
+    if [ ! -f "reference/homo_sapiens.GRCh38.109.fasta" ]; then
+        ln --symbolic --force --relative --verbose \
+            "/mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.fasta" \
+            "reference/homo_sapiens.GRCh38.109.fasta"
+    fi
   
-    ln --symbolic --force --relative --verbose \
-        "/mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.fasta.fai" \
-        "reference/homo_sapiens.GRCh38.109.fasta.fai"
+    if [ ! -f "reference/homo_sapiens.GRCh38.109.fasta.fai" ]; then
+        ln --symbolic --force --relative --verbose \
+            "/mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.fasta.fai" \
+            "reference/homo_sapiens.GRCh38.109.fasta.fai"
+    fi
 
-    ln --symbolic --force --relative --verbose \
-        "/mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.dict" \
-        "reference/homo_sapiens.GRCh38.109.dict"
+    if [ ! -f "reference/homo_sapiens.GRCh38.109.dict" ]; then
+        ln --symbolic --force --relative --verbose \
+            "/mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.dict" \
+            "reference/homo_sapiens.GRCh38.109.dict"
+    fi
  
-    ln --symbolic --force --relative --verbose \
-        "/mnt/beegfs/database/bioinfo/Index_DB/GTF/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.gtf" \
-        "reference/homo_sapiens.GRCh38.109.gtf"
+    if [ ! -f "reference/homo_sapiens.GRCh38.109.dict" ]; then
+        ln --symbolic --force --relative --verbose \
+            "/mnt/beegfs/database/bioinfo/Index_DB/GTF/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.gtf" \
+            "reference/homo_sapiens.GRCh38.109.gtf"
+    fi
 
-    ln --symbolic --force --relative --verbose \
-        "/mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/" \
-        "reference/"
+    if [ ! -d "reference/bowtie2_index" ]; then
+        ln --symbolic --force --relative --verbose \
+            "/mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/" \
+            "reference/"
+    fi
 
-    ln --symbolic --force --relative --verbose \
-        "/mnt/beegfs/database/bioinfo/Index_DB/2bit/GRCh38.109/homo_sapiens.GRCh38.109.2bit" \
-        "reference/homo_sapiens.GRCh38.109.2bit"
+    if [ ! -f "reference/homo_sapiens.GRCh38.109.2bit" ]; then
+        ln --symbolic --force --relative --verbose \
+            "/mnt/beegfs/database/bioinfo/Index_DB/2bit/GRCh38.109/homo_sapiens.GRCh38.109.2bit" \
+            "reference/homo_sapiens.GRCh38.109.2bit"
+    fi
 
-    ln --symbolic --force --relative --verbose \
-        "/mnt/beegfs/database/bioinfo/Index_DB/blacklist/hg38.blacklist.merged.bed" \
-        "reference/blacklist/homo_sapiens.GRCh38.merged.109.bed.gz"
+    if [ ! -f "reference/homo_sapiens.GRCh38.merged.109.bed.gz" ]; then
+        ln --symbolic --force --relative --verbose \
+            "/mnt/beegfs/database/bioinfo/Index_DB/blacklist/hg38.blacklist.merged.bed" \
+            "reference/blacklist/homo_sapiens.GRCh38.merged.109.bed.gz"
+    fi
 
     find "/mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/" -type f | while read FILE; do
         FILE_NAME=$(basename "${FILE/GRCh38_GRCm38_r99_DNA/pdx-both}")
