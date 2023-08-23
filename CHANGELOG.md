@@ -1,3 +1,12 @@
+# 0.14.1 – CLI
+
+* Launcher now updates workflow version when user changes it
+* Launcher provides more information to the user
+
+# 0.14.0 – Launcher
+
+* Fix launcher conda activation
+
 # 0.13.2 – Factor levels
 
 ## Features

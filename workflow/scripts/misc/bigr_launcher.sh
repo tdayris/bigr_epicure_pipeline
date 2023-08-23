@@ -21,7 +21,7 @@ PROTOCOL="chip-seq"
 # Keep the pipeline version homogen
 # among multiple sequencing in a same
 # research project
-PIPELINE_VERSION="v0.12.1"
+PIPELINE_VERSION="0.14.1"
 
 # Organism name: "homo_sapiens" or "mus_musculus"
 ORGANISM="homo_sapiens"
@@ -34,39 +34,57 @@ LIBRARY="paired"
 ## Unless you know what you are doing ##
 ########################################
 
+echo "Working in: ${WORK_DIR}"
 WORK_DIR=$(readlink -e "${WORK_DIR:?}")
 cd "${WORK_DIR}" || exit 1
 
 # Activating shell environment
+echo "Activating conda..."
 source /mnt/beegfs/pipelines/unofficial-snakemake-wrappers/bigr_snakemake/etc/profile.d/conda.sh
 conda activate "/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/shared_install/bigr_epicure_pipeline"
 
 # Exporting required IO variables
+echo "Exporting environment variables..."
 export SNAKEMAKE_OUTPUT_CACHE="/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/snakemake_cache/"
 
 # Building IO architecture
+echo "Building repository architecture if missing..."
 mkdir --parent --verbose logs/slurm tmp data_{output,input} reference/{blacklist,xenome/index}
 # cd tmp || exit 1
 
 # Deploy workflow
 if [ ! -f "workflow/Snakefile" ]; then
+    echo "Deploying Snakemake-workflow..."
     snakedeploy deploy-workflow "https://github.com/tdayris/bigr_epicure_pipeline" . --tag "${PIPELINE_VERSION}"
     mv "config/design.tsv" "config/example.design.tsv"
+else
+    echo "Updating Snakemake-workflow verison if needed..."
+    sed "s|tag=\"[^\"]\"|tag=\"${PIPELINE_VERSION}\"|g" workflow/Snakefile
 fi
+
+if [ ! -f "workflow/bigr_launcher.sh" ]; then
+    echo "Saving local copy of this launcher script..."
+    LAUNCHER_PATH=$(readlink -e "$0")
+    cp --verbose "${LAUNCHER_PATH}" "workflow/bigr_launcher.sh"
+fi
+    
 
 # Edit configuration file if needed
 if [ "${ORGANISM}" == "mus_musculus" ]; then
+    echo "Editing configuration in order to match Mouse datasets"
     sed --in-place 's|organism: homo_sapiens|organism: mus_musculus|g' "config/config.yaml"
     sed --in-place 's|build: GRCh38|build: GRCm38|g' "config/config.yaml"
     sed --in-place 's|release: 109|release: 103|g' "config/config.yaml"
 fi
 
 # Update sequencing protocol
+echo "Updating sequencing protocol if needed..."
 sed --in-place \
     "s|protocol: atac-seq|protocol: ${PROTOCOL}|g" \
     "config/config.yaml"
 
 # Use BiGR Annotations
+echo "Linking available annotations (if any) ..."
 sed --in-place \
     's|fastq_screen_config: config/fastq_screen.conf|fastq_screen_config: config/fastq_screen_bigr.conf|g' \
     "config/config.yaml"
@@ -113,7 +131,9 @@ fi
 
 # Build design file if missing
 if [ ! -f "config/design.tsv" ]; then
+    echo "Building design file..."
     if [ "${LIBRARY}" == "paired" ]; then
+        echo "Looking for fastq files..."
         find "${WORK_DIR}/data_input/" -type f -name "*q.gz" | \
             sort | \
             uniq | \
@@ -122,6 +142,7 @@ if [ ! -f "config/design.tsv" ]; then
             awk 'BEGIN{FS="\t"; print "Sample_id" FS "Upstream_file" FS "Downstream_file"} {print $0}' \
         > "config/design.tsv"
     else
+        echo "Looking for fastq files..."
         find "${WORK_DIR}/data_input/" -type f -name "*q.gz" | \
             sort | \
             uniq | \
@@ -132,9 +153,9 @@ if [ ! -f "config/design.tsv" ]; then
 fi
 
 # Launching pipeline
+echo "Launching pipeline..."
 snakemake --snakefile 'workflow/Snakefile' \
           --profile '/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/profiles/slurm-web/' \
           --cache \
           --rerun-incomplete \
           --nt "$@"
-          
