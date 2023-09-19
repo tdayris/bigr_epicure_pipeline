@@ -76,7 +76,7 @@ container: "docker://continuumio/miniconda3"
 
 
 # This is the main version of all snakemake-wrappers
-snakemake_wrappers_version: str = "v2.0.0"
+snakemake_wrappers_version: str = "v2.6.0"
 
 
 ########################
@@ -1022,7 +1022,7 @@ def get_deeptools_alignment_sieve_params(
     extra: str = (
         config.get("mapping", {}).get("deeptools", {}).get("alignment_sieve_extra", "")
     )
-    if extra == "" and protocol_is_atac(protocol):
+    if extra == "" and (protocol_is_atac(protocol) or protocol_is_cutntag(protocol)):
         extra = " --ATACshift "
 
     return extra

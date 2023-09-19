@@ -43,7 +43,7 @@ base::message("Peaks loaded")
 
 
 # Annotate regions
-anntotation <- MEDIPS::MEDIPS.setAnnotation(
+annotation <- MEDIPS::MEDIPS.setAnnotation(
     regions = edger_results,
     annotation = annotation
 )

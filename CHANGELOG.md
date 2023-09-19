@@ -1,3 +1,10 @@
+# 0.15.0 – Reviews
+
+* Cut&Tag protocols also use Tn5. Atac-shift should be done on these alignments as well.
+* Corrected misleading documentation information.
+* Typo and refactoring. 
+* Snakemake-wrappers update.
+
 # 0.14.2 – Formats
 
 ## Features
