@@ -1,6 +1,6 @@
 rule link_genome_annotation:
     input:
-        config["reference"]["genome_gtf"]
+        config["reference"]["genome_gtf"],
     output:
         "reference/{species}.{build}.{release}.gtf",
     threads: 1

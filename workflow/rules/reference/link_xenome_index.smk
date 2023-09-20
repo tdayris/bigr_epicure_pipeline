@@ -3,7 +3,7 @@ rule link_xenome_index:
         config["reference"]["xenome_index"],
     output:
         multiext(
-        "reference/xenome/index/pdx-both",
+            "reference/xenome/index/pdx-both",
             ".idx-both.header",
             ".idx-both.kmers-d0",
             ".idx-both.kmers-d1",
@@ -27,7 +27,7 @@ rule link_xenome_index:
             ".idx-host.kmers.high-bits",
             ".idx-host.kmers.low-bits.lwr",
             ".idx-host.kmers.low-bits.upr",
-        )
+        ),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,

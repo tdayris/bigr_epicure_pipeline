@@ -1,6 +1,6 @@
 rule link_bowtie2_index:
     input:
-        config["reference"]["bowtie2_index"]
+        config["reference"]["bowtie2_index"],
     output:
         multiext(
             "reference/xenome/index/pdx-both",
@@ -27,7 +27,7 @@ rule link_bowtie2_index:
             ".idx-host.kmers.high-bits",
             ".idx-host.kmers.low-bits.lwr",
             ".idx-host.kmers.low-bits.upr",
-        )
+        ),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,

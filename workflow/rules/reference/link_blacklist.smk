@@ -1,6 +1,6 @@
 rule link_blacklist_gz:
     input:
-        config["reference"]["blacklist"]
+        config["reference"]["blacklist"],
     output:
         "reference/blacklist/{species}.{build}.{release}.bed.gz",
     threads: 1
@@ -29,11 +29,10 @@ rule gunzip_blacklist:
         runtime=lambda wildcards, attempt: attempt * 5,
         tmpdir=tmp,
     log:
-        "logs/gunzip/blacklist/{species}.{build}.{release}.log"
+        "logs/gunzip/blacklist/{species}.{build}.{release}.log",
     params:
-        extra="-c"
+        extra="-c",
     conda:
         "../../envs/bash.yaml"
     shell:
         "gunzip {params.extra} {input} > {output} 2> {log}"
-    
