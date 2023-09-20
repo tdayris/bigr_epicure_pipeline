@@ -41,26 +41,40 @@ steps:
 
   # Perform fastq trimming + mapping + peak-calling + motives analysis
   # Missing genome sequences/annotation/indexes will run installation process
-  motives: false
+  motives: true
 
 
-# Must be one of: `chip-seq`, `atac-seq`, `medip-seq`
+# Must be one of the following
 # Main differences:
 # * `chip-seq`:
+#    - Base pipeline
 #
 # * `atac-seq`: 
 #    - Read shifting is performed on aligned reads (on BAM files, after deduplication)
 #
 # * `cut&run` :
+#    - No deduplication
+#    - Seacr is used as a peak caller alongside with Macs2
 #
 # * `cut&tag` :
+#    - No deduplication
 #
 # * `medip-seq`:
 #    - CpG density calculation for peak-coverage normalization/merging/QC
 #
 # * `og-seq`:
+#   - Specific bias accounted in CSAW
 #
-protocol: atac-seq
+# * `gro-seq`:
+#   - Specific bias accounted in CSAW
+#
+# * `ribo-seq`:
+#   - Specific bias accounted in coverage analysis
+#
+# * `mnase-seq`:
+#   - Specific bias accounted in coverage analysis
+#
+protocol: 'cutnrun'
 
 # Path to the design file. It must be a TSV-formatted text file
 # with the following columns (case matters, order does not matter):
@@ -77,6 +91,9 @@ protocol: atac-seq
 design: config/design.tsv
 
 reference:
+  # Data are from xenograft.
+  #  pdx: false
+
   # Ensembl organism name. eg. `homo_sapiens`.
   species: homo_sapiens
 
@@ -84,45 +101,127 @@ reference:
   build: GRCh38
 
   # Ensembl organism release. eg: `109`.
-  release: 109
+  release: "109"
 
   # Path to genome sequence file (FASTA formatted, NOT gzipped)
   # A missing sequence file will be downloaded and indexed.
-  # genome_fasta: /path/to/sequences.fasta
+  genome_fasta: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.fasta
+
+  # Path to genome sequence file (FASTA formatted, NOT gzipped)
+  # A missing index sequence file will be re-created.
+  genome_fai: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.fasta.fai
+
+  # Path to genome sequence file (FASTA formatted, NOT gzipped)
+  # A missing sequence decitionary file will be re-created.
+  genome_dict: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.dict
 
   # Path to genome annotation file (GTF formatted, NOT gzipped)
   # A missing annotation file will be downloaded.
-  # genome_gtf: /path/to/annotation.gtf
+  genome_gtf: /mnt/beegfs/database/bioinfo/Index_DB/GTF/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.gtf
 
   # Path to bowtie2_index directory.
   # A missing bowtie2 index directory will lead to genome indexation.
-  # bowtie2_index: /path/to/bowtie2_index/dir/
+  bowtie2_index:
+    - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/homo_sapiens.GRCh38.109.1.bt2
+    - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/homo_sapiens.GRCh38.109.2.bt2
+    - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/homo_sapiens.GRCh38.109.3.bt2
+    - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/homo_sapiens.GRCh38.109.4.bt2
+    - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/homo_sapiens.GRCh38.109.rev.1.bt2
+    - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/homo_sapiens.GRCh38.109.rev.2.bt2
 
   # Path to blacklisted intervals.
   # A missing interval file will be downloaded.
-  # blacklist: /path/to/blacklist.bed
+  blacklist: /mnt/beegfs/database/bioinfo/Index_DB/blacklist/hg38.blacklist.nochr.bed
 
   # Path to directory containing fastq_screen configuration file
   fastq_screen_config: config/fastq_screen_bigr.conf
 
+  # Path to genome sequence in TwoBit format
+  # A missing genome sequence in TwoBit format will lead
+  # to a fasta to TwoBit conversion
+  two_bits: /mnt/beegfs/database/bioinfo/Index_DB/2bit/GRCh38.109/homo_sapiens.GRCh38.109.2bit
+
+  # Path to mouse sequence genome in case of PDX
+  # A missinge genome sequence will be downloaded.
+  # WARNING: If you're working with mouse-only datasets,
+  #          Do not use this variable. Use `genome_fasta`.
+  mouse_fasta: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCm38.99/GRCm38.99.mus_musculus.dna.fasta
+
+  # Path to a bed-file containing regions of interest (roi).
+  # The whole pipeline would stick to these regions only.
+  # WARNING: The rest of the genome will be ignored if this
+  #          option is enabled.
+  # roi_bed: /path/to/intervals.bed
+
+  # Path to Xenome indexed genomes
+  # A missing index directory will be re-computed.
+  xenome_index:
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-both.header
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-both.kmers-d0
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-both.kmers-d1
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-both.kmers.header
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-both.kmers.high-bits
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-both.kmers.low-bits.lwr
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-both.kmers.low-bits.upr
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-both.lhs-bits
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-both.rhs-bits
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-graft.header
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-graft.kmers-d0
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-graft.kmers-d1
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-graft.kmers.header
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-graft.kmers.high-bits
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-graft.kmers.low-bits.lwr
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-graft.kmers.low-bits.upr
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-host.header
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-host.kmers-d0
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-host.kmers-d1
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-host.kmers.header
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-host.kmers.high-bits
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-host.kmers.low-bits.lwr
+    - /mnt/beegfs/database/bioinfo/Index_DB/xenome/GRCh38_GRCm38/Ensembl/r99/DNA/GRCh38_GRCm38_r99_DNA.idx-host.kmers.low-bits.upr
+
 
 # Macs2 peak caller parameters
 macs2:
-  # Perform broad peak calling using Macs2 (chip-seq)
+  # Perform broad peak calling using Macs2
   broad: true
 
-  # Perform narrow peak calling using Macs2 (chip-seq)
+  # Perform narrow peak calling using Macs2
   narrow: true
+
+
+# Seacr peak caller for Cut&Run parameters
+seacr:
+  # Perform stringent peak calling using Seacr
+  stringent: true
+
+  # Perform relaxed peak calling using Seacr
+  relaxed: true
 
 # Options to define differential peak coverage
 differential_peak_coverage:
   # One item per comparison. For multiple comparisons, add a new item for each single comparison.
   - model_name: Condition  # Human readable unique comparison name
-    reference: Control  # Reference samples. WARNING: reference ≠ input. Reference = fold-change denominator.
-    tested: Treatment  # Tested samples, the fold-change numerator.
-  # - model_name: Factor
-  #   reference: ReferenceFactorLevel
-  #   tested: TestedFactorLevel
-  # - model_name: OtherFactor
-  #   reference: ReferenceOtherFactorLevel
-  #   tested: TestedOtherFactorLevel
+    reference: WT  # Reference samples. WARNING: reference ≠ input. Reference = fold-change denominator.
+    tested: Mut  # Tested samples, the fold-change numerator.
+    formula: "~Condition"
+
+# The following options involve trimming (fastp)
+# trimming:
+  # Contaminent, vector, adapter. Comment to ignore.
+  # adapters: --adapter_sequence GATCGGAAGAGCACACGTCTGAACTCCAGTCA
+
+  # Fastp trimming options. Comment to ignore.
+  # fastp_extra: none
+
+
+# The following options involve mapping and post-mapping corrections
+# mapping:
+#   deeptools:
+#     alignment_sieve_extra: --shift -200 -200
+
+
+# The following options involve motifs over signal
+finger_prints:
+  motifs:
+    - CTCF

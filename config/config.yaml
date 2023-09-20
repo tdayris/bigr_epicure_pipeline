@@ -92,7 +92,7 @@ design: config/design.tsv
 
 reference:
   # Data are from xenograft.
-  pdx: true
+  pdx: false
 
   # Ensembl organism name. eg. `homo_sapiens`.
   species: homo_sapiens
