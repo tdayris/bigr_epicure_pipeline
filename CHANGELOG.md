@@ -1,9 +1,18 @@
 # 0.15.0 – Reviews
 
+## Features
+
 * Cut&Tag protocols also use Tn5. Atac-shift should be done on these alignments as well.
 * Corrected misleading documentation information.
 * Typo and refactoring. 
 * Snakemake-wrappers update.
+* Documentation update
+* PDX set to false by default
+
+## Fixes
+
+* Fix documentation path to shared conda
+* Bigr config paths defined
 
 # 0.14.2 – Formats
 

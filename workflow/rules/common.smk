@@ -177,75 +177,52 @@ species: str = config.get("reference", {}).get("species", "homo_sapiens")
 build: str = config.get("reference", {}).get("build", "GRCh38")
 release: str = config.get("reference", {}).get("release", "109")
 
-# Genome sequence (FASTA, not gzipped)
-genome_fasta_path: str = config.get("reference", {}).get("genome_fasta")
-if not genome_fasta_path:
-    logging.info(
-        "Missing genome FASTA path in the file `config.yaml`. "
-        "A new one will be downloaded from Ensembl FTP."
-    )
-    genome_fasta_path = f"reference/{species}.{build}.{release}.fasta"
-
-
-# Genome sequences indexes
-genome_fai_path: str = f"{genome_fasta_path}.fai"
-genome_dict_path: str = ".".join(genome_fasta_path.split(".")[:-1]) + ".dict"
-genome_twobit_path: str = ".".join(genome_fasta_path.split(".")[:-1]) + ".2bit"
-
-
-# Genome annotation (GFF/GTF, not gzipped)
-genome_annotation_path: str = config.get("reference", {}).get("genome_gtf")
-if not genome_annotation_path:
-    logging.info(
-        "Missing GTF path in the file `config.yaml`. "
-        "A new one will be downloaded from Ensembl FTP."
-    )
-    genome_annotation_path = f"reference/{species}.{build}.{release}.gtf"
-
+# Resolve reference paths if needed
+genome_fasta_path: str = f"reference/{species}.{build}.{release}.fasta"
+genome_fai_path: str = f"reference/{species}.{build}.{release}.fasta.fai"
+genome_dict_path: str = f"reference/{species}.{build}.{release}.dict"
+genome_twobit_path: str = f"reference/{species}.{build}.{release}.2bit"
+genome_annotation_path: str = f"reference/{species}.{build}.{release}.gtf"
+blacklist_path: str = f"reference/blacklist/{species}.{build}.{release}.merged.bed.gz"
 
 # Bowtie2 genome index
-bowtie2_index_path: List[str] = config.get("reference", {}).get("bowtie2_index")
-if not bowtie2_index_path:
-    logging.info(
-        "Missing Bowtie2 index path in the file `config.yaml`. "
-        "A new one will be created."
-    )
-    bowtie2_index_path = multiext(
-        f"reference/bowtie2_index/{species}.{build}.{release}",
-        ".1.bt2",
-        ".2.bt2",
-        ".3.bt2",
-        ".4.bt2",
-        ".rev.1.bt2",
-        ".rev.2.bt2",
-    )
+bowtie2_index_path: List[str] = multiext(
+    f"reference/bowtie2_index/{species}.{build}.{release}",
+    ".1.bt2",
+    ".2.bt2",
+    ".3.bt2",
+    ".4.bt2",
+    ".rev.1.bt2",
+    ".rev.2.bt2",
+)
 
-
-# Xenome genomes index with host = mouse, and target = human
-xenome_index: List[str] = config.get("reference", {}).get("xenome_index")
-if not xenome_index:
-    logging.info(
-        "Missing Xenome index path in the file `config.yaml`. "
-        "A new one will be created."
-    )
-    xenome_index = multiext(
-        "reference/xenome/index/pdx-both",
-        ".header",
-        ".kmers-d0",
-        ".kmers-d1",
-        ".kmers.header",
-        ".kmers.high-bits",
-        ".kmers.low-bits.lwr",
-        ".kmers.low-bits.upr",
-        ".lhs-bits",
-        ".rhs-bits",
-    )
-
-
-# Genome blacklisted regions
-blacklist_path: str = config.get("reference", {}).get("blacklist")
-if not blacklist_path:
-    blacklist_path = f"reference/blacklist/{species}.{build}.{release}.merged.bed.gz"
+# Xenome genomes index with host = mouse, and graft/target = human
+xenome_index: List[str] = multiext(
+    "reference/xenome/index/pdx-both",
+    ".idx-both.header",
+    ".idx-both.kmers-d0",
+    ".idx-both.kmers-d1",
+    ".idx-both.kmers.header",
+    ".idx-both.kmers.high-bits",
+    ".idx-both.kmers.low-bits.lwr",
+    ".idx-both.kmers.low-bits.upr",
+    ".idx-both.lhs-bits",
+    ".idx-both.rhs-bits",
+    ".idx-graft.header",
+    ".idx-graft.kmers-d0",
+    ".idx-graft.kmers-d1",
+    ".idx-graft.kmers.header",
+    ".idx-graft.kmers.high-bits",
+    ".idx-graft.kmers.low-bits.lwr",
+    ".idx-graft.kmers.low-bits.upr",
+    ".idx-host.header",
+    ".idx-host.kmers-d0",
+    ".idx-host.kmers-d1",
+    ".idx-host.kmers.header",
+    ".idx-host.kmers.high-bits",
+    ".idx-host.kmers.low-bits.lwr",
+    ".idx-host.kmers.low-bits.upr",
+)
 
 
 # See: https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html
