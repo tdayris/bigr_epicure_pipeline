@@ -37,7 +37,7 @@ steps:
 
   # Perform fastq trimming + mapping + peak-calling + differential coverage analysis
   # Missing genome sequences/annotation/indexes will run installation process
-  diff_cov: false
+  diff_cov: true
 
   # Perform fastq trimming + mapping + peak-calling + motives analysis
   # Missing genome sequences/annotation/indexes will run installation process
@@ -163,12 +163,12 @@ seacr:
   relaxed: true
 
 # Options to define differential peak coverage
-# differential_peak_coverage:
-#   # One item per comparison. For multiple comparisons, add a new item for each single comparison.
-#   - model_name: Condition  # Human readable unique comparison name
-#     reference: WT  # Reference samples. WARNING: reference ≠ input. Reference = fold-change denominator.
-#     tested: Mut  # Tested samples, the fold-change numerator.
-#     formula: "~Condition"
+differential_peak_coverage:
+  # One item per comparison. For multiple comparisons, add a new item for each single comparison.
+  - model_name: Condition  # Human readable unique comparison name
+    reference: WT  # Reference samples. WARNING: reference ≠ input. Reference = fold-change denominator.
+    tested: Mut  # Tested samples, the fold-change numerator.
+    formula: "~Condition"
 
 # The following options involve trimming (fastp)
 # trimming:

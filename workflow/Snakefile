@@ -178,6 +178,11 @@ include: "rules/annotation/homer_annotate_peaks.smk"
 include: "rules/footprints/plot_footprints.smk"
 
 
+ruleorder: sambamba_markdup > sambamba_merge_per_factors_level
+ruleorder: sambamba_bam_index > index_sambamba_merge_per_factors_level
+ruleorder: deeptools_bamcoverage > deeptools_bamcoverage_per_factor
+ruleorder: chipseeker_annotate_peak_from_bed > chipseeker_annotate_peak_from_ranges
+
 
 rule target:
     input:
