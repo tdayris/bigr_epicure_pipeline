@@ -36,7 +36,7 @@ if [ ! -f "workflow/bigr_launcher.sh" ]; then
 fi
 
 # Edit configuration file
-mv "config/config.BiGR_Flamingo.yaml" "config/config.yaml"
+mv "config/config_BiGR_Flamingo.yaml" "config/config.yaml"
 
 
 # Build design file if missing
