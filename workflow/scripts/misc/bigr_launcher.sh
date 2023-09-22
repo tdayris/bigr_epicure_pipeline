@@ -16,6 +16,7 @@ conda activate "/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/shared_insta
 # Exporting required IO variables
 echo "Exporting environment variables..."
 export SNAKEMAKE_OUTPUT_CACHE="/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/snakemake_cache/"
+export PIPELINE_VERSION="0.15.0"
 
 # Building IO architecture
 echo "Building repository architecture if missing..."
@@ -34,19 +35,8 @@ if [ ! -f "workflow/bigr_launcher.sh" ]; then
     cp --verbose "${LAUNCHER_PATH}" "workflow/bigr_launcher.sh"
 fi
 
-# Edit configuration file if needed
-if [ "${ORGANISM}" == "mus_musculus" ]; then
-    echo "Mouse configuration is not yet available"
-    exit 1
-else
-    mv "config/config.BiGR_Flamingo.yaml" "config/config.yaml"
-fi
-
-# Update sequencing protocol
-echo "Updating sequencing protocol if needed..."
-sed --in-place \
-    "s|protocol: atac-seq|protocol: ${PROTOCOL}|g" \
-    "config/config.yaml"
+# Edit configuration file
+mv "config/config.BiGR_Flamingo.yaml" "config/config.yaml"
 
 
 # Build design file if missing
@@ -54,7 +44,7 @@ if [ ! -f "config/design.tsv" ]; then
     echo "Building design file..."
     if [ "${LIBRARY}" == "paired" ]; then
         echo "Looking for pairs of fastq files..."
-        find "${WORK_DIR}/data_input/" -type f -name "*q.gz" | \
+        find "data_input/" -type f -name "*q.gz" | \
             sort | \
             uniq | \
             paste - - | \
@@ -63,7 +53,7 @@ if [ ! -f "config/design.tsv" ]; then
         > "config/design.tsv"
     else
         echo "Looking for fastq files..."
-        find "${WORK_DIR}/data_input/" -type f -name "*q.gz" | \
+        find "data_input/" -type f -name "*q.gz" | \
             sort | \
             uniq | \
             while read R1; do echo -e "$(basename ${R1})\t${R1}"; done | \
