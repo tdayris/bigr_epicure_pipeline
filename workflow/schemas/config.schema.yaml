@@ -52,7 +52,9 @@ properties:
       genome_gtf:
         type: string
       bowtie2_index:
-        type: string
+        type: array
+        items:
+          type: string
       blacklist:
         type: string
       fastq_screen_config:
@@ -61,6 +63,10 @@ properties:
         type: string
       mouse_genome:
         type: string
+      xenome_index:
+        type: array
+        items:
+          type: string
 
   macs2:
     type: object
