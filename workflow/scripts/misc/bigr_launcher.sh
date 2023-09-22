@@ -8,10 +8,6 @@ shopt -s nullglob
 #SBATCH --mem=10G
 #SBATCH --partition=mediumq
 
-echo "Working in: ${WORK_DIR}"
-WORK_DIR=$(readlink -e "${WORK_DIR:?}")
-cd "${WORK_DIR}" || exit 1
-
 # Activating shell environment
 echo "Activating conda..."
 source /mnt/beegfs/pipelines/unofficial-snakemake-wrappers/bigr_snakemake/etc/profile.d/conda.sh
