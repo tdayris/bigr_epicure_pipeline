@@ -41,8 +41,9 @@ mv "config/config_BiGR_Flamingo.yaml" "config/config.yaml"
 
 # Build design file if missing
 if [ ! -f "config/design.tsv" ]; then
-    echo "Building design file..."
-    if [ "${LIBRARY}" == "paired" ]; then
+    if [ -f "design.tsv" ]; then
+        mv --verbose "design.tsv" "config/design.tsv"
+    elif [ "${LIBRARY}" == "paired" ]; then
         echo "Looking for pairs of fastq files..."
         find "data_input/" -type f -name "*q.gz" | \
             sort | \
