@@ -34,7 +34,7 @@ rule link_xenome_index:
         runtime=lambda wildcards, attempt: attempt * 5,
         tmpdir=tmp,
     log:
-        "logs/bigr_copy/xenome/{species}.{build}.{release}.log",
+        "logs/bigr_copy/xenome/link.log",
     params:
         extra_ln="--relative --verbose --symbolic --force",
     conda:

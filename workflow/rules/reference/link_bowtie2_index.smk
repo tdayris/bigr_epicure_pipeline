@@ -9,7 +9,7 @@ rule link_bowtie2_index:
         runtime=lambda wildcards, attempt: attempt * 5,
         tmpdir=tmp,
     log:
-        "logs/ln/blacklist/{species}.{build}.{release}.log",
+        "logs/ln/bowtie2/link.log",
     params:
         extra_ln="--relative --verbose --symbolic --force",
     conda:
