@@ -2,32 +2,7 @@ rule link_bowtie2_index:
     input:
         config["reference"]["bowtie2_index"],
     output:
-        multiext(
-            "reference/xenome/index/pdx-both",
-            ".idx-both.header",
-            ".idx-both.kmers-d0",
-            ".idx-both.kmers-d1",
-            ".idx-both.kmers.header",
-            ".idx-both.kmers.high-bits",
-            ".idx-both.kmers.low-bits.lwr",
-            ".idx-both.kmers.low-bits.upr",
-            ".idx-both.lhs-bits",
-            ".idx-both.rhs-bits",
-            ".idx-graft.header",
-            ".idx-graft.kmers-d0",
-            ".idx-graft.kmers-d1",
-            ".idx-graft.kmers.header",
-            ".idx-graft.kmers.high-bits",
-            ".idx-graft.kmers.low-bits.lwr",
-            ".idx-graft.kmers.low-bits.upr",
-            ".idx-host.header",
-            ".idx-host.kmers-d0",
-            ".idx-host.kmers-d1",
-            ".idx-host.kmers.header",
-            ".idx-host.kmers.high-bits",
-            ".idx-host.kmers.low-bits.lwr",
-            ".idx-host.kmers.low-bits.upr",
-        ),
+        mbowtie2_index_path,
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,

@@ -11,20 +11,51 @@ include: "rules/common.smk"
 # retrieve them from iRODS if and only if we are on the
 # flamingo cluster at Gustave Roussy
 include: "rules/indexing/rename.smk"
-# This snakefile contains rules to download genome GTF file
-include: "rules/reference/download_genome_annotation.smk"
-# This snakefile contains rules to download genome sequences
-include: "rules/reference/download_genome_sequence.smk"
-# This snakefile contains rules to create bowtie 2 index
-include: "rules/indexing/bowtie2_index.smk"
+#
+# Deal with user inputs:
+# 1. Either link user-input files
+# 2. Or download/rebuild them
+#
+# GTF input
+if config.get("reference", {}).get("genome_gtf"):
+    # This snakefile contains rules to link existing genome GTF file
+    include: "rules/reference/link_genome_annotation.smk"
+else:
+    # This snakefile contains rules to download genome GTF file
+    include: "rules/reference/download_genome_annotation.smk"
+# Fasta input
+if config.get("reference", {}).get("genome_fasta"):
+    # This snakefile contains rule to link existing genome fasta file
+    include: "rules/reference/link_genome_sequence.smk"
+else:
+    # This snakefile contains rules to download genome sequences
+    include: "rules/reference/download_genome_sequence.smk"
+# Bowtie2 index input:
+if config.get("reference", {}).get("bowtie2_index"):
+    # This snakefile contains rules to link provided bowtie2 index
+    include: "rules/reference/link_bowtie2_index.smk"
+else:
+    # This snakefile contains rules to create bowtie 2 index
+    include: "rules/indexing/bowtie2_index.smk"
+# Blacklists
+if config.get("reference", {}).get("blacklist"):
+    # This snakefile contains rules to link blackist file
+    include: "rules/reference/link_blacklist.smk"
+else:
+    # This snakefile contains rules to download known blacklist regions
+    include: "rules/reference/download_blacklist.smk"
+# Xenome index
+if config.get("reference", {}).get("xenome_index"):
+    # This snakefile contains rules to link xenom index files
+    include: "rules/reference/link_xenome_index.smk"
+else:
+    # This snakefile contains rules to build Xenome indexes
+    include: "rules/indexing/xenome_index.smk"
 # This snakefile contains rules to index genome sequences
 include: "rules/indexing/samtools_faidx.smk"
-# This snakefile contains rules to download Fastq-Screen indexes
-include: "rules/reference/download_fastq_screen_index.smk"
-# This snakefile contains rules to download known blacklist regions
-include: "rules/reference/download_blacklist.smk"
-# This snakefile contains rules to build Xenome indexes
-include: "rules/indexing/xenome_index.smk"
+if config.get("steps", {}).get("download_fastq_screen_indexes"):
+    # This snakefile contains rules to download Fastq-Screen indexes
+    include: "rules/reference/download_fastq_screen_index.smk"
 # This snakefile contains rules to create R objets describing
 # experimental design, statistical formulas and sequencing libraries
 include: "rules/indexing/csaw_preprocess.smk"
@@ -33,11 +64,14 @@ include: "rules/indexing/fasta_to_twobit.smk"
 # 
 # Trimming
 #
-# This snakefile contains rules to trimm reads with fastp
-include: "rules/trimming/fastp.smk"
-# This snakefile contains rules to identify xenograft bias 
-# in sequenced reads, and identify read's origin
-include: "rules/mapping/xenome_pdx.smk"
+if trimming:
+    # This snakefile contains rules to trimm reads with fastp
+    include: "rules/trimming/fastp.smk"
+# Xenografts
+if config.get("reference", {}).get("pdx") and mapping:
+    # This snakefile contains rules to identify xenograft bias 
+    # in sequenced reads, and identify read's origin
+    include: "rules/mapping/xenome_pdx.smk"
 #
 # Library quality controls
 #
@@ -47,141 +81,151 @@ include: "rules/trimming/fastq_screen.smk"
 #
 # Mapping
 #
-# This snakefile contains rules to align reads with
-# bowtie 2.
-include: "rules/mapping/bowtie2_mapping.smk"
-# This snakefile contains rules to clean and filter
-# aligned reads and reach basic quality thresholds.
-include: "rules/mapping/sambamba_samtools_filters.smk"
-# This snakefile contains rules to filter reads over
-# user-defined regions of interes (if any)
-include: "rules/mapping/bedtools_filter_roi.smk"
-# This snakefile contains rules to identify
-# duplicated reads and (optionally) remove them.
-include: "rules/mapping/sambamba_markdup.smk"
-# This snakefile contains rules to shift
-# sequenced reads in order to fix AtacSeq known bias.
-include: "rules/mapping/deeptools_shift.smk"
-include: "rules/mapping/ensembl_to_ucsc.smk"
+if mapping:
+    # This snakefile contains rules to align reads with
+    # bowtie 2.
+    include: "rules/mapping/bowtie2_mapping.smk"
+    # This snakefile contains rules to clean and filter
+    # aligned reads and reach basic quality thresholds.
+    include: "rules/mapping/sambamba_samtools_filters.smk"
+    # This snakefile contains rules to filter reads over
+    # user-defined regions of interes (if any)
+    include: "rules/mapping/bedtools_filter_roi.smk"
+    # This snakefile contains rules to identify
+    # duplicated reads and (optionally) remove them.
+    include: "rules/mapping/sambamba_markdup.smk"
+    # Rename sequences in case of USCS/Ensembl opposition
+    include: "rules/mapping/ensembl_to_ucsc.smk"
+    if protocol_is_atac(protocol) or protocol_is_cutntag(protocol):
+        # This snakefile contains rules to shift
+        # sequenced reads in order to fix AtacSeq known bias.
+        include: "rules/mapping/deeptools_shift.smk"
 #
 # Mapping QC
 #
-# This snakefile contains rules to check mapping quality with Picard
-include: "rules/mapping_qc/picard_collect_mutiple_metrics.smk"
-# This snakefile contains rules to check mapping quality with Samtools
-include: "rules/mapping_qc/samtools.smk"
-# This snakefile contains rules to compress Bam files in CRAM
-include: "rules/mapping/samtools_cram.smk"
-# This snakefile contains rules to import mappings in R
-include: "rules/medips/bam_import.smk"
-# This snakefile contains rules to filter mappings in R
-include: "rules/mapping/rsamtools.smk"
-# This snakefile contains rules to concat bams per levels for each conditions
-# used in QC purpose only.
-include: "rules/mapping/pull_bams.smk"
+if mapping:
+    # This snakefile contains rules to check mapping quality with Picard
+    include: "rules/mapping_qc/picard_collect_mutiple_metrics.smk"
+    # This snakefile contains rules to check mapping quality with Samtools
+    include: "rules/mapping_qc/samtools.smk"
+    # This snakefile contains rules to compress Bam files in CRAM
+    include: "rules/mapping/samtools_cram.smk"
+    # This snakefile contains rules to import mappings in R
+    include: "rules/medips/bam_import.smk"
+    # This snakefile contains rules to filter mappings in R
+    include: "rules/mapping/rsamtools.smk"
+    # This snakefile contains rules to concat bams per levels for each conditions
+    # used in QC purpose only.
+    include: "rules/mapping/pull_bams.smk"
 #
 # Peak-Calling
 #
-# This snakefile contains rules to call peaks with Macs2
-include: "rules/peak-calling/macs2_callpeak.smk"
-# This snakefile contains rules to call peaks with Seacr
-include: "rules/peak-calling/seacr_callpeak.smk"
+if calling:
+    # This snakefile contains rules to call peaks with Macs2
+    include: "rules/peak-calling/macs2_callpeak.smk"
+    # This snakefile contains rules to call peaks with Seacr
+    include: "rules/peak-calling/seacr_callpeak.smk"
 #
 # Coverage
 #
-# This snakefile contains rules to compute genome coverage
-include: "rules/coverage/deeptools_bamcoverage.smk"
-# This snakefile contains rules to transform genome coverage
-include: "rules/coverage/deeptools_matrix.smk"
-# This snakefile contains rules to plot genome coverage heatmap
-include: "rules/coverage/deeptools_plot_heatmap.smk"
-# This snakefile contains rules to plot genome coverage fingerprint
-include: "rules/mapping_qc/deeptools_fingerprint.smk"
-# This snakefile contains rules to import coverages in R for CSAW
-# and compute per-bin normalized coverage
-include: "rules/coverage/csaw_count.smk"
-# This snakefile contains rules to import coverages in R for MEDIPS
-# and compute per-bin normalized coverage
-include: "rules/coverage/medips_meth.smk"
+if coverage:
+    # This snakefile contains rules to compute genome coverage
+    include: "rules/coverage/deeptools_bamcoverage.smk"
+    # This snakefile contains rules to transform genome coverage
+    include: "rules/coverage/deeptools_matrix.smk"
+    # This snakefile contains rules to plot genome coverage heatmap
+    include: "rules/coverage/deeptools_plot_heatmap.smk"
+    # This snakefile contains rules to plot genome coverage fingerprint
+    include: "rules/mapping_qc/deeptools_fingerprint.smk"
+    # This snakefile contains rules to import coverages in R for CSAW
+    # and compute per-bin normalized coverage
+    include: "rules/coverage/csaw_count.smk"
+    # This snakefile contains rules to import coverages in R for MEDIPS
+    # and compute per-bin normalized coverage
+    include: "rules/coverage/medips_meth.smk"
 #
 # Coverage QC
 #
-# This snakefile contains rules to assess fragment size in
-# paired bam files
-include: "rules/mapping_qc/deeptools_bampefragment_size.smk"
-# This snakefile contains rules to assess sample coverage
-# correlation
-include: "rules/coverage_qc/deeptools_plot_correlation.smk"
-# This snakefile contains rules to plot Per-sample coverage PCA
-include: "rules/coverage_qc/deeptools_plot_pca.smk"
-# This snakefile contains rules to plot Per-sample coverage
-include: "rules/coverage_qc/deeptools_plot_profile.smk"
+if coverage:
+    # This snakefile contains rules to assess fragment size in
+    # paired bam files
+    include: "rules/mapping_qc/deeptools_bampefragment_size.smk"
+    # This snakefile contains rules to assess sample coverage
+    # correlation
+    include: "rules/coverage_qc/deeptools_plot_correlation.smk"
+    # This snakefile contains rules to plot Per-sample coverage PCA
+    include: "rules/coverage_qc/deeptools_plot_pca.smk"
+    # This snakefile contains rules to plot Per-sample coverage
+    include: "rules/coverage_qc/deeptools_plot_profile.smk"
 #
 # FRiP score
 #
-# This snakefile contains rules to aggregate regions for
-# further FRiP score computation
-include: "rules/peak-calling/bedtools_intersect.smk"
-# This snakefile contains rules to compute FRiP score
-include: "rules/peak-calling/manual_frip_score.smk"
+if calling:
+    # This snakefile contains rules to aggregate regions for
+    # further FRiP score computation
+    include: "rules/peak-calling/bedtools_intersect.smk"
+    # This snakefile contains rules to compute FRiP score
+    include: "rules/peak-calling/manual_frip_score.smk"
 #
 # Differential binding
 #
-# This snakefile include rules to compute diff binding with CSAW
-include: "rules/differential_binding/csaw_db.smk"
-# This snakefile include rules to compute diff binding with MEDIPS
-include: "rules/differential_binding/medips_edger.smk"
-# This snakefile include rules to compute per-factor coverage for QC purpose
-include: "rules/differential_binding/pull_samples_coverage.smk"
-# This snakefile include rules to compute per-factor peaks for QC purpose
-include: "rules/differential_binding/pull_samples_peaks.smk"
-# This snakefile include rules to compute per-factor heatmaps for QC purpose
-include: "rules/differential_binding/pull_samples_heatmap.smk"
+if diff_cov:
+    # This snakefile include rules to compute diff binding with CSAW
+    include: "rules/differential_binding/csaw_db.smk"
+    # This snakefile include rules to compute diff binding with MEDIPS
+    include: "rules/differential_binding/medips_edger.smk"
+    # This snakefile include rules to compute per-factor coverage for QC purpose
+    include: "rules/differential_binding/pull_samples_coverage.smk"
+    # This snakefile include rules to compute per-factor peaks for QC purpose
+    include: "rules/differential_binding/pull_samples_peaks.smk"
+    # This snakefile include rules to compute per-factor heatmaps for QC purpose
+    include: "rules/differential_binding/pull_samples_heatmap.smk"
 #
 # Annotation
 #
-# This snakefile include rules to annotate peaks with chipseeker
-include: "rules/annotation/chipseeker_peak_annotate.smk"
-# This snakefile include rules to build tagmatrix for further QC
-include: "rules/annotation/chipseeker_tagmatrix.smk"
-# This snakefile include rules to plot peaks distance to TSS
-include: "rules/annotation/chipseeker_plot_distance_to_tss.smk"
-# This snakefile include rules to plot annotation histogram
-include: "rules/annotation/chipseeker_plot_annobar.smk"
-# This snakefile include rules to plot genome annotation as an upset
-include: "rules/annotation/chipseeker_plot_upsetvenn.smk"
-# This snakefile include rules to plot gene body coverage
-include: "rules/annotation/chipseeker_genebody.smk"
-# This snakefile include rules to plot genome coverage
-include: "rules/annotation/chipseeker_genomecov.smk"
+if motives:
+    # This snakefile include rules to annotate peaks with chipseeker
+    include: "rules/annotation/chipseeker_peak_annotate.smk"
+    # This snakefile include rules to build tagmatrix for further QC
+    include: "rules/annotation/chipseeker_tagmatrix.smk"
+    # This snakefile include rules to plot peaks distance to TSS
+    include: "rules/annotation/chipseeker_plot_distance_to_tss.smk"
+    # This snakefile include rules to plot annotation histogram
+    include: "rules/annotation/chipseeker_plot_annobar.smk"
+    # This snakefile include rules to plot genome annotation as an upset
+    include: "rules/annotation/chipseeker_plot_upsetvenn.smk"
+    # This snakefile include rules to plot gene body coverage
+    include: "rules/annotation/chipseeker_genebody.smk"
+    # This snakefile include rules to plot genome coverage
+    include: "rules/annotation/chipseeker_genomecov.smk"
 #
 # Oxidip
 #
-# This snakefile contains rules to correct Oxidip bias
-# after mapping
-include: "rules/mapping/deeptools_gc_bias.smk"
+if mapping and protocol_is_ogseq(protocol):
+    # This snakefile contains rules to correct Oxidip bias
+    # after mapping
+    include: "rules/mapping/deeptools_gc_bias.smk"
 #
 # QC aggregation
 #
 # This snakefile contains rules to run MultiQC
-include: "rules/multiqc/multiqc_mapping.smk"
-include: "rules/multiqc/multiqc_trimming.smk"
-include: "rules/multiqc/multiqc_coverage.smk"
+if mapping:
+    include: "rules/multiqc/multiqc_mapping.smk"
+if trimming:
+    include: "rules/multiqc/multiqc_trimming.smk"
+if coverage:
+    include: "rules/multiqc/multiqc_coverage.smk"
 #
 # Motifs
 # 
-# This Snakefile contains rules to find denovo motifs with Homer
-include: "rules/motif/homer_find_motifs_genome.smk"
-# This Snakefile contains rules to annotate peaks with Homer
-include: "rules/annotation/homer_annotate_peaks.smk"
-# This Snakefile contains rules to plot Motifs Footprints
-include: "rules/footprints/plot_footprints.smk"
+if motives:
+    # This Snakefile contains rules to find denovo motifs with Homer
+    include: "rules/motif/homer_find_motifs_genome.smk"
+    # This Snakefile contains rules to annotate peaks with Homer
+    include: "rules/annotation/homer_annotate_peaks.smk"
+    # This Snakefile contains rules to plot Motifs Footprints
+    include: "rules/footprints/plot_footprints.smk"
 
-
-ruleorder: sambamba_markdup > sambamba_merge_per_factors_level
-ruleorder: sambamba_bam_index > index_sambamba_merge_per_factors_level
-ruleorder: deeptools_bamcoverage > deeptools_bamcoverage_per_factor
-ruleorder: chipseeker_annotate_peak_from_bed > chipseeker_annotate_peak_from_ranges
 
 
 rule target:

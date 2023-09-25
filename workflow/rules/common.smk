@@ -353,6 +353,19 @@ motifs_list: Optional[List[str]] = config.get("finger_prints", {}).get("motifs")
 # List of deeptools transformations to do
 command_list: List[str] = ["reference-point"]  # ["scale-region", "reference-point"]
 
+# Pipelines steps
+install: bool = config.get("steps", {}).get("install")
+download_fastq_screen_indexes: bool = (
+    config.get("steps", {}).get("download_fastq_screen_indexes") and install
+)
+
+motives: bool = config.get("steps", {}).get("motives")
+diff_cov: bool = config.get("steps", {}).get("diff_cov")
+calling: bool = config.get("steps", {}).get("calling") or motives
+coverage: bool = config.get("steps", {}).get("coverage") or calling or diff_cov
+mapping: bool = config.get("steps", {}).get("mapping") or coverage
+trimming: bool = config.get("steps", {}).get("trimming") or mapping
+
 
 #############################################
 ### Experimental design related functions ###
@@ -1918,41 +1931,48 @@ def targets(
     default_fastq_screen_genomes: List[str] = default_fastq_screen_genomes,
     macs2_params: Dict[str, Any] = macs2_params,
     peak_type_and_mode_list: List[str] = peak_type_and_mode_list,
+    trimming: bool = trimming,
+    mapping: bool = mapping,
+    coverage: bool = coverage,
+    calling: bool = calling,
+    diff_cov: bool = diff_cov,
+    motives: bool = motives,
+    install: bool = install,
+    download_fastq_screen_indexes: bool = download_fastq_screen_indexes,
 ):
     """
     Return the list of expected output files, depending on the
     choices made by user in configuration file at: `<root>/config/config.yaml`
     """
     expected_targets = {}
-    steps = config.get("steps", {})
 
-    if steps.get("install", False):
+    if install:
         expected_targets["gtf"] = genome_annotation_path
         expected_targets["genome_fasta"] = genome_fasta_path
         expected_targets["bowtie2_index"] = bowtie2_index_path
-        if steps.get("download_fastq_screen_indexes", False):
+        if download_fastq_screen_indexes:
             expected_targets["fastq_screen_indexes"] = expand(
                 "reference/fastq_screen/index/{fq_genome}",
                 fq_genome=default_fastq_screen_genomes,
             )
 
-    if steps.get("trimming", False):
+    if trimming:
         expected_targets["fastp"] = get_fastp_output_html(design=design)
         expected_targets["multiqc_trim"] = "data_output/QC/Trimming.QC.html"
 
-    if steps.get("mapping", False):
+    if mapping:
         expected_targets["mapping"] = expand(
             "data_output/CRAM/{sample}.cram", sample=design.index
         )
         expected_targets["multiqc_map"] = ("data_output/QC/Mapping.QC.html",)
 
-    if steps.get("coverage", False):
+    if coverage:
         expected_targets["bam_coverage"] = expand(
             "data_output/Coverage/{sample}.bw",
             sample=get_tested_sample_list(design=design),
         )
 
-    if steps.get("calling", False):
+    if calling:
         if macs2_params.get("broad", False) or macs2_params.get("narrow", False):
             expected_targets["macs2_broad"] = expand(
                 "data_output/Peak_Calling/{peaktype}/Macs2/{sample}_peaks.xls",
@@ -1975,7 +1995,7 @@ def targets(
 
         expected_targets["multiqc_coverage_report"] = "data_output/QC/Coverage.QC.html"
 
-    if steps.get("diff_cov", False):
+    if diff_cov:
         comparison_list: List[str] = get_model_names(config)
         if len(comparison_list) > 0:
             expected_targets["annotated_csaw_tsv"] = expand(
@@ -2001,7 +2021,7 @@ def targets(
                 command=command_list,
             )
 
-    if steps.get("motives", False):
+    if motives:
         expected_targets["homer_annotate"] = expand(
             "data_output/Motifs/{peaktype}/{sample}_homer_annot.txt",
             peaktype=peak_type_and_mode_list,
