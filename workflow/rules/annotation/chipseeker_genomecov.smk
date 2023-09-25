@@ -6,7 +6,7 @@ rule chipseeker_genome_cov_single_sample:
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
-        runtime=lambda wildcards, attempt: attempt * 20,
+        runtime=lambda wildcards, attempt: attempt * 60,
         tmpdir=tmp,
     log:
         "logs/chipseeker/genomecov/{sample}.{peaktype}.log",
@@ -26,7 +26,7 @@ rule chipseeker_plot_genome_cov_differential_binding:
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 4,
-        runtime=lambda wildcards, attempt: attempt * 20,
+        runtime=lambda wildcards, attempt: attempt * 60,
         tmpdir=tmp,
     log:
         "logs/chipseeker/genomecov/{model_name}.log",
