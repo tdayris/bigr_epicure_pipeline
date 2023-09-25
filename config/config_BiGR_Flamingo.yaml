@@ -131,7 +131,7 @@ reference:
 
   # Path to blacklisted intervals.
   # A missing interval file will be downloaded.
-  blacklist: /mnt/beegfs/database/bioinfo/Index_DB/blacklist/hg38.blacklist.nochr.bed
+  blacklist: /mnt/beegfs/database/bioinfo/Index_DB/blacklist/hg38.blacklist.merged.bed
 
   # Path to directory containing fastq_screen configuration file
   fastq_screen_config: config/fastq_screen_bigr.conf
