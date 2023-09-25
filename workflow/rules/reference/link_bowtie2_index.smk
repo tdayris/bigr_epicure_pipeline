@@ -2,7 +2,7 @@ rule link_bowtie2_index:
     input:
         config["reference"]["bowtie2_index"],
     output:
-        mbowtie2_index_path,
+        bowtie2_index_path,
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,
