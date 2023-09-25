@@ -183,7 +183,7 @@ genome_fai_path: str = f"reference/{species}.{build}.{release}.fasta.fai"
 genome_dict_path: str = f"reference/{species}.{build}.{release}.dict"
 genome_twobit_path: str = f"reference/{species}.{build}.{release}.2bit"
 genome_annotation_path: str = f"reference/{species}.{build}.{release}.gtf"
-blacklist_path: str = f"reference/blacklist/{species}.{build}.{release}.merged.bed.gz"
+blacklist_path: str = f"reference/blacklist/{species}.{build}.{release}.bed"
 
 # Bowtie2 genome index
 bowtie2_index_path: List[str] = multiext(
