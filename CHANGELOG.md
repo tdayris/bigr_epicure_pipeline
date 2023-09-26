@@ -1,3 +1,9 @@
+# 0.15.1 – Usage
+
+## Documentation
+
+* Path to launcher explicited on BiGR-Flamingo
+
 # 0.15.0 – Reviews
 
 ## Features
