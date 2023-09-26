@@ -3,6 +3,8 @@
 ## Documentation
 
 * Path to launcher explicited on BiGR-Flamingo
+* Fix missing branches in Snakedeploy
+* Fix missing shift in Cut&Tag material and methods
 
 # 0.15.0 – Reviews
 
