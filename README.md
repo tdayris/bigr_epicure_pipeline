@@ -89,7 +89,7 @@ _note: This action has been made easier for you if you work at Gustave Roussy. S
 
 Given that the workflow has been properly deployed and configured, it can be executed as follows.
 
-Fow running the workflow while deploying any necessary software via conda (using the Mamba package manager by default), run Snakemake with
+For running the workflow while deploying any necessary software via conda (using the Mamba package manager by default), run Snakemake with
 
 `snakemake --cores all --use-conda `
 
