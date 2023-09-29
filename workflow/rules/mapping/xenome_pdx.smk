@@ -21,7 +21,7 @@ rule xenome_classify_pairs:
     params:
         extra=" --verbose --pairs ",
         out_prefix=lambda wildcards, output: output[0][: -len("_ambiguous_1.fastq")],
-        idx_prefix=lambda wildcards, input: "-".join(input.index[0].split("-")[:-1]),
+        idx_prefix=lambda wildcards, input: sorted(input.index)[0][:-len(".header")],
     envmodules:
         "xenome/1.0.0_patched",
     shell:
