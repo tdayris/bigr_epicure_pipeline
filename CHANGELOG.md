@@ -1,5 +1,9 @@
 # 0.15.1 – Usage
 
+## Fix
+
+* Fix unmerged blacklist file in BiGR preconfigured pipeline
+
 ## Documentation
 
 * Path to launcher explicited on BiGR-Flamingo
