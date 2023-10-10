@@ -1974,7 +1974,7 @@ def targets(
         )
 
     if calling:
-        if macs2_params.get("broad", False) or macs2_params.get("narrow", False):
+        if len(peaktype_list) >= 1:
             expected_targets["macs2_broad"] = expand(
                 "data_output/Peak_Calling/{peaktype}/Macs2/{sample}_peaks.xls",
                 sample=get_tested_sample_list(design=design),
