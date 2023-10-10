@@ -5,6 +5,10 @@
 * Annotation pie-chart
 * General graphs for all samples
 
+## Fix
+
+* Calling QC trigger fixed
+
 # 0.15.1 – Usage
 
 ## Fix
