@@ -314,6 +314,7 @@ default_fastq_screen_genomes: List[str] = [
 chipseeker_plot_list: List[str] = [
     "UpsetVenn",
     "Feature_Distribution",
+    "Feature_Distribution_Pie",
     "Distance_to_TSS",
     "Genome_Coverage",
     "Gene_Body_Coverage",
@@ -1978,6 +1979,15 @@ def targets(
                 "data_output/Peak_Calling/{peaktype}/Macs2/{sample}_peaks.xls",
                 sample=get_tested_sample_list(design=design),
                 peaktype=peaktype_list,
+            )
+            expected_targets["genomic_annottion_all_samples"] = expand(
+                "data_output/Peak_Calling/{peaktype}/{general_graphs}.png",
+                peaktype=peaktype_list,
+                general_graphs=[
+                    "GenomicAnnotations_Pie",
+                    "GenomicAnnotations",
+                    "Distance_to_TSS",
+                ],
             )
 
         if len(peak_type_and_mode_list) > 0:

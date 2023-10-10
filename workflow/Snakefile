@@ -192,12 +192,15 @@ if motives:
     include: "rules/annotation/chipseeker_plot_distance_to_tss.smk"
     # This snakefile include rules to plot annotation histogram
     include: "rules/annotation/chipseeker_plot_annobar.smk"
+    # This snakefile include rules to plot annotation pie
+    include: "rules/annotation/chipseeker_plot_annopie.smk"
     # This snakefile include rules to plot genome annotation as an upset
     include: "rules/annotation/chipseeker_plot_upsetvenn.smk"
     # This snakefile include rules to plot gene body coverage
     include: "rules/annotation/chipseeker_genebody.smk"
     # This snakefile include rules to plot genome coverage
     include: "rules/annotation/chipseeker_genomecov.smk"
+    
 #
 # Oxidip
 #

@@ -102,9 +102,9 @@ rule bedtools_merge_blacklist:
 
 rule unzip_blacklist:
     input:
-        "reference/blacklist/{species}.{build}.{release}.merged.bed.gz"
+        "reference/blacklist/{species}.{build}.{release}.merged.bed.gz",
     output:
-        "reference/blacklist/{species}.{build}.{release}.bed"
+        "reference/blacklist/{species}.{build}.{release}.bed",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024,
@@ -118,4 +118,3 @@ rule unzip_blacklist:
         "../../envs/bash.yaml"
     shell:
         "gunzip {params.extra} {input} > {output} 2>&1"
-    

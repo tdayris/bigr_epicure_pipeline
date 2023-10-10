@@ -1,3 +1,10 @@
+# 0.16.0 – Graphs
+
+## Feature
+
+* Annotation pie-chart
+* General graphs for all samples
+
 # 0.15.1 – Usage
 
 ## Fix
