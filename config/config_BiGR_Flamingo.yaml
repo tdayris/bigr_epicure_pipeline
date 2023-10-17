@@ -106,18 +106,22 @@ reference:
   # Path to genome sequence file (FASTA formatted, NOT gzipped)
   # A missing sequence file will be downloaded and indexed.
   genome_fasta: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.fasta
+  # genome_fasta: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCm38.102/mus_musculus.GRCm38.102.fasta
 
   # Path to genome sequence file (FASTA formatted, NOT gzipped)
   # A missing index sequence file will be re-created.
   genome_fai: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.fasta.fai
+  # genome_fai: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCm38.102/mus_musculus.GRCm38.102.fasta.fai
 
   # Path to genome sequence file (FASTA formatted, NOT gzipped)
   # A missing sequence decitionary file will be re-created.
   genome_dict: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.dict
+  # genome_dict: /mnt/beegfs/database/bioinfo/Index_DB/Fasta/Ensembl/GRCm38.102/mus_musculus.GRCm38.102.dict
 
   # Path to genome annotation file (GTF formatted, NOT gzipped)
   # A missing annotation file will be downloaded.
   genome_gtf: /mnt/beegfs/database/bioinfo/Index_DB/GTF/Ensembl/GRCh38.109/homo_sapiens.GRCh38.109.gtf
+  # genome_gtf: /mnt/beegfs/database/bioinfo/Index_DB/GTF/Ensembl/GRCm38.102/mus_musculus.GRCm38.102.gtf
 
   # Path to bowtie2_index directory.
   # A missing bowtie2 index directory will lead to genome indexation.
@@ -128,10 +132,18 @@ reference:
     - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/homo_sapiens.GRCh38.109.4.bt2
     - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/homo_sapiens.GRCh38.109.rev.1.bt2
     - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCh38.109/bowtie2_index/homo_sapiens.GRCh38.109.rev.2.bt2
+  # bowtie2_index:
+  #   - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCm38.102/mus_musculus.GRCm38.102.1.bt2
+  #   - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCm38.102/mus_musculus.GRCm38.102.2.bt2
+  #   - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCm38.102/mus_musculus.GRCm38.102.3.bt2
+  #   - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCm38.102/mus_musculus.GRCm38.102.4.bt2
+  #   - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCm38.102/mus_musculus.GRCm38.102.rev.1.bt2
+  #   - /mnt/beegfs/database/bioinfo/Index_DB/Bowtie/2.5.1/GRCm38.102/mus_musculus.GRCm38.102.rev.2.bt2
 
   # Path to blacklisted intervals.
   # A missing interval file will be downloaded.
   blacklist: /mnt/beegfs/database/bioinfo/Index_DB/blacklist/hg38.blacklist.merged.bed
+  # blacklist: /mnt/beegfs/database/bioinfo/Index_DB/blacklist/GRCm38.102/mus_musculus.GRCm38.102.merged.bed
 
   # Path to directory containing fastq_screen configuration file
   fastq_screen_config: config/fastq_screen_bigr.conf

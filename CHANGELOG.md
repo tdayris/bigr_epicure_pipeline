@@ -1,3 +1,13 @@
+# 0.16.1 – Mice
+
+## Feature
+
+* Indexed for mus musculus available on BiGR Flamingo
+
+## Fix
+
+* Logging behaviour in blacklist gunzip now points to logging file
+
 # 0.16.0 – Graphs
 
 ## Feature

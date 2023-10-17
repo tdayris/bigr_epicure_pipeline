@@ -117,4 +117,4 @@ rule unzip_blacklist:
     conda:
         "../../envs/bash.yaml"
     shell:
-        "gunzip {params.extra} {input} > {output} 2>&1"
+        "gunzip {params.extra} {input} > {output} 2> {log}"
