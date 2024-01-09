@@ -100,7 +100,7 @@ sigs <- factorFootprints(
     pfm = motif[[1]],
     genome = genome,
     min.score = "90%",
-    seqlev = c(1:22, "X", "Y"),
+    seqlev = seqlev,
     upstream = 100,
     downstream = 100
 )
