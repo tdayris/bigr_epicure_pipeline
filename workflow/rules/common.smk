@@ -172,9 +172,9 @@ def protocol_is_groseq(protocol: str = protocol) -> bool:
 ################################
 
 # Main genome informations
-species: str = config.get("reference", {}).get("species", "homo_sapiens")
-build: str = config.get("reference", {}).get("build", "GRCh38")
-release: str = config.get("reference", {}).get("release", "109")
+species: str = str(config.get("reference", {}).get("species", "homo_sapiens"))
+build: str = str(config.get("reference", {}).get("build", "GRCh38"))
+release: str = str(config.get("reference", {}).get("release", "109"))
 
 # Resolve reference paths if needed
 genome_fasta_path: str = f"reference/{species}.{build}.{release}.fasta"
