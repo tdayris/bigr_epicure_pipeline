@@ -1,3 +1,10 @@
+# 0.16.2
+
+## Fix
+
+* Ambiguity error
+* Launcher pointing to old version
+
 # 0.16.1 – Mice
 
 ## Feature
