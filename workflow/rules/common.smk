@@ -78,8 +78,6 @@ container: "docker://continuumio/miniconda3"
 # This is the main version of all snakemake-wrappers
 snakemake_wrappers_version: str = "v2.6.0"
 
-ruleorder: sambamba_markdup > sambamba_merge_per_factors_level
-
 ########################
 ### Global variables ###
 ########################
