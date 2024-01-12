@@ -114,9 +114,6 @@ if mapping:
     include: "rules/medips/bam_import.smk"
     # This snakefile contains rules to filter mappings in R
     include: "rules/mapping/rsamtools.smk"
-    # This snakefile contains rules to concat bams per levels for each conditions
-    # used in QC purpose only.
-    include: "rules/mapping/pull_bams.smk"
 #
 # Peak-Calling
 #
@@ -170,6 +167,9 @@ if calling:
 # Differential binding
 #
 if diff_cov:
+    # This snakefile contains rules to concat bams per levels for each conditions
+    # used in QC purpose only.
+    include: "rules/mapping/pull_bams.smk"
     # This snakefile include rules to compute diff binding with CSAW
     include: "rules/differential_binding/csaw_db.smk"
     # This snakefile include rules to compute diff binding with MEDIPS
