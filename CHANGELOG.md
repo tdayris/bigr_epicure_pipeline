@@ -1,6 +1,13 @@
+# 0.16.3
+
+## Fix:
+
+* missing optional dependencies in Seacr
+* rule order error
+
 # 0.16.2
 
-## Fix
+## Fix:
 
 * Ambiguity error
 * Launcher pointing to old version
