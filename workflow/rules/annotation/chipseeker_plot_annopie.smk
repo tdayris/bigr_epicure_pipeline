@@ -64,4 +64,4 @@ rule chipseeker_plot_annopie_single_sample_list:
     conda:
         "../../envs/chipseeker.yaml"
     script:
-        "../../scripts/chipseeker/chipseeker_plot_annopie_lsit.R"
+        "../../scripts/chipseeker/chipseeker_plot_annopie_list.R"
