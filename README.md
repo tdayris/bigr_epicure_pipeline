@@ -98,7 +98,7 @@ For running the workflow while deploying any necessary software via conda (using
 
 Alternatively, for users at Gustave Roussy, you may use:
 
-`bash /mnt/beegfs/pipelines/bigr_epicure_pipeline/<version>/workflow/scripts/misc/bigr_launcher.sh` (replace `<version>` accoding to your needs)
+`bash ./workflow/bigr_launcher.sh`
 
 Snakemake will automatically detect the main `Snakefile` in the `workflow` subfolder and execute the workflow module that has been defined by the deployment in step 2.
 
