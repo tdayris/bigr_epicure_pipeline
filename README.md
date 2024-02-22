@@ -51,7 +51,7 @@ _note: This action has already been done for you if you work at Gustave Roussy. 
 
 `conda shell.bash activate bigr_epicure_pipeline`
 
-Alternatively, if you work at Gustave Roussy, you can use our shared environment:
+Alternatively, if you work at Gustave Roussy, you can skip this step or use our shared environment:
 
 `conda activate /mnt/beegfs/pipelines/unofficial-snakemake-wrappers/shared_install/bigr_epicure_pipeline/`
 
@@ -76,8 +76,11 @@ Snakedeploy will create two folders `workflow` and `config`. The former contains
 
 3. Consider to put the exact version of the pipeline and all modifications you might want perform under version control. _e.g._ by [managing it via a (private) Github repository](https://docs.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line)
 
-Alternatively, if you work at Gustave Roussy, you can 
+Alternatively, if you work at Gustave Roussy, you can use our dedicated launcher:
 
+`bash /mnt/beegfs/pipelines/bigr_epicure_pipeline/<version>/workflow/scripts/misc/bigr_launcher.sh` (replace `<version>` accoding to your needs)
+
+If the pipeline is deployed and configuration is available, then it will launch the pipeline, or else it will deploy pipeline and configuration.
 
 ## Configure workflow (following Snakemake-Workflows guidelines)
 
