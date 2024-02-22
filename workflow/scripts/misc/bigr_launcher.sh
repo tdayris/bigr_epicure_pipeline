@@ -31,14 +31,16 @@ if [ ! -f "workflow/Snakefile" ]; then
    # Edit configuration file
     if [ -f "config/config_BiGR_Flamingo.yaml" ]; then
         mv --verbose "config/config_BiGR_Flamingo.yaml" "config/config.yaml"
-    fi 
-fi
+    fi
 
-# Saving launcher copy
-if [ ! -f "workflow/bigr_launcher.sh" ]; then
-    echo "Saving local copy of this launcher script..."
-    LAUNCHER_PATH=$(readlink -e "$0")
-    cp --verbose "${LAUNCHER_PATH}" "workflow/bigr_launcher.sh"
+    # Saving launcher copy
+    if [ ! -f "workflow/bigr_launcher.sh" ]; then
+        echo "Saving local copy of this launcher script..."
+        LAUNCHER_PATH=$(readlink -e "$0")
+        cp --verbose "${LAUNCHER_PATH}" "workflow/bigr_launcher.sh"
+    fi
+else
+    echo "Pipeline already deployed."
 fi
 
 # Build design file if missing
@@ -63,12 +65,16 @@ if [ ! -f "config/design.tsv" ]; then
             awk 'BEGIN{FS="\t"; print "Sample_id" FS "Upstream_file"} {print $0}' \
         > "config/design.tsv"
     fi
+else
+    echo "Design file already available"
 fi
 
 # Dealing with windows/mac inputs
 if [ -f "config/design.tsv" ]; then
     echo "Removing possible Windows complex end of lines..."
     sed -i 's|\r||g' config/design.tsv
+else
+    echo "Configuration file not available"
 fi
 
 echo "Updating Snakemake-workflow verison if needed..."
