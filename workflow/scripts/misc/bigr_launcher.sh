@@ -16,7 +16,7 @@ conda activate "/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/shared_insta
 # Exporting required IO variables
 echo "Exporting environment variables..."
 export SNAKEMAKE_OUTPUT_CACHE="/mnt/beegfs/pipelines/unofficial-snakemake-wrappers/snakemake_cache/"
-export PIPELINE_VERSION="0.16.2"
+export PIPELINE_VERSION="0.16.4"
 
 # Building IO architecture
 echo "Building repository architecture if missing..."
