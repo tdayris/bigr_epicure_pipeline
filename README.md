@@ -68,15 +68,15 @@ Given that Snakemake and Snakedeploy are installed and available (see [Installat
 
 2. Deploy workflow:
 
-`snakedeploy deploy-workflow https://github.com/tdayris/bigr_epicure_pipeline . --tag 0.15.0`
+`snakedeploy deploy-workflow https://github.com/tdayris/bigr_epicure_pipeline . --tag <version>`
+
+With `<version>` being the last available version.
 
 Snakedeploy will create two folders `workflow` and `config`. The former contains the deployment of the chosen workflow as a [Snakemake module](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-and-combining-pre-exising-workflows), the latter contains configuration files which will be modified in the next step in order to configure the workflow to your needs. Later, when executing the workflow, Snakemake will automatically find the main `Snakefile` in the `workflow` subfolder.
 
 3. Consider to put the exact version of the pipeline and all modifications you might want perform under version control. _e.g._ by [managing it via a (private) Github repository](https://docs.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line)
 
-Alternatively, if you work at Gustave Roussy, you can use our shared pipeline repository:
-
-`snakedeploy deploy-workflow /mnt/beegfs/pipelines/bigr_epicure_pipeline/0.15.0 . --tag 0.15.0`
+Alternatively, if you work at Gustave Roussy, you can 
 
 
 ## Configure workflow (following Snakemake-Workflows guidelines)
