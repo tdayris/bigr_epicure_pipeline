@@ -1,3 +1,10 @@
+# 0.16.4
+
+* Fix script name error
+* Raise version in launcher
+* Fix launcher removing configuration on launch
+* Fix documentation
+
 # 0.16.3
 
 ## Fix:
