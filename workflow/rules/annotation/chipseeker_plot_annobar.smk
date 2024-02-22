@@ -64,4 +64,4 @@ rule chipseeker_plot_annobar_single_sample_list:
     conda:
         "../../envs/chipseeker.yaml"
     script:
-        "../../scripts/chipseeker/chipseeker_plot_annobar_lsit.R"
+        "../../scripts/chipseeker/chipseeker_plot_annobar_list.R"
