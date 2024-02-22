@@ -27,19 +27,19 @@ if [ ! -f "workflow/Snakefile" ]; then
     echo "Deploying Snakemake-workflow..."
     snakedeploy deploy-workflow "https://github.com/tdayris/bigr_epicure_pipeline" . --tag "${PIPELINE_VERSION}"
     mv "config/design.tsv" "config/example.design.tsv"
+
+   # Edit configuration file
+    if [ -f "config/config_BiGR_Flamingo.yaml" ]; then
+        mv --verbose "config/config_BiGR_Flamingo.yaml" "config/config.yaml"
+    fi 
 fi
 
+# Saving launcher copy
 if [ ! -f "workflow/bigr_launcher.sh" ]; then
     echo "Saving local copy of this launcher script..."
     LAUNCHER_PATH=$(readlink -e "$0")
     cp --verbose "${LAUNCHER_PATH}" "workflow/bigr_launcher.sh"
 fi
-
-# Edit configuration file
-if [ -f "config/config_BiGR_Flamingo.yaml" ]; then
-    mv --verbose "config/config_BiGR_Flamingo.yaml" "config/config.yaml"
-fi
-
 
 # Build design file if missing
 if [ ! -f "config/design.tsv" ]; then
