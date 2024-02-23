@@ -1,3 +1,10 @@
+# 0.16.5
+
+Known bug: deactivating motives and differential coverage analysis produces a workflow-error
+
+* Fix launcher running Snakemake before user could have updated configuration file
+* Documentation update
+
 # 0.16.4
 
 * Fix script name error
